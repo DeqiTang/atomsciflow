@@ -49,8 +49,32 @@ file(GLOB UTILS_SOURCES
 )
 pybind11_add_module(utils MODULE ${UTILS_SOURCES})
 
+file(GLOB CUBE_HANDLE_SOURCES
+    "./cube_handle/*.cpp"
+    "../atomsciflow/src/atomsciflow/cube_handle/*.cpp"
+    "../atomsciflow/src/atomsciflow/parser/*.cpp"
+    "../atomsciflow/src/atomsciflow/base/*.cpp"
+)
+pybind11_add_module(cube_handle MODULE ${CUBE_HANDLE_SOURCES})
+
+file(GLOB BASE_SOURCES
+    "./base/*.cpp"
+    "../atomsciflow/src/atomsciflow/base/*.cpp"
+)
+pybind11_add_module(base MODULE ${BASE_SOURCES})
+
+file(GLOB CP2K_SOURCES
+    "./cp2k/*.cpp"
+    "../atomsciflow/src/atomsciflow/base/*.cpp"
+    "../atomsciflow/src/atomsciflow/cp2k/*.cpp" 
+    "../atomsciflow/src/atomsciflow/abinit/*.cpp"
+)
+pybind11_add_module(cp2k MODULE ${CP2K_SOURCES})
 
 # scikit-build
 if(SKBUILD)
     install(TARGETS utils DESTINATION .)
+    install(TARGETS cube_handle DESTINATION .)
+    install(TARGETS cp2k DESTINATION .)
+    install(TARGETS base DESTINATION .)
 endif()

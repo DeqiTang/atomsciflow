@@ -47,10 +47,22 @@ include_directories("./src")
 #    )
 file(GLOB PROJECT_LIB_SOURCES
     "./src/atomsciflow/*.cpp"
+    "./src/atomsciflow/base/*.cpp"
+    "./src/atomsciflow/parser/*.cpp"
+    "./src/atomsciflow/abinit/*.cpp"
+    "./src/atomsciflow/cp2k/*.cpp"
+    "./src/atomsciflow/qe/*.cpp"
+    "./src/atomsciflow/cube_handle/*.cpp"
 )
 
 file(GLOB PROJECT_HEADER_FILES
     "./src/atomsciflow/*.h"
+    "./src/atomsciflow/base/*.h"
+    "./src/atomsciflow/parser/*.h"
+    "./src/atomsciflow/abinit/*.h"
+    "./src/atomsciflow/cp2k/*.h"
+    "./src/atomsciflow/qe/*.h"
+    "./src/atomsciflow/cube_handle/*.h"
 )
 
 # set output path 
@@ -74,6 +86,39 @@ target_link_libraries(atomsciflow-version.x
     ${Boost_LIBRARIES}
 )
 
+add_executable(asflow.x 
+    "./cmd/asflow.cpp"
+)
+target_link_libraries(asflow.x
+    atomsciflow
+    ${Boost_LIBRARIES}
+)
+
+
+add_executable(asflow-traj.x
+    "./cmd/asflow_traj.cpp"
+)
+target_link_libraries(asflow-traj.x
+    atomsciflow
+    ${Boost_LIBRARIES}
+)
+
+add_executable(asflow-cube.x
+    "./cmd/asflow_cube.cpp"
+)
+target_link_libraries(asflow-cube.x
+    atomsciflow
+    ${Boost_LIBRARIES}
+)
+
+add_executable(asflow-calc.x
+    "./cmd/asflow_calc.cpp"
+)
+target_link_libraries(asflow-calc.x
+    atomsciflow
+    ${Boost_LIBRARIES}
+)
+
 # set install
 install(
     DIRECTORY ${CMAKE_SOURCE_DIR}/src/
@@ -84,10 +129,10 @@ install(
 #install(DIRECTORY ${PROJECT_BINARY_DIR}/lib/ DESTINATION lib)
 #install(TARGETS atomsciflow EXPORT atomsciflow DESTINATION lib)
 #install(DIRECTORY ${PROJECT_BINARY_DIR}/bin/ DESTINATION bin)
-#install(TARGETS atomsciflow-version.x  DESTINATION bin)
+#install(TARGETS atomsciflow-version.x asflow.x asflow-traj.x asflow-cube.x asflow-calc.x  DESTINATION bin)
 
 install(
-    TARGETS atomsciflow atomsciflow-version.x
+    TARGETS atomsciflow atomsciflow-version.x asflow.x asflow-traj.x asflow-cube.x asflow-calc.x
     EXPORT atomsciflow
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
