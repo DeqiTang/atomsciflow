@@ -18,7 +18,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC ")
 
-find_package(Boost COMPONENTS program_options filesystem system REQUIRED)
+find_package(Boost COMPONENTS program_options filesystem system  REQUIRED)
 include_directories( ${Boost_INCLUDE_DIR}  )
 
 # OpenMP
@@ -48,20 +48,24 @@ include_directories("./src")
 file(GLOB PROJECT_LIB_SOURCES
     "./src/atomsciflow/*.cpp"
     "./src/atomsciflow/base/*.cpp"
+    "./src/atomsciflow/variable/*.cpp"
     "./src/atomsciflow/parser/*.cpp"
     "./src/atomsciflow/abinit/*.cpp"
     "./src/atomsciflow/cp2k/*.cpp"
     "./src/atomsciflow/qe/*.cpp"
+    "./src/atomsciflow/qmcpack/*.cpp"
     "./src/atomsciflow/cube_handle/*.cpp"
 )
 
 file(GLOB PROJECT_HEADER_FILES
     "./src/atomsciflow/*.h"
     "./src/atomsciflow/base/*.h"
+    "./src/atomsciflow/variable/*.h"
     "./src/atomsciflow/parser/*.h"
     "./src/atomsciflow/abinit/*.h"
     "./src/atomsciflow/cp2k/*.h"
     "./src/atomsciflow/qe/*.h"
+    "./src/atomsciflow/qmcpack/*.h"
     "./src/atomsciflow/cube_handle/*.h"
 )
 

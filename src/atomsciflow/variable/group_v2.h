@@ -5,8 +5,8 @@
     > Created Time: Sat 30 Jan 2021 08:14:26 PM CST
 ************************************************************************/
 
-#ifndef ATOMSCIFLOW_ABINIT_GROUP_V2_H_
-#define ATOMSCIFLOW_ABINIT_GROUP_V2_H_
+#ifndef ATOMSCIFLOW_VARIABLE_GROUP_V2_H_
+#define ATOMSCIFLOW_VARIABLE_GROUP_V2_H_
 
 #include <map>
 #include <iostream>
@@ -14,15 +14,15 @@
 #include <typeinfo>
 
 //#include "atomsciflow/abinit/utils.h"
-#include "atomsciflow/abinit/variable_v2.h"
+#include "atomsciflow/variable/variable_v2.h"
 
 namespace atomsciflow {
 
 
-class AbinitVariableGroupV2 {// }: public AbinitVariableGroupBase {
+class VariableGroupV2 {// }: public AbinitVariableGroupBase {
     public:
-        AbinitVariableGroupV2() {};
-        virtual ~AbinitVariableGroupV2() {};
+        VariableGroupV2() {};
+        virtual ~VariableGroupV2() {};
 
         virtual void set_param(std::string key, int value);
         virtual void set_param(std::string key, double value);
@@ -43,13 +43,13 @@ class AbinitVariableGroupV2 {// }: public AbinitVariableGroupBase {
 
         int n;
     private:
-        std::map<std::string, AbinitVariableV2<int> > params_int;
-        std::map<std::string, AbinitVariableV2<double> > params_double;
+        std::map<std::string, VariableV2<int> > params_int;
+        std::map<std::string, VariableV2<double> > params_double;
 
 };
 
 
 } // namespace atomsciflow
 
-#endif // ATOMSCIFLOW_ABINIT_GROUP_V2_H_
+#endif // ATOMSCIFLOW_VARIABLE_GROUP_V2_H_
 

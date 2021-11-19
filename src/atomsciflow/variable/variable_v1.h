@@ -5,54 +5,54 @@
     > Created Time: Mon 25 Jan 2021 08:22:31 PM CST
 ************************************************************************/
 
-#ifndef atomsciflow_INCLUDE_atomsciflow_ABINIT_VARIABLE_V1_H_
-#define atomsciflow_INCLUDE_atomsciflow_ABINIT_VARIABLE_V1_H_
+#ifndef ATOMSCIFLOW_VARIABLE_VARIABLE_V1_H_
+#define ATOMSCIFLOW_VARIABLE_VARIABLE_V1_H_
 
 #include <string>
 #include <vector>
 
-#include "atomsciflow/abinit/utils.h"
+#include "atomsciflow/variable/utils.h"
 
 namespace atomsciflow {
 
-class AbinitVariableV1 {
+class VariableV1 {
     public:
-        AbinitVariableV1() {};
-        ~AbinitVariableV1() {};
+        VariableV1() {};
+        ~VariableV1() {};
 
-        AbinitVariableV1(std::string key, int value) {
+        VariableV1(std::string key, int value) {
             this->set(key, value);
         }
 
-        AbinitVariableV1(std::string key, double value) {
+        VariableV1(std::string key, double value) {
             this->set(key, value);
         }
 
-        AbinitVariableV1(std::string key, std::string value) {
+        VariableV1(std::string key, std::string value) {
             this->set(key, value);
         }
 
-        AbinitVariableV1(std::string key, std::vector<int> value) {
+        VariableV1(std::string key, std::vector<int> value) {
             this->set(key, value);
         }
 
-        AbinitVariableV1(std::string key, std::vector<double> value) {
+        VariableV1(std::string key, std::vector<double> value) {
             this->set(key, value);
         }
 
-        AbinitVariableV1(std::string key, std::vector<std::string> value) {
+        VariableV1(std::string key, std::vector<std::string> value) {
             this->set(key, value);
         }
 
-        AbinitVariableV1(std::string key, std::vector<std::vector<int> > value) {
+        VariableV1(std::string key, std::vector<std::vector<int> > value) {
             this->set(key, value);
         }
 
-        AbinitVariableV1(std::string key, std::vector<std::vector<double> > value) {
+        VariableV1(std::string key, std::vector<std::vector<double> > value) {
             this->set(key, value);
         }
 
-        AbinitVariableV1(std::string key, std::vector<std::vector<std::string> > value) {
+        VariableV1(std::string key, std::vector<std::vector<std::string> > value) {
             this->set(key, value);
         }
 
@@ -103,4 +103,4 @@ class AbinitVariableV1 {
 
 
 } // namespace atomsciflow
-#endif // atomsciflow_INCLUDE_atomsciflow_ABINIT_VARIABLE_V1_H_
+#endif // ATOMSCIFLOW_VARIABLE_VARIABLE_V1_H_

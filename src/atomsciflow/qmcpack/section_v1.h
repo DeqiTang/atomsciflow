@@ -2,36 +2,44 @@
     > File Name: section_v1.h
     > Author: deqi
     > Mail: deqi_tang@163.com 
-    > Created Time: Sun 31 Jan 2021 07:46:25 PM CST
 ************************************************************************/
 
-#ifndef ATOMSCIFLOW_CP2K_SECTION_V1_H_
-#define ATOMSCIFLOW_CP2K_SECTION_V1_H_
+
+// QmcpackSectionV1 make use of VariableGroupV1 to keep the variables and
+// use boost::property_tree::ptree to do the xml related parsing and output
+// This is unlike QmcpackSectionV2 which only use boost;;property_tree::ptree to
+// both store the variables and do the xml related parsing.
+
+
+#ifndef ATOMSCIFLOW_QMCPACK_SECTION_V1_H_
+#define ATOMSCIFLOW_QMCPACK_SECTION_V1_H_
 
 #include <map>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 
 #include "atomsciflow/variable/variable_v1.h"
 
 
 namespace atomsciflow {
 
-    using Cp2kVariableV1 = VariableV1;
+namespace bpt = boost::property_tree;
 
+class QmcpackSectionV1 {
 
-class Cp2kSectionV1 {
-    public:
-    Cp2kSectionV1() {};
-    explicit Cp2kSectionV1(std::string name) { this->name = name; }
-    ~Cp2kSectionV1() {};
+public:
+    QmcpackSectionV1() {};
+    explicit QmcpackSectionV1(std::string name) { this->name = name; }
+    ~QmcpackSectionV1() {};
 
 
     std::string to_string();
     std::string to_string(std::string indent);
 
     //void add_subsection(std::string);
-    //void add_subsection(std::string, Cp2kSectionV1);
-    Cp2kSectionV1& add_subsection(std::string);
-    Cp2kSectionV1& add_subsection(std::string, Cp2kSectionV1);
+    //void add_subsection(std::string, QmcpackSectionV1);
+    QmcpackSectionV1& add_subsection(std::string);
+    QmcpackSectionV1& add_subsection(std::string, QmcpackSectionV1);
 
     void remove_subsection(std::string);
 
@@ -57,20 +65,21 @@ class Cp2kSectionV1 {
 
     std::string name = "unknown";
     std::string section_parameter;
-    Cp2kVariableV1 section_var;
+    VariableV1 section_var;
     
     bool status = true;
 
-    std::map<std::string, Cp2kSectionV1> subsections;
-
     private:
-    std::map<std::string, Cp2kVariableV1> params;
+    std::map<std::string, VariableV1> params;
+    std::map<std::string, QmcpackSectionV1> subsections;
+
+    bpt::ptree ptree_obj;
+
 };
 
 
 } // namespace atomsciflow
 
 
-
-#endif // ATOMSCIFLOW_CP2K_SECTION_V1_H_
+#endif // ATOMSCIFLOW_QMCPACK_SECTION_V1_H_
 

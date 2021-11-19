@@ -5,37 +5,37 @@
     > Created Time: Sat 30 Jan 2021 08:29:12 PM CST
 ************************************************************************/
 
-#include "atomsciflow/abinit/group_v2.h"
+#include "atomsciflow/variable/group_v2.h"
 
 namespace atomsciflow {
 
 using namespace utils;
 
 
-void AbinitVariableGroupV2::set_param(std::string key, int value) {
+void VariableGroupV2::set_param(std::string key, int value) {
     this->remove(key);
-    this->params_int[key] = AbinitVariableV2<int>{key, value};
+    this->params_int[key] = VariableV2<int>{key, value};
 }
 
-void AbinitVariableGroupV2::set_param(std::string key, double value) {
+void VariableGroupV2::set_param(std::string key, double value) {
 
     this->remove(key);
-    this->params_double[key] = AbinitVariableV2<double>{key, value};
+    this->params_double[key] = VariableV2<double>{key, value};
 }
 
-void AbinitVariableGroupV2::set_param(std::string key, std::vector<int> value) {
+void VariableGroupV2::set_param(std::string key, std::vector<int> value) {
     this->remove(key);
 
-    this->params_int[key] = AbinitVariableV2<int>{key, value};
+    this->params_int[key] = VariableV2<int>{key, value};
 }
 
-void AbinitVariableGroupV2::set_param(std::string key, std::vector<double> value) {
+void VariableGroupV2::set_param(std::string key, std::vector<double> value) {
     this->remove(key);
 
-    this->params_double[key] = AbinitVariableV2<double>{key, value};
+    this->params_double[key] = VariableV2<double>{key, value};
 }
 
-    bool AbinitVariableGroupV2::contains(std::string key) {
+    bool VariableGroupV2::contains(std::string key) {
     if (this->params_int.find(key) == this->params_int.end() && this->params_double.find(key) == this->params_double.end()) {
         return false;
     } else {
@@ -43,7 +43,7 @@ void AbinitVariableGroupV2::set_param(std::string key, std::vector<double> value
     }
 }
 
-void AbinitVariableGroupV2::set_status(std::string key, bool status) {
+void VariableGroupV2::set_status(std::string key, bool status) {
     //this->params[key].status = status;
     if (this->contains(key) == false) {
         return;
@@ -56,11 +56,11 @@ void AbinitVariableGroupV2::set_status(std::string key, bool status) {
     }
 }
 
-std::string AbinitVariableGroupV2::to_string() {
+std::string VariableGroupV2::to_string() {
     return this->to_string(this->n);
 }
 
-std::string AbinitVariableGroupV2::to_string(int n) {
+std::string VariableGroupV2::to_string(int n) {
     std::string out = "";
     for (auto item : this->params_int) {
         if (this->params_int[item.first].status == false) {
@@ -77,7 +77,7 @@ std::string AbinitVariableGroupV2::to_string(int n) {
     return out;
 }
 
-void AbinitVariableGroupV2::remove(std::string key) {
+void VariableGroupV2::remove(std::string key) {
     for (auto it = this->params_int.begin(); it != this->params_int.end(); ++it) {
         if (it->first == key) {
             this->params_int.erase(it);
@@ -93,13 +93,13 @@ void AbinitVariableGroupV2::remove(std::string key) {
 }
 
 
-void AbinitVariableGroupV2::clear() {
+void VariableGroupV2::clear() {
     this->params_int.clear();
     this->params_double.clear();
 }
 
 template<typename U>
-U AbinitVariableGroupV2::get(std::string key) {
+U VariableGroupV2::get(std::string key) {
     U out;
     for (auto it = this->params_int.begin(); it != this->params_int.end(); ++it) {
         if (it->first == key) {
@@ -120,8 +120,8 @@ U AbinitVariableGroupV2::get(std::string key) {
     return out;
 }
 
-template int AbinitVariableGroupV2::get(std::string);
-//template double AbinitVariableGroupV2::get(std::string);
-template std::vector<int> AbinitVariableGroupV2::get(std::string);
+template int VariableGroupV2::get(std::string);
+//template double VariableGroupV2::get(std::string);
+template std::vector<int> VariableGroupV2::get(std::string);
 
 } // namespace atomsciflow

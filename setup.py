@@ -46,7 +46,7 @@ class CMakeExtension(Extension):
 
 def pybind11_build_ext(builder, ext):
     extdir = os.path.abspath(os.path.dirname(builder.get_ext_fullpath(ext.name)))
-    #extdir = os.path.join(extdir, "pymatflow/cpp")
+    #extdir = os.path.join(extdir, "atomsciflow/cpp")
     # required for auto-detection & inclusion of auxiliary "native" libs
     if not extdir.endswith(os.path.sep):
         extdir += os.path.sep
@@ -124,13 +124,22 @@ def pybind11_build_ext(builder, ext):
     )
     #
     #if ext.name in ["pyaskit"]:
-    #    os.system("mv _skbuild/linux-x86_64-*/setuptools/lib.linux-x86_64-*/%s.*.so _skbuild/linux-x86_64-*/setuptools/lib.linux-x86_64-*/pymatflow/cpp/" % ext.name)
+    #    os.system("mv _skbuild/linux-x86_64-*/setuptools/lib.linux-x86_64-*/%s.*.so _skbuild/linux-x86_64-*/setuptools/lib.linux-x86_64-*/atomsciflow/cpp/" % ext.name)
+
 
 # -----------------------------
 # make sure pybind11 is working
 # -----------------------------
 try:
     import pybind11
+    # if there is a pybind11 directory locally in this project, it can be imported.
+    # but that's not the pybind11 package we want
+    # so check pybind11 package validity further
+    if os.path.exists("pybind11"):
+        # see if the truly pybind11 package is installed
+        os.environ["PATH"] = os.environ["PATH"] + ":%s" % os.path.join(os.path.expanduser("~"), ".local/bin")
+        subprocess.run(["pybind11-config", "-h"], stdout=subprocess.PIPE)
+    print("using pybind11 version: ", pybind11.version_info)
 except:
     subprocess.run(["pip3", "install", "--user", "pybind11[global]==2.7.1"])
 os.environ["PATH"] = os.environ["PATH"] + ":%s" % os.path.join(os.path.expanduser("~"), ".local/bin")
@@ -144,6 +153,7 @@ if "CPLUS_INCLUDE_PATH" not in os.environ:
     os.environ["CPLUS_INCLUDE_PATH"] = ":".join(list_paths)
 else:
     os.environ["CPLUS_INCLUDE_PATH"] = os.environ["CPLUS_INCLUDE_PATH"] + ":%s" % ":".join(list_paths)
+
 
 # --------------------------------
 # fortran support
@@ -181,7 +191,7 @@ for ext in ext_modules_fortran:
 def fortran_build_ext(builder, ext):
     builder.build_extension(ext)
     # TODO: more strong code here
-    os.system("mv _skbuild/linux-x86_64-*/setuptools/lib.linux-x86_64-*/%s.*.so _skbuild/linux-x86_64-*/setuptools/lib.linux-x86_64-*/pymatflow/fortran/" % ext.name)
+    os.system("mv _skbuild/linux-x86_64-*/setuptools/lib.linux-x86_64-*/%s.*.so _skbuild/linux-x86_64-*/setuptools/lib.linux-x86_64-*/atomsciflow/fortran/" % ext.name)
 
 
 class CustomBuildExt(build_ext):

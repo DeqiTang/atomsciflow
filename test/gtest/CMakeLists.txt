@@ -36,10 +36,12 @@ include_directories("../../src")
 file(GLOB PROJECT_LIB_SOURCES
     "../../src/atomsciflow/*.cpp"
     "../../src/atomsciflow/base/*.cpp"
+    "../../src/atomsciflow/variable/*.cpp"
     "../../src/atomsciflow/parser/*.cpp"
     "../../src/atomsciflow/abinit/*.cpp"
     "../../src/atomsciflow/cp2k/*.cpp"
     "../../src/atomsciflow/qe/*.cpp"
+    "../../src/atomsciflow/qmcpack/*.cpp"
     "../../src/atomsciflow/cube_handle/*.cpp"
 )
 
@@ -50,11 +52,14 @@ file(GLOB PROJECT_HEADER_FILES
     "../../src/atomsciflow/abinit/*.h"
     "../../src/atomsciflow/cp2k/*.h"
     "../../src/atomsciflow/qe/*.h"
+    "../../src/atomsciflow/qmcpack/*.h"
     "../../src/atomsciflow/cube_handle/*.h"
 )
 
 file(GLOB PROJECT_TEST_SOURCES
     "utils/*.cpp"
+    "cp2k/*.cpp"
+    "qmcpack/*.cpp"
 )
 
 # set output path 

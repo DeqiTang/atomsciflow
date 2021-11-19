@@ -10,11 +10,11 @@
 
 #include <map>
 
-#include "atomsciflow/abinit/variable_v1.h"
+#include "atomsciflow/variable/variable_v1.h"
 
 namespace atomsciflow {
 
-using QeVariableV1 = AbinitVariableV1; 
+using QeVariableV1 = VariableV1; 
 
 class QeNamelistV1 {
     public:

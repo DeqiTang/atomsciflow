@@ -5,32 +5,32 @@
     > Created Time: Mon 25 Jan 2021 08:22:31 PM CST
 ************************************************************************/
 
-#ifndef atomsciflow_INCLUDE_atomsciflow_ABINIT_VARIABLE_V2_H_
-#define atomsciflow_INCLUDE_atomsciflow_ABINIT_VARIABLE_V2_H_
+#ifndef ATOMSCIFLOW_VARIABLE_VARIABLE_V2_H_
+#define ATOMSCIFLOW_VARIABLE_VARIABLE_V2_H_
 
 #include <string>
 #include <vector>
 
-#include "atomsciflow/abinit/utils.h"
+#include "atomsciflow/variable/utils.h"
 
 namespace atomsciflow {
 
 
 template<typename T>
-class AbinitVariableV2 {
+class VariableV2 {
     public:
-        AbinitVariableV2() {};
-        ~AbinitVariableV2() {};
+        VariableV2() {};
+        ~VariableV2() {};
 
-        AbinitVariableV2(std::string key, T value) {
+        VariableV2(std::string key, T value) {
             this->set(key, value);
         }
 
-        AbinitVariableV2(std::string key, std::vector<T> value) {
+        VariableV2(std::string key, std::vector<T> value) {
             this->set(key, value);
         }
 
-        AbinitVariableV2(std::string key, std::vector<std::vector<T> > value) {
+        VariableV2(std::string key, std::vector<std::vector<T> > value) {
             this->set(key, value);
         }
 
@@ -83,4 +83,4 @@ class AbinitVariableV2 {
 
 } // namespace atomsciflow
 
-#endif // atomsciflow_INCLUDE_atomsciflow_ABINIT_VARIABLE_V2_H_
+#endif // ATOMSCIFLOW_VARIABLE_VARIABLE_V2_H_

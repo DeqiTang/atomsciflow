@@ -15,8 +15,8 @@
 
 //#include "atomsciflow/abinit/utils.h"
 #include "atomsciflow/base/kpath.h"
-#include "atomsciflow/abinit/group_v1.h"
-//#include "atomsciflow/abinit/group_v2.h"
+#include "atomsciflow/variable/group_v1.h"
+//#include "atomsciflow/variable/group_v2.h"
 
 /*
  * in control of electrons step related parameters
@@ -41,7 +41,7 @@ class Kpoints {
     public:
 
     Kpoints() {
-        this->vars = new AbinitVariableGroupV1();
+        this->vars = new VariableGroupV1();
         //this->vars = new AbinitVariableGroupV2;
 
         this->incharge.push_back("kptopt");
@@ -81,7 +81,7 @@ class Kpoints {
     std::vector<std::string> incharge;
 
     //AbinitVariableGroupBase* vars;
-    AbinitVariableGroupV1* vars;
+    VariableGroupV1* vars;
     //AbinitVariableGroupV2* vars;
     //
     Kpath kpath;
@@ -98,7 +98,7 @@ class AbinitElectrons {
     public:
     
     AbinitElectrons() {
-        this->vars = new AbinitVariableGroupV1();       
+        this->vars = new VariableGroupV1();       
         //this->vars = new AbinitVariableGroupV2;
 
         this->incharge.push_back("ecut");
@@ -149,7 +149,7 @@ class AbinitElectrons {
     Kpoints kpoints;
     
     //AbinitVariableGroupBase* vars;
-    AbinitVariableGroupV1* vars;
+    VariableGroupV1* vars;
     //AbinitVariableGroupV2* vars;
 };
 

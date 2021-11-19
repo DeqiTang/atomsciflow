@@ -6,7 +6,7 @@
 ************************************************************************/
 
 //#include "atomsciflow/abinit/utils.h"
-#include "atomsciflow/abinit/variable_v1.h"
+#include "atomsciflow/variable/variable_v1.h"
 
 #include <string>
 //#include <vector>
@@ -17,7 +17,7 @@ namespace atomsciflow {
     
     // inline functions
     //
-    inline std::string to_string_same_line(const AbinitVariableV1& var, std::string indent, int n) {
+    inline std::string to_string_same_line(const VariableV1& var, std::string indent, int n) {
         if (false == var.status) {
             return "";
         }
@@ -56,7 +56,7 @@ namespace atomsciflow {
     }
 
 
-    inline std::string to_string_second_line(const AbinitVariableV1& var, std::string indent, int n) {
+    inline std::string to_string_second_line(const VariableV1& var, std::string indent, int n) {
         
         if (false == var.status) {
             return "";
@@ -93,26 +93,26 @@ namespace atomsciflow {
     }
 
 
-    void AbinitVariableV1::set(std::string key, int value) {
+    void VariableV1::set(std::string key, int value) {
         this->key = key;
         this->value.clear();
         this->value.push_back(std::vector<std::string>{std::to_string(value)});
     }
 
-    void AbinitVariableV1::set(std::string key, double value) {
+    void VariableV1::set(std::string key, double value) {
         this->key = key;
         this->value.clear();
         this->value.push_back(std::vector<std::string>{std::to_string(value)});
     }
 
-    void AbinitVariableV1::set(std::string key, std::string value) {
+    void VariableV1::set(std::string key, std::string value) {
         this->key = key;
         this->value.clear();
         this->value.push_back(std::vector<std::string>{value});
     }
 
 
-    void AbinitVariableV1::set(std::string key, std::vector<int> value) {
+    void VariableV1::set(std::string key, std::vector<int> value) {
         this->key = key;
         this->value.clear();
         std::vector<std::string> vec_str;
@@ -122,7 +122,7 @@ namespace atomsciflow {
         this->value.push_back(vec_str);
     }
 
-    void AbinitVariableV1::set(std::string key, std::vector<double> value) {
+    void VariableV1::set(std::string key, std::vector<double> value) {
         this->key = key;
         this->value.clear();
         std::vector<std::string> vec_str;
@@ -133,7 +133,7 @@ namespace atomsciflow {
 
     }
 
-    void AbinitVariableV1::set(std::string key, std::vector<std::string> value) {
+    void VariableV1::set(std::string key, std::vector<std::string> value) {
         this->key = key;
         this->value.clear();
         std::vector<std::string> vec_str;
@@ -144,7 +144,7 @@ namespace atomsciflow {
 
     }
 
-    void AbinitVariableV1::set(std::string key, std::vector<std::vector<int> > value) {
+    void VariableV1::set(std::string key, std::vector<std::vector<int> > value) {
         this->key = key;
         this->value.clear();
         std::vector<std::string> vec_str;
@@ -157,7 +157,7 @@ namespace atomsciflow {
         }
     }
 
-    void AbinitVariableV1::set(std::string key, std::vector<std::vector<double> > value) {
+    void VariableV1::set(std::string key, std::vector<std::vector<double> > value) {
         this->key = key;
         this->value.clear();
         std::vector<std::string> vec_str;
@@ -170,7 +170,7 @@ namespace atomsciflow {
         }
     }
 
-    void AbinitVariableV1::set(std::string key, std::vector<std::vector<std::string> > value) {
+    void VariableV1::set(std::string key, std::vector<std::vector<std::string> > value) {
         this->key = key;
         this->value.clear();
         std::vector<std::string> vec_str;
@@ -184,33 +184,33 @@ namespace atomsciflow {
     }
 
 
-    void AbinitVariableV1::to(int& value) {
+    void VariableV1::to(int& value) {
         value = std::atoi(this->value[0][0].c_str());
     }
 
-    void AbinitVariableV1::to(double& value) {
+    void VariableV1::to(double& value) {
         value = std::atof(this->value[0][0].c_str());
     }
 
-    void AbinitVariableV1::to(std::string& value) {
+    void VariableV1::to(std::string& value) {
         value = this->value[0][0];
     }
 
-    void AbinitVariableV1::to(std::vector<int>& value) {
+    void VariableV1::to(std::vector<int>& value) {
         value.clear();
         for (auto& val : this->value[0]) {
             value.push_back(std::atoi(val.c_str()));
         }
     }
     
-    void AbinitVariableV1::to(std::vector<double>& value) {
+    void VariableV1::to(std::vector<double>& value) {
         value.clear();
         for (auto& val : this->value[0]) {
             value.push_back(std::atof(val.c_str()));
         }
     }
 
-    void AbinitVariableV1::to(std::vector<std::string>& value) {
+    void VariableV1::to(std::vector<std::string>& value) {
         value.clear();
         //for (auto& val : this->value[0]) {
         //    value.push_back(val);
@@ -218,7 +218,7 @@ namespace atomsciflow {
         value = this->value[0];
     }
 
-    void AbinitVariableV1::to(std::vector<std::vector<int>>& value) {
+    void VariableV1::to(std::vector<std::vector<int>>& value) {
         value.clear();
         std::vector<int> vec_int;
         for (auto& row : this->value) {
@@ -230,7 +230,7 @@ namespace atomsciflow {
         }
     }
 
-    void AbinitVariableV1::to(std::vector<std::vector<double>>& value) {
+    void VariableV1::to(std::vector<std::vector<double>>& value) {
         value.clear();
         std::vector<double> vec_double;
         for (auto& row : this->value) {
@@ -242,7 +242,7 @@ namespace atomsciflow {
         }
     }
 
-    void AbinitVariableV1::to(std::vector<std::vector<std::string>>& value) {
+    void VariableV1::to(std::vector<std::vector<std::string>>& value) {
         value.clear();
         //std::vector<std::string> vec_str;
         //for (auto& row : this->value) {
@@ -256,14 +256,14 @@ namespace atomsciflow {
     }
 
 
-    std::string AbinitVariableV1::to_string() {
+    std::string VariableV1::to_string() {
         if (false == this->status) {
             return "";
         }
         return this->to_string(0);
     }
 
-    std::string AbinitVariableV1::to_string(int n) {
+    std::string VariableV1::to_string(int n) {
         if (false == this->status) {
             return "";
         }
@@ -293,7 +293,7 @@ namespace atomsciflow {
         return out;
     }
 
-    std::string AbinitVariableV1::to_string(std::string layout, std::string indent) {
+    std::string VariableV1::to_string(std::string layout, std::string indent) {
         if (false == this->status) {
             return "";
         }
@@ -301,7 +301,7 @@ namespace atomsciflow {
     }
 
 
-    std::string AbinitVariableV1::to_string(std::string layout, std::string indent, int n) {
+    std::string VariableV1::to_string(std::string layout, std::string indent, int n) {
 
         /*
          * layout:

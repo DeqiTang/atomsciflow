@@ -5,7 +5,7 @@
     > Created Time: Sat 30 Jan 2021 01:11:54 PM CST
 ************************************************************************/
 
-#include "atomsciflow/abinit/utils.h"
+#include "atomsciflow/variable/utils.h"
 
 #include <string>
 //#include <vector>
