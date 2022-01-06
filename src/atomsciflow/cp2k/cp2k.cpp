@@ -11,7 +11,7 @@
 
 namespace atomsciflow {
 
-Cp2kSectionV1& Cp2k::set_subsys(Crystal crystal) {
+Cp2kSectionV1& Cp2k::set_subsys(Crystal& crystal) {
     this->crystal = crystal;
     return this->set_subsys();
 }

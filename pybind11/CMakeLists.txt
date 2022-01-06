@@ -48,33 +48,85 @@ file(GLOB UTILS_SOURCES
     "../src/atomsciflow/utils.cpp"
 )
 pybind11_add_module(utils MODULE ${UTILS_SOURCES})
+#add_library(utils MODULE ${UTILS_SOURCES})
+#target_link_libraries(utils PRIVATE pybind11::module)
+#set_target_properties(utils PROPERTIES 
+#    PREFIX "${PYTHON_MODULE_PREFIX}"
+#    SUFFIX "${PYTHON_MODULE_EXTENSION}"
+#)
+#pybind11_add_module(utils MODULE ${UTILS_SOURCES})
 
 file(GLOB CUBE_HANDLE_SOURCES
     "./cube_handle/*.cpp"
-    "../atomsciflow/src/atomsciflow/cube_handle/*.cpp"
-    "../atomsciflow/src/atomsciflow/parser/*.cpp"
-    "../atomsciflow/src/atomsciflow/base/*.cpp"
+    "../src/atomsciflow/cube_handle/*.cpp"
+    "../src/atomsciflow/parser/*.cpp"
+    "../src/atomsciflow/base/*.cpp"
 )
 pybind11_add_module(cube_handle MODULE ${CUBE_HANDLE_SOURCES})
 
 file(GLOB BASE_SOURCES
     "./base/*.cpp"
-    "../atomsciflow/src/atomsciflow/base/*.cpp"
+    "../src/atomsciflow/base/*.cpp"
 )
 pybind11_add_module(base MODULE ${BASE_SOURCES})
+#add_library(base MODULE ${BASE_SOURCES})
+#target_link_libraries(base PRIVATE pybind11::module)
+#set_target_properties(base PROPERTIES 
+#    PREFIX "${PYTHON_MODULE_PREFIX}"
+#    SUFFIX "${PYTHON_MODULE_EXTENSION}"
+#)
+#pybind11_add_module(base MODULE ${BASE_SOURCES})
 
 file(GLOB CP2K_SOURCES
     "./cp2k/*.cpp"
-    "../atomsciflow/src/atomsciflow/base/*.cpp"
-    "../atomsciflow/src/atomsciflow/cp2k/*.cpp" 
-    "../atomsciflow/src/atomsciflow/abinit/*.cpp"
+    "../src/atomsciflow/variable/*.cpp"
+    "../src/atomsciflow/base/*.cpp"
+    "../src/atomsciflow/cp2k/*.cpp" 
 )
 pybind11_add_module(cp2k MODULE ${CP2K_SOURCES})
+
+file(GLOB QE_SOURCES
+    "./qe/*.cpp"
+    "../src/atomsciflow/variable/*.cpp"
+    "../src/atomsciflow/base/*.cpp"
+    "../src/atomsciflow/qe/*.cpp" 
+)
+pybind11_add_module(qe MODULE ${QE_SOURCES})
+
+file(GLOB ABINIT_SOURCES
+    "./abinit/abinit.cpp"
+    "../src/atomsciflow/variable/*.cpp"
+    "../src/atomsciflow/base/*.cpp"
+    "../src/atomsciflow/abinit/*.cpp"
+)
+pybind11_add_module(abinit MODULE ${ABINIT_SOURCES})
+
+file(GLOB PARSER_SOURCES
+    "./parser/parser.cpp"
+    "../src/atomsciflow/parser/*.cpp"
+    "../src/atomsciflow/base/*.cpp"
+)
+#pybind11_add_module(parser MODULE ${PARSER_SOURCES})
+add_library(parser MODULE ${PARSER_SOURCES})
+target_link_libraries(parser
+    PRIVATE pybind11::module
+    ${Boost_LIBRARIES}
+)
+set_target_properties(parser PROPERTIES 
+    PREFIX "${PYTHON_MODULE_PREFIX}"
+    SUFFIX "${PYTHON_MODULE_EXTENSION}"
+)
+#pybind11_add_module(parser MODULE ${PARSER_SOURCES})
+
+
 
 # scikit-build
 if(SKBUILD)
     install(TARGETS utils DESTINATION .)
     install(TARGETS cube_handle DESTINATION .)
-    install(TARGETS cp2k DESTINATION .)
     install(TARGETS base DESTINATION .)
+    install(TARGETS cp2k DESTINATION .)
+    install(TARGETS qe DESTINATION .)
+    install(TARGETS abinit DESTINATION .)
+    install(TARGETS parser DESTINATION .)
 endif()

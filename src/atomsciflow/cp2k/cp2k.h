@@ -34,7 +34,7 @@ public:
         return out;
     }
 
-    Cp2kSectionV1& set_subsys(Crystal crystal);
+    Cp2kSectionV1& set_subsys(Crystal& crystal);
 
     std::map<std::string, Cp2kSectionV1> sections;
     Crystal crystal;

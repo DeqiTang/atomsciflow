@@ -174,6 +174,8 @@ U Cp2kSectionV1::get(std::string key) {
 }
 
 
+// explicit instantiation of template member function
+
 template int Cp2kSectionV1::get<int>(std::string);
 template double Cp2kSectionV1::get<double>(std::string);
 template std::string Cp2kSectionV1::get<std::string>(std::string);

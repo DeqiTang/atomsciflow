@@ -37,7 +37,8 @@ class Crystal {
     int get_atoms(Atom* atoms) {return 0;};
 
     int get_cell_atoms(double** cell, Atom* atoms) {return 0;};
-
+    
+    int get_cell_atoms(std::vector<std::vector<double>>& cell, Atom* atoms) {return 0;};
 
     int cartesian() {return 0;};
 

@@ -75,14 +75,21 @@ add_library(atomsciflow STATIC
 )
 
 
-add_executable(main-test.x 
+add_executable(atomsciflow-main-test.x 
     "main.cpp"
     ${PROJECT_TEST_SOURCES}
 )
-target_link_libraries(main-test.x
+target_link_libraries(atomsciflow-main-test.x
     atomsciflow
     GTest::gtest
     GTest::gtest_main
 )
 
+install(
+    TARGETS atomsciflow atomsciflow-main-test.x
+    EXPORT atomsciflow
+    #LIBRARY DESTINATION lib
+    #ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+)
 

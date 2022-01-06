@@ -217,7 +217,7 @@ class CustomBuildExt(build_ext):
 
 setup(
     name = "atomsciflow",
-    version = '0.0.0',
+    version = '0.0.1a1',
     ## python3 setup.py build sdist bdist_wheel
     ## twine upload dist/*
     keywords = ("Atom Science, Workflow"),

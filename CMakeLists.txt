@@ -18,6 +18,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC ")
 
+find_package(GTest REQUIRED)
+
 find_package(Boost COMPONENTS program_options filesystem system  REQUIRED)
 include_directories( ${Boost_INCLUDE_DIR}  )
 
@@ -67,6 +69,12 @@ file(GLOB PROJECT_HEADER_FILES
     "./src/atomsciflow/qe/*.h"
     "./src/atomsciflow/qmcpack/*.h"
     "./src/atomsciflow/cube_handle/*.h"
+)
+
+file(GLOB PROJECT_TEST_SOURCES
+    "./test/gtest/utils/*.cpp"
+    "./test/gtest/cp2k/*.cpp"
+    "./test/gtest/qmcpack/*.cpp"
 )
 
 # set output path 
@@ -123,7 +131,21 @@ target_link_libraries(asflow-calc.x
     ${Boost_LIBRARIES}
 )
 
-# set install
+# main c++ test
+add_executable(atomsciflow-main-test.x
+    "./test/gtest/main.cpp"
+    ${PROJECT_TEST_SOURCES}
+)
+target_link_libraries(atomsciflow-main-test.x
+    atomsciflow
+    GTest::gtest
+    GTest::gtest_main
+)
+
+
+# ------------------------------------------------
+#                   set install
+# ------------------------------------------------
 install(
     DIRECTORY ${CMAKE_SOURCE_DIR}/src/
     DESTINATION include #include/atomsciflow
@@ -136,7 +158,7 @@ install(
 #install(TARGETS atomsciflow-version.x asflow.x asflow-traj.x asflow-cube.x asflow-calc.x  DESTINATION bin)
 
 install(
-    TARGETS atomsciflow atomsciflow-version.x asflow.x asflow-traj.x asflow-cube.x asflow-calc.x
+    TARGETS atomsciflow atomsciflow-version.x asflow.x asflow-traj.x asflow-cube.x asflow-calc.x atomsciflow-main-test.x
     EXPORT atomsciflow
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib

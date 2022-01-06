@@ -1,22 +1,68 @@
-
+#include <string>
 #include <iostream>
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h> // for automatical c++ stl support
 
+#include "atomsciflow/base/atom.h"
 #include "atomsciflow/base/crystal.h"
 
 namespace py = pybind11;
 
+void add_class_atom(py::module& m) {
+
+    py::class_<atomsciflow::Atom>(m, "Atom")
+        .def(py::init<>())
+        .def("get_name", &atomsciflow::Atom::get_name)
+        .def("get_x", &atomsciflow::Atom::get_x)
+        .def("get_y", &atomsciflow::Atom::get_y)
+        .def("get_z", &atomsciflow::Atom::get_z)
+        .def("set_name", &atomsciflow::Atom::set_name)
+        .def("set_x", &atomsciflow::Atom::set_x)
+        .def("set_y", &atomsciflow::Atom::set_y)
+        .def("set_z", &atomsciflow::Atom::set_z)
+        .def("set_xyz", &atomsciflow::Atom::set_xyz)
+        .def_property("name", &atomsciflow::Atom::get_name, &atomsciflow::Atom::set_name)
+        ;
+
+}
+
 
 void add_class_crystal(py::module& m) {
+
+
     py::class_<atomsciflow::Crystal>(m, "Crystal")
-        .def(py::init())
-        .def("read_xyz_str", &atomsciflow::Crystal::read_xyz_str, py::return_value_policy::reference)
-        ;
+        .def(py::init<>())
+        .def("read_xyz_file", &atomsciflow::Crystal::read_xyz_file)
+        .def("write_xyz_file", &atomsciflow::Crystal::write_xyz_file)
+        .def("read_xyz_str", &atomsciflow::Crystal::read_xyz_str)
+        .def("write_xyz_str", py::overload_cast<std::string&>(&atomsciflow::Crystal::write_xyz_str))
+        .def("write_xyz_str", py::overload_cast<>(&atomsciflow::Crystal::write_xyz_str))
+        .def("get_atoms", &atomsciflow::Crystal::get_atoms)
+        //.def("get_cell_atoms", &atomsciflow::Crystal::get_cell_atoms)
+        // atomsciflow::Crystal::get_cell_atoms is a overloaded function
+        // we need to use py::overload_cast to deal with it
+        // however, int atomsciflow::Crystal::get_cell_atoms(double**, Atom*)
+        // the double pointer is not automatically handled in pybind11
+        // so we ignore the overload, but use a lambda function to deal with it
+        .def("get_cell_atoms", [](atomsciflow::Crystal& _this, std::vector<std::vector<double>>& cell, atomsciflow::Atom* atoms) {
+            return _this.get_cell_atoms(cell, atoms);
+        })
+        .def("cartesian", &atomsciflow::Crystal::cartesian)
+        .def("get_fractional", &atomsciflow::Crystal::get_fractional)
+        .def("volume", &atomsciflow::Crystal::volume)
+        .def("build_supercell", &atomsciflow::Crystal::build_supercell)
+        .def("to_base_xyz", &atomsciflow::Crystal::to_base_xyz)
+        .def("remove_atom", &atomsciflow::Crystal::remove_atom)
+        .def("remove_atoms", &atomsciflow::Crystal::remove_atoms)
+        .def("natom", &atomsciflow::Crystal::natom)
+        ; 
+
 }
 
 PYBIND11_MODULE(base, m) {
     m.doc() = "base module";
     m.attr("__version__") = "0.0.1";
 
+    add_class_atom(m);
     add_class_crystal(m);
 }
