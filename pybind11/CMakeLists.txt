@@ -118,6 +118,11 @@ set_target_properties(parser PROPERTIES
 )
 #pybind11_add_module(parser MODULE ${PARSER_SOURCES})
 
+file(GLOB ATOMSCIFLOW_VARIABLE_SOURCES
+    "./variable/variable.cpp"
+    "../src/atomsciflow/variable/*.cpp"
+)
+pybind11_add_module(variable MODULE ${ATOMSCIFLOW_VARIABLE_SOURCES})
 
 
 # scikit-build
@@ -129,4 +134,5 @@ if(SKBUILD)
     install(TARGETS qe DESTINATION .)
     install(TARGETS abinit DESTINATION .)
     install(TARGETS parser DESTINATION .)
+    install(TARGETS variable DESTINATION .)
 endif()

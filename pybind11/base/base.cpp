@@ -5,6 +5,7 @@
 
 #include "atomsciflow/base/atom.h"
 #include "atomsciflow/base/crystal.h"
+#include "atomsciflow/base/atomic_radius.h"
 
 namespace py = pybind11;
 
@@ -22,6 +23,10 @@ void add_class_atom(py::module& m) {
         .def("set_z", &atomsciflow::Atom::set_z)
         .def("set_xyz", &atomsciflow::Atom::set_xyz)
         .def_property("name", &atomsciflow::Atom::get_name, &atomsciflow::Atom::set_name)
+        .def_readwrite("x", &atomsciflow::Atom::x)
+        .def_readwrite("y", &atomsciflow::Atom::y)
+        .def_readwrite("z", &atomsciflow::Atom::z)
+        .def_readwrite("name", &atomsciflow::Atom::name)
         ;
 
 }
@@ -55,9 +60,25 @@ void add_class_crystal(py::module& m) {
         .def("remove_atom", &atomsciflow::Crystal::remove_atom)
         .def("remove_atoms", &atomsciflow::Crystal::remove_atoms)
         .def("natom", &atomsciflow::Crystal::natom)
+        .def_readwrite("atoms", &atomsciflow::Crystal::atoms)
         ; 
 
 }
+
+
+void add_class_atomic_radius(py::module& m) {
+
+    py::class_<atomsciflow::AtomicRadius>(m, "AtomicRadius")
+        .def(py::init<>())
+        .def_readwrite("emprical", &atomsciflow::AtomicRadius::emprical)
+        .def_readwrite("calculated", &atomsciflow::AtomicRadius::calculated)
+        .def_readwrite("vanderwaals", &atomsciflow::AtomicRadius::vanderwaals)
+        .def_readwrite("covalent_single_bond", &atomsciflow::AtomicRadius::covalent_single_bond)
+        .def_readwrite("covalent_triple_bond", &atomsciflow::AtomicRadius::covalent_triple_bond)
+        ;
+
+}
+
 
 PYBIND11_MODULE(base, m) {
     m.doc() = "base module";
@@ -65,4 +86,6 @@ PYBIND11_MODULE(base, m) {
 
     add_class_atom(m);
     add_class_crystal(m);
+    add_class_atomic_radius(m);
+
 }

@@ -217,14 +217,14 @@ class CustomBuildExt(build_ext):
 
 setup(
     name = "atomsciflow",
-    version = '0.0.1a1',
+    version = '0.0.1a2',
     ## python3 setup.py build sdist bdist_wheel
     ## twine upload dist/*
     keywords = ("Atom Science, Workflow"),
     description = "A workflow manger for scientific research involving atoms",
     license = "MIT",
     url = "https://gitlab.com/deqitang/atomsciflow",
-    author_email = "deqi_tang@163.com",
+    author_email = "deqitang@gmail.com",
     packages = find_packages(),
     #data_files
     include_package_data = True,
