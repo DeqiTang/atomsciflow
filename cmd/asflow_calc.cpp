@@ -1,6 +1,6 @@
 #include <boost/program_options.hpp>
-//#include <experimental/filesystem>
-#include <boost/filesystem.hpp>
+#include <filesystem>
+//#include <boost/filesystem.hpp>
 #include <iostream>
 #include <string>
 #include <regex>
@@ -12,6 +12,7 @@
 #include "atomsciflow/utils.h"
 #include "atomsciflow/abinit/abinit.h"
 #include "atomsciflow/cp2k/cp2k.h"
+#include "atomsciflow/cp2k/opt.h"
 #include "atomsciflow/qe/pw.h"
 
 // needs: libboost-dev, libboost-program-options-dev
@@ -19,8 +20,8 @@
 namespace po = boost::program_options;
 
 
-//namespace filesys = std::experimental::filesystem;  // --std=c++17 -lstdc++fs
-namespace filesys = boost::filesystem;     // --std=c++11 -lboost_filesystem -lboost_system
+namespace filesys = std::filesystem; 
+//namespace filesys = boost::filesystem;     // --std=c++11 -lboost_filesystem -lboost_system
 
 int log_sub_cmd_start(std::string cmd) {
     std::cout << "----------------------------------------------------------------------" << std::endl;    
@@ -87,7 +88,7 @@ int main(int argc, char const* argv[]) {
     po::store(parsed, vm);
 
     std::cout << "**********************************************************************" << std::endl;
-    std::cout << "*                       askit.x utils runnig                         *" << std::endl;
+    std::cout << "*                     asflow-calc.x utils runnig                     *" << std::endl;
     std::cout << "**********************************************************************" << std::endl;
     
     if (0 == vm.count("command")) { // or by vm.empty()
@@ -104,6 +105,7 @@ int main(int argc, char const* argv[]) {
         // convert command has the following options:
         po::options_description opt_abinit("abinit options");
         opt_abinit.add_options()
+            ("help, h", "Print out help information for abinit subcommand")
             ("input, i", po::value<std::string>()->required(), "input structure file");
         //opts.add_options()
         //    ("input, i", po::value<std::string>(&input), "input structure file")
@@ -156,8 +158,24 @@ int main(int argc, char const* argv[]) {
         // convert command has the following options:
         po::options_description opt_cp2k("cp2k options");
         opt_cp2k.add_options()
+            ("help, h", "Print out help information for cp2k sub command")
+            ("runtype, r", po::value<int>()->default_value(0), "Choice of the calculation type: 0 -> static run, 1 -> geometric optimization")
             ("input, i", po::value<std::string>()->required(), "input structure file")
-            ("directory, d", po::value<std::string>()->default_value("askit-calc-running"));
+            ("directory, d", po::value<std::string>()->default_value("askit-calc-running"), "The directory to put all the resources")
+            ("runopt", po::value<std::string>()->default_value("gen"), "Rnning option, generation only, or running at the same time")
+            ("auto", po::value<int>()->default_value(3), "Automation level: 0 -> doing nothing, 1 -> copying files to server")
+            ("mpi", po::value<std::string>()->default_value(""))
+            ("server", po::value<std::string>()->default_value("pbs"))
+            ("jobname", po::value<std::string>()->default_value("atomsciflow-job"))
+            ("nodes", po::value<int>()->default_value(1))
+            ("ppn", po::value<int>()->default_value(32))
+            // llhpc
+            ("parition", po::value<std::string>()->default_value("free"))
+            ("ntask", po::value<int>()->default_value(24))
+            ("stdout", po::value<std::string>()->default_value("slurm.out"))
+            ("stderr", po::value<std::string>()->default_value("slurm.err"))
+
+        ;
         //opts.add_options()
         //    ("input, i", po::value<std::string>(&input), "input structure file")
         //    ("output, o", po::value<std::string>(&output), "output structure file");
@@ -194,9 +212,22 @@ int main(int argc, char const* argv[]) {
             // std::cout << "in_path(extension)->" << in_path.extension().string() << std::endl;
             crystal = atomsciflow::read_structure_file(input_file); 
 
-            atomsciflow::Cp2k calculator;
-            calculator.set_subsys(crystal);
-            std::cout << calculator.to_string() << std::endl;
+            //atomsciflow::Cp2k calculator;
+            //calculator.set_subsys(crystal);
+            //std::cout << calculator.to_string() << std::endl;
+            
+            if (vm["runtype"].as<int>() == 1) {
+
+                auto task = atomsciflow::OptRun();
+                task.set_subsys(crystal);
+                task.geo_opt(
+                    vm["directory"].as<std::string>(),
+                    "geo-opt.in", 
+                    "geo-opt.out", 
+                    vm["runopt"].as<std::string>(), 
+                    vm["auto"].as<int>()
+                );
+            }
 
         }
        
@@ -209,6 +240,7 @@ int main(int argc, char const* argv[]) {
         // convert command has the following options:
         po::options_description opt_qe("qe options");
         opt_qe.add_options()
+            ("help, h", "Print out help information for qe subcommand")
             ("input, i", po::value<std::string>()->required(), "input structure file")
             ("directory, d", po::value<std::string>()->default_value("askit-calc-running"));
         //opts.add_options()
@@ -255,10 +287,10 @@ int main(int argc, char const* argv[]) {
         }
         
         log_sub_cmd_end(cmd);    
+
     } else {
         std::cout << "The specified subcommand is not defined!\n";
     }
         
-    //
     return 0;
 }

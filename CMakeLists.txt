@@ -57,6 +57,7 @@ file(GLOB PROJECT_LIB_SOURCES
     "./src/atomsciflow/qe/*.cpp"
     "./src/atomsciflow/qmcpack/*.cpp"
     "./src/atomsciflow/cube_handle/*.cpp"
+    "./src/atomsciflow/remote/*.cpp"
 )
 
 file(GLOB PROJECT_HEADER_FILES
@@ -69,6 +70,7 @@ file(GLOB PROJECT_HEADER_FILES
     "./src/atomsciflow/qe/*.h"
     "./src/atomsciflow/qmcpack/*.h"
     "./src/atomsciflow/cube_handle/*.h"
+    "./src/atomsciflow/remote/*.h"
 )
 
 file(GLOB PROJECT_TEST_SOURCES
@@ -129,6 +131,7 @@ add_executable(asflow-calc.x
 target_link_libraries(asflow-calc.x
     atomsciflow
     ${Boost_LIBRARIES}
+    #-lstdc++fs
 )
 
 # main c++ test

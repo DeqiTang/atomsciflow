@@ -12,11 +12,12 @@ namespace atomsciflow {
 
 class Cp2kStatic: public Cp2k {
    
-    public:
+public:
+
     Cp2kStatic() {};
     ~Cp2kStatic() {};
     
-    private:
+private:
 
 };
 
