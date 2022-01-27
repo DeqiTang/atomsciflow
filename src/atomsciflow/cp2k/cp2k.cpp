@@ -44,13 +44,13 @@ Cp2kSectionV1& Cp2k::set_subsys() {
     return subsys;
 }
 
-void Cp2k::set_cdcloud(std::string partition = "free", int nodes = 1, int ntask = 24, std::string jobname = "atomsciflow_job", std::string stdout = "slurm.out", std::string stderr = "slurm.err") {
+void Cp2k::set_cdcloud(std::string partition = "free", int nodes = 1, int ntask = 24, std::string jobname = "atomsciflow_job", std::string std_out = "slurm.out", std::string std_err = "slurm.err") {
     this->run_params["partition"] = partition;
     this->run_params["jobname"] = jobname;
     this->run_params["nodes"] = std::to_string(nodes);
     this->run_params["ntask"] = std::to_string(ntask);
-    this->run_params["stdout"] = stdout;
-    this->run_params["stderr"] = stderr;
+    this->run_params["stdout"] = std_out;
+    this->run_params["stderr"] = std_err;
 }
 
 

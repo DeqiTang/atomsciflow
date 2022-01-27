@@ -22,8 +22,11 @@ public:
     Cp2k() {
         this->sections["global"] = cp2k::gen::global();
         this->sections["force_eval"] = cp2k::gen::force_eval();
-    };
-    ~Cp2k() {};
+    }
+
+    ~Cp2k() {
+   
+    }
 
     std::string to_string() {
         std::string out = "";
@@ -37,7 +40,7 @@ public:
 
     Cp2kSectionV1& set_subsys(Crystal& crystal);
 
-    void set_cdcloud(std::string partition, int nodes, int ntask, std::string jobname, std::string stdout, std::string stderr); 
+    void set_cdcloud(std::string partition, int nodes, int ntask, std::string jobname, std::string std_out, std::string std_err); 
 
     std::string gen_cdcloud_string(std::string inpname, std::string output, std::string cmd);
     void gen_cdcloud(std::string inpname, std::string output, std::string directory, std::string cmd);

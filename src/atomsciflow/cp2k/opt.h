@@ -12,11 +12,11 @@
 namespace atomsciflow {
 
 
-class OptRun : public Cp2k {
+class Cp2kOpt : public Cp2k {
 
 public:
     
-    OptRun() {
+    Cp2kOpt() {
         this->sections["force_eval"].subsections["mgrid"].set_param("cutoff", 100);
         this->sections["force_eval"].subsections["mgrid"].set_param("rel_cutoff", 60);
     }

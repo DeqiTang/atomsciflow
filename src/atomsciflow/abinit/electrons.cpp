@@ -1,6 +1,6 @@
 /************************************************************************
-    > File Name: ../../../src/abinit/electrons.cpp
-    > Author: deqi
+    > File Name: src/abinit/electrons.cpp
+    > Author: Deqi Tang
     > Mail: deqi_tang@163.com 
     > Created Time: Sat 30 Jan 2021 02:37:52 PM CST
 ************************************************************************/

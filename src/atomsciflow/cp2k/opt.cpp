@@ -15,12 +15,12 @@ namespace atomsciflow {
 //namespace fs = std::filesystem;
 namespace fs = boost::filesystem;    // --std=c++11 -lboost_filesystem -lboost_system
 
-void OptRun::set_geo_opt() {
+void Cp2kOpt::set_geo_opt() {
     this->sections["global"].set_param("run_type", "GEO_OPT");
     this->sections["motion"].set_status("geo_opt", true);
 }
 
-void OptRun::geo_opt(std::string directory = "tmp-cp2k-geo-opt", std::string inpname = "geo-opt.inp", std::string output = "geo-opt.out", std::string runopt = "gen", int auto_level = 0) {
+void Cp2kOpt::geo_opt(std::string directory = "tmp-cp2k-geo-opt", std::string inpname = "geo-opt.inp", std::string output = "geo-opt.out", std::string runopt = "gen", int auto_level = 0) {
     this->set_geo_opt();
     
     if (runopt == "gen" || runopt == "genrun") {

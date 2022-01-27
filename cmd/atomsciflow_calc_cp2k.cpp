@@ -85,7 +85,7 @@ void atomsciflow_calc_cp2k(po::parsed_options& parsed, po::variables_map& vm) {
     
         if (vm["runtype"].as<int>() == 1) {
 
-            auto task = atomsciflow::OptRun();
+            auto task = atomsciflow::Cp2kOpt();
             task.set_subsys(crystal);
             task.geo_opt(
                 vm["directory"].as<std::string>(),
