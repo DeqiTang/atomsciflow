@@ -9,7 +9,8 @@
 
 #include <iostream>
 #include <fstream>
-#include <filesystem>
+//#include <filesystem>
+#include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 
 namespace atomsciflow {
@@ -85,10 +86,11 @@ std::string Cp2k::gen_cdcloud_string(std::string inpname, std::string output, st
     
 void Cp2k::gen_cdcloud(std::string inpname, std::string output, std::string directory, std::string cmd = "cp2k.psmp") {
     std::ofstream outfile;
-    std::filesystem::path p_out = directory;
+    //std::filesystem::path p_out = directory;
+    boost::filesystem::path p_out = directory;
     p_out /= inpname;
     p_out.replace_extension(".slurm");
-    outfile.open(p_out);
+    outfile.open(p_out.string());
     
     outfile << this->gen_cdcloud_string(inpname, output, cmd);
 

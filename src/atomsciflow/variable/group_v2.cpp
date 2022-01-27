@@ -69,7 +69,7 @@ std::string VariableGroupV2::to_string(int n) {
         out += this->params_int[item.first].to_string(n) + "\n";
     }
     for (auto item : this->params_double) {
-        if (this->params_double[item.first].status = false) {
+        if (this->params_double[item.first].status == false) {
             continue;
         }
         out += this->params_double[item.first].to_string(n) + "\n";

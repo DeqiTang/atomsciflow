@@ -18,7 +18,7 @@ CXXFLAGS += -fopenmp
 LDFLAGS = -larmadillo -llapack -lblas
 LDFLAGS += -fopenmp
 
-src = $(wildcard ./src/atomsciflow/base/*.cpp ./src/atomsciflow/parser/*.cpp ./src/atomsciflow/*.cpp ./src/atomsciflow/abinit/*.cpp ./src/atomsciflow/cp2k/*.cpp ./src/atomsciflow/qe/*.cpp ./src/atomsciflow/cube_handle/*.cpp)
+src = $(wildcard ./src/atomsciflow/base/*.cpp ./src/atomsciflow/variable/*.cpp ./src/atomsciflow/parser/*.cpp ./src/atomsciflow/*.cpp ./src/atomsciflow/abinit/*.cpp ./src/atomsciflow/cp2k/*.cpp ./src/atomsciflow/qe/*.cpp ./src/atomsciflow/cube_handle/*.cpp)
 #src = $(wildcard ./src/**/*.cpp)
 #src = $(shell find ./src -name *.cpp)
 obj = $(patsubst %.cpp, %.o, $(src))

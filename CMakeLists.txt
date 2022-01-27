@@ -36,8 +36,8 @@ find_package(Armadillo REQUIRED)
 include_directories(${ARMADILLO_INCLUDE_DIRS})
 link_libraries(${ARMADILLO_LIBRARIES})
 
-find_package(LAPACK REQUIRED)
-find_package(BLAS REQUIRED)
+#find_package(LAPACK REQUIRED)
+#find_package(BLAS REQUIRED)
 
 #include_directories("./include")
 include_directories("./src")
@@ -94,41 +94,49 @@ add_library(atomsciflow STATIC
 
 add_executable(atomsciflow-version.x
     "./cmd/atomsciflow_version.cpp"
+    "./cmd/cmd_utils.cpp"
 )
 target_link_libraries(atomsciflow-version.x
     atomsciflow
     ${Boost_LIBRARIES}
 )
 
-add_executable(asflow.x 
-    "./cmd/asflow.cpp"
+add_executable(atomsciflow.x 
+    "./cmd/atomsciflow.cpp"
+    "./cmd/cmd_utils.cpp"
 )
-target_link_libraries(asflow.x
+target_link_libraries(atomsciflow.x
     atomsciflow
     ${Boost_LIBRARIES}
 )
 
 
-add_executable(asflow-traj.x
-    "./cmd/asflow_traj.cpp"
+add_executable(atomsciflow-traj.x
+    "./cmd/atomsciflow_traj.cpp"
+    "./cmd/cmd_utils.cpp"
 )
-target_link_libraries(asflow-traj.x
+target_link_libraries(atomsciflow-traj.x
     atomsciflow
     ${Boost_LIBRARIES}
 )
 
-add_executable(asflow-cube.x
-    "./cmd/asflow_cube.cpp"
+add_executable(atomsciflow-cube.x
+    "./cmd/atomsciflow_cube.cpp"
+    "./cmd/cmd_utils.cpp"
 )
-target_link_libraries(asflow-cube.x
+target_link_libraries(atomsciflow-cube.x
     atomsciflow
     ${Boost_LIBRARIES}
 )
 
-add_executable(asflow-calc.x
-    "./cmd/asflow_calc.cpp"
+add_executable(atomsciflow-calc.x
+    "./cmd/atomsciflow_calc.cpp"
+    "./cmd/atomsciflow_calc_abinit.cpp"
+    "./cmd/atomsciflow_calc_cp2k.cpp"
+    "./cmd/atomsciflow_calc_qe.cpp"
+    "./cmd/cmd_utils.cpp"
 )
-target_link_libraries(asflow-calc.x
+target_link_libraries(atomsciflow-calc.x
     atomsciflow
     ${Boost_LIBRARIES}
     #-lstdc++fs
@@ -137,6 +145,7 @@ target_link_libraries(asflow-calc.x
 # main c++ test
 add_executable(atomsciflow-main-test.x
     "./test/gtest/main.cpp"
+    "./cmd/cmd_utils.cpp"
     ${PROJECT_TEST_SOURCES}
 )
 target_link_libraries(atomsciflow-main-test.x
@@ -161,7 +170,7 @@ install(
 #install(TARGETS atomsciflow-version.x asflow.x asflow-traj.x asflow-cube.x asflow-calc.x  DESTINATION bin)
 
 install(
-    TARGETS atomsciflow atomsciflow-version.x asflow.x asflow-traj.x asflow-cube.x asflow-calc.x atomsciflow-main-test.x
+    TARGETS atomsciflow atomsciflow-version.x atomsciflow.x atomsciflow-traj.x atomsciflow-cube.x atomsciflow-calc.x atomsciflow-main-test.x
     EXPORT atomsciflow
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib

@@ -15,6 +15,8 @@
 #include "atomsciflow/utils.h"
 
 #include "atomsciflow/cube_handle/cube_handle.h"
+
+#include "cmd_utils.h"
 // needs: libboost-dev, libboost-program-options-dev
 
 namespace po = boost::program_options;
@@ -24,33 +26,6 @@ namespace po = boost::program_options;
 namespace filesys = boost::filesystem;     // --std=c++11 -lboost_filesystem -lboost_system
 
 
-
-// used to allow negative number parsed to boost cmd option
-std::vector<po::option> ignore_numbers(std::vector<std::string>& args)
-{
-    // this function can help to alow negative number args but it probhibits positional args
-    // however we do not need positional args. so it is ok.
-    std::vector<po::option> result;
-    int pos = 0;
-    while(!args.empty()) {
-        const auto& arg = args[0];
-        double num;
-        if(boost::conversion::try_lexical_convert(arg, num)) {
-            result.push_back(po::option());
-            po::option& opt = result.back();
-
-            opt.position_key = pos++;
-            opt.value.push_back(arg);
-            opt.original_tokens.push_back(arg);
-
-            args.erase(args.begin());
-        } else {
-            break;
-        }
-    }
-
-    return result;
-}
 
 
 
@@ -107,7 +82,7 @@ int main(int argc, char const* argv[]) {
         std::vector<std::string> opts = po::collect_unrecognized(parsed.options, po::include_positional);
         opts.erase(opts.begin());
         //parse again...
-        po::store(po::command_line_parser(opts).options(opt_along).style(po::command_line_style::unix_style | po::command_line_style::allow_long_disguise).extra_style_parser(&ignore_numbers).run(), vm);
+        po::store(po::command_line_parser(opts).options(opt_along).style(po::command_line_style::unix_style | po::command_line_style::allow_long_disguise).extra_style_parser(&allow_negative_numbers).run(), vm);
         std::cout << "parse arguments again" << "\n";
 
         if (vm.count("help")) {
@@ -311,7 +286,7 @@ int main(int argc, char const* argv[]) {
         std::vector<std::string> opts = po::collect_unrecognized(parsed.options, po::include_positional);
         opts.erase(opts.begin());
         //parse again...
-        po::store(po::command_line_parser(opts).options(opt_diff).style(po::command_line_style::unix_style | po::command_line_style::allow_long_disguise).extra_style_parser(&ignore_numbers).run(), vm);
+        po::store(po::command_line_parser(opts).options(opt_diff).style(po::command_line_style::unix_style | po::command_line_style::allow_long_disguise).extra_style_parser(&allow_negative_numbers).run(), vm);
         std::cout << "parse arguments again" << "\n";
 
         if (vm.count("help")) {

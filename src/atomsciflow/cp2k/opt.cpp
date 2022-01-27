@@ -5,13 +5,15 @@
 
 #include "atomsciflow/cp2k/opt.h"
 
-#include <filesystem>
+//#include <filesystem>
+#include <boost/filesystem.hpp>
 #include <fstream>
 
 
 namespace atomsciflow {
 
-namespace fs = std::filesystem;
+//namespace fs = std::filesystem;
+namespace fs = boost::filesystem;    // --std=c++11 -lboost_filesystem -lboost_system
 
 void OptRun::set_geo_opt() {
     this->sections["global"].set_param("run_type", "GEO_OPT");
@@ -31,7 +33,7 @@ void OptRun::geo_opt(std::string directory = "tmp-cp2k-geo-opt", std::string inp
         std::ofstream out;
         auto inp_path = fs::path(directory);
         inp_path /= inpname;
-        out.open(inp_path);
+        out.open(inp_path.string());
         out << this->to_string();
 
         this->gen_cdcloud(inpname, output, directory, "$ASF_CP2K");

@@ -22,35 +22,42 @@ LDFLAGS += -fopenmp
 #src_cu = $(wildcard ./*.cu ../src/*.cu)
 #obj_cu = $(patsubst %.cu, %.cu.o, $(src_cu))
 
-all: asflow asflow-traj asflow-cube asflow-calc
+all: atomsciflow atomsciflow-traj atomsciflow-cube atomsciflow-calc
 
-asflow:
-	$(CXX) -c asflow.cpp $(CPPFLAGS) $(CXXFLAGS) 
+atomsciflow:
+	$(CXX) -c atomsciflow.cpp $(CPPFLAGS) $(CXXFLAGS) 
+	$(CXX) -c cmd_utils.cpp $(CPPFLAGS) $(CXXFLAGS) 
 	make -C ../ -f makefile.linux
-	${CXX} -o asflow.x asflow.o ../libatomsciflow.a $(LDFLAGS)
+	${CXX} -o atomsciflow.x atomsciflow.o cmd_utils.o ../libatomsciflow.a $(LDFLAGS)
 
 
-asflow-traj:
-	$(CXX) -c asflow_traj.cpp $(CPPFLAGS) $(CXXFLAGS)
+atomsciflow-traj:
+	$(CXX) -c atomsciflow_traj.cpp $(CPPFLAGS) $(CXXFLAGS)
+	$(CXX) -c cmd_utils.cpp $(CPPFLAGS) $(CXXFLAGS) 
 	make -C ../ -f makefile.linux
-	${CXX} -o asflow-traj.x asflow_traj.o ../libatomsciflow.a $(LDFLAGS)
+	${CXX} -o atomsciflow-traj.x atomsciflow_traj.o cmd_utils.o ../libatomsciflow.a $(LDFLAGS)
 
-asflow-cube:
-	$(CXX) -c asflow_cube.cpp $(CPPFLAGS) $(CXXFLAGS)
+atomsciflow-cube:
+	$(CXX) -c atomsciflow_cube.cpp $(CPPFLAGS) $(CXXFLAGS)
+	$(CXX) -c cmd_utils.cpp $(CPPFLAGS) $(CXXFLAGS) 
 	make -C ../ -f makefile.linux
-	${CXX} -o asflow-cube.x asflow_cube.o ../libatomsciflow.a $(LDFLAGS)
+	${CXX} -o atomsciflow-cube.x atomsciflow_cube.o cmd_utils.o ../libatomsciflow.a $(LDFLAGS)
 
-asflow-calc:
-	$(CXX) -c asflow_calc.cpp $(CPPFLAGS) $(CXXFLAGS)
+atomsciflow-calc:
+	$(CXX) -c atomsciflow_calc.cpp $(CPPFLAGS) $(CXXFLAGS)
+	$(CXX) -c atomsciflow_calc_abinit.cpp $(CPPFLAGS) $(CXXFLAGS)
+	$(CXX) -c atomsciflow_calc_cp2k.cpp $(CPPFLAGS) $(CXXFLAGS)
+	$(CXX) -c atomsciflow_calc_qe.cpp $(CPPFLAGS) $(CXXFLAGS)
+	$(CXX) -c cmd_utils.cpp $(CPPFLAGS) $(CXXFLAGS) 
 	make -C ../ -f makefile.linux
-	$(CXX) -o asflow-calc.x asflow_calc.o ../libatomsciflow.a $(LDFLAGS)
+	$(CXX) -o atomsciflow-calc.x atomsciflow_calc.o atomsciflow_calc_*.o cmd_utils.o ../libatomsciflow.a $(LDFLAGS)
 
 install: all
 	make install -C ../ -f makefile.linux
-	cp asflow.x ${HOME}/.local/bin
-	cp asflow-traj.x ${HOME}/.local/bin
-	cp asflow-cube.x ${HOME}/.local/bin
-	cp asflow-calc.x ${HOME}/.local/bin
+	cp atomsciflow.x ${HOME}/.local/bin
+	cp atomsciflow-traj.x ${HOME}/.local/bin
+	cp atomsciflow-cube.x ${HOME}/.local/bin
+	cp atomsciflow-calc.x ${HOME}/.local/bin
 
 .PHONY: clean
 

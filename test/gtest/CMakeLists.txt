@@ -27,8 +27,8 @@ find_package(Armadillo REQUIRED)
 include_directories(${ARMADILLO_INCLUDE_DIRS})
 link_libraries(${ARMADILLO_LIBRARIES})
 
-find_package(LAPACK REQUIRED)
-find_package(BLAS REQUIRED)
+#find_package(LAPACK REQUIRED)
+#find_package(BLAS REQUIRED)
 
 #include_directories("./include")
 include_directories("../../src")
