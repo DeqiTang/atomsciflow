@@ -92,67 +92,10 @@ add_library(atomsciflow STATIC
 )
 
 
-add_executable(atomsciflow-version.x
-    "./cmd/atomsciflow_version.cpp"
-    "./cmd/cmd_utils.cpp"
-)
-target_link_libraries(atomsciflow-version.x
-    atomsciflow
-    ${Boost_LIBRARIES}
-)
-
-add_executable(atomsciflow.x 
-    "./cmd/atomsciflow.cpp"
-    "./cmd/cmd_utils.cpp"
-)
-target_link_libraries(atomsciflow.x
-    atomsciflow
-    ${Boost_LIBRARIES}
-)
-
-
-add_executable(atomsciflow-traj.x
-    "./cmd/atomsciflow_traj.cpp"
-    "./cmd/cmd_utils.cpp"
-)
-target_link_libraries(atomsciflow-traj.x
-    atomsciflow
-    ${Boost_LIBRARIES}
-)
-
-add_executable(atomsciflow-cube.x
-    "./cmd/atomsciflow_cube.cpp"
-    "./cmd/cmd_utils.cpp"
-)
-target_link_libraries(atomsciflow-cube.x
-    atomsciflow
-    ${Boost_LIBRARIES}
-)
-
-add_executable(atomsciflow-calc.x
-    "./cmd/atomsciflow_calc.cpp"
-    "./cmd/atomsciflow_calc_abinit.cpp"
-    "./cmd/atomsciflow_calc_cp2k.cpp"
-    "./cmd/atomsciflow_calc_qe.cpp"
-    "./cmd/cmd_utils.cpp"
-)
-target_link_libraries(atomsciflow-calc.x
-    atomsciflow
-    ${Boost_LIBRARIES}
-    #-lstdc++fs
-)
-
-# main c++ test
-add_executable(atomsciflow-main-test.x
-    "./test/gtest/main.cpp"
-    "./cmd/cmd_utils.cpp"
-    ${PROJECT_TEST_SOURCES}
-)
-target_link_libraries(atomsciflow-main-test.x
-    atomsciflow
-    GTest::gtest
-    GTest::gtest_main
-)
+option(BUILD_CMD "Whether to build Command Line executables" OFF)
+if (BUILD_CMD)
+    add_subdirectory(./cmd)
+endif()
 
 
 # ------------------------------------------------
@@ -164,13 +107,9 @@ install(
     FILES_MATCHING
     PATTERN "*.h"
 )
-#install(DIRECTORY ${PROJECT_BINARY_DIR}/lib/ DESTINATION lib)
-#install(TARGETS atomsciflow EXPORT atomsciflow DESTINATION lib)
-#install(DIRECTORY ${PROJECT_BINARY_DIR}/bin/ DESTINATION bin)
-#install(TARGETS atomsciflow-version.x asflow.x asflow-traj.x asflow-cube.x asflow-calc.x  DESTINATION bin)
 
 install(
-    TARGETS atomsciflow atomsciflow-version.x atomsciflow.x atomsciflow-traj.x atomsciflow-cube.x atomsciflow-calc.x atomsciflow-main-test.x
+    TARGETS atomsciflow 
     EXPORT atomsciflow
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
