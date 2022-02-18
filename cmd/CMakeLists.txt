@@ -48,6 +48,15 @@ target_link_libraries(atomsciflow-calc.x
     #-lstdc++fs
 )
 
+add_executable(atomsciflow-ssh.x
+    "./atomsciflow_ssh.cpp"
+    "./cmd_utils.cpp"
+)
+target_link_libraries(atomsciflow-ssh.x
+    atomsciflow
+    ${Boost_LIBRARIES}
+)
+
 # main c++ test
 add_executable(atomsciflow-main-test.x
     "../test/gtest/main.cpp"
@@ -67,6 +76,7 @@ install(
     atomsciflow-traj.x 
     atomsciflow-cube.x 
     atomsciflow-calc.x 
+    atomsciflow-ssh.x
     atomsciflow-main-test.x
     EXPORT atomsciflow
     LIBRARY DESTINATION lib
