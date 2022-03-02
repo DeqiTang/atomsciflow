@@ -29,7 +29,7 @@ int inverse_cell_center(atomsciflow::Crystal* structure);
 
 int rotate_along_axis(atomsciflow::Crystal* structure, std::vector<int> rotate_atoms, std::vector<int> axis);
 
-int enlarge_atoms(atomsciflow::Crystal* structure);
+std::vector<atomsciflow::Atom> enlarge_atoms(atomsciflow::Crystal* structure);
 
 std::vector<atomsciflow::Atom> enlarge_atoms_new_cell(atomsciflow::Crystal* structure, std::vector<std::vector<double> > new_cell);
 

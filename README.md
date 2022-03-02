@@ -43,6 +43,7 @@ licenses and acknowledgements for them.
 * BLAS is a freely-available software package.
 * LAPACK is licensed under the [modified BSD license](http://www.netlib.org/lapack/LICENSE.txt).
 * Pybind11 is licensed under a [BSD style license](https://github.com/pybind/pybind11/blob/master/LICENSE).
+* yaml-cpp is licensed under the [MIT license](https://github.com/jbeder/yaml-cpp/blob/master/LICENSE)
 
 The text version of licenses for all the used third party softwares
 are included in the `third_party/license` directory of this project.

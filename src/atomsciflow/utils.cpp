@@ -430,53 +430,66 @@ int rotate_along_axis(atomsciflow::Crystal* structure, std::vector<int> rotate_a
     
     
     
-int enlarge_atoms(atomsciflow::Crystal* structure) {
+std::vector<atomsciflow::Atom> enlarge_atoms(atomsciflow::Crystal* structure) {
     /*
-    :return out:
-        atoms: [
-                ["C", 0.00000, 0.000000, 0.0000],
-                ["O", 0.00000, 0.500000, 0.0000],
-                ...
-            ]
     Note: will enlarge the atoms in the unit cell along both a, b, c and -a, -b, -c direction.
         The goal is to make sure when the cell rotate in the 3D space, it will always be filled
         with atoms.
     */
+ 
+    arma::mat latcell(3, 3);
+    latcell.row(0) = arma::conv_to<arma::rowvec>::from(structure->cell[0]);
+    latcell.row(1) = arma::conv_to<arma::rowvec>::from(structure->cell[1]);
+    latcell.row(2) = arma::conv_to<arma::rowvec>::from(structure->cell[2]);  
     
-    /*
-    from pymatflow.base.atom import Atom
-    #
-    cell = copy.deepcopy(structure.cell)
-    a = np.linalg.norm(cell[0])
-    b = np.linalg.norm(cell[1])
-    c = np.linalg.norm(cell[2])
-    
-    n1 = np.ceil(np.max([a, b, c]) / a ) * 2 # maybe times 2 is not needed
-    n2 = np.ceil(np.max([a, b, c]) / b ) * 2
-    n3 = np.ceil(np.max([a, b, c]) / c ) * 2
-    n = [int(n1), int(n2), int(n3)]
-    print(n)
-    
-    atoms = copy.deepcopy(structure.atoms)
-    # build supercell: replica in three vector one by one
-    for i in range(3):
-        natom_now = len(atoms)
-        for j in range(n[i] - 1):
-            for atom in atoms[:natom_now]:
-                x = atom.x + float(j + 1) * structure.cell[i][0]
-                y = atom.y + float(j + 1) * structure.cell[i][1]
-                z = atom.z + float(j + 1) * structure.cell[i][2]
-                atoms.append(Atom(atom.name, x, y, z))
-        # replicate in the negative direction of structure.cell[i]
-        for atom in atoms[:natom_now*n[i]]:
-            x = atom.x - float(n[i]) * structure.cell[i][0]
-            y = atom.y - float(n[i]) * structure.cell[i][1]
-            z = atom.z - float(n[i]) * structure.cell[i][2]
-            atoms.append(Atom(atom.name, x, y, z))
-    return [[atom.name, atom.x, atom.y, atom.z] for atom in atoms]
+    double a = arma::norm(latcell.row(0));
+    double b = arma::norm(latcell.row(1));
+    double c = arma::norm(latcell.row(2));  
 
-    */
-    return 0;
+    int n1 = std::ceil(std::max({a, b, c}) / a) * 2; // maybe times 2 is not needed    
+    int n2 = std::ceil(std::max({a, b, c}) / b) * 2;
+    int n3 = std::ceil(std::max({a, b, c}) / c) * 2;
+    std::vector<int> n;
+    n.emplace_back(n1);
+    n.emplace_back(n2);
+    n.emplace_back(n3);
+
+    std::vector<atomsciflow::Atom> atoms = structure->atoms;   
+
+    // build supercell: replica in three vector one by one
+    int natom_now;
+    double x, y, z;
+    for (int i = 0; i < 3; i++) {
+        natom_now = atoms.size();
+        for (int j = 0; j < n[i] - 1; j++) {
+            for (int k = 0; k < natom_now; k++) {    
+                x = atoms[k].x + (j + 1) * structure->cell[i][0];
+                y = atoms[k].y + (j + 1) * structure->cell[i][1];
+                z = atoms[k].z + (j + 1) * structure->cell[i][2];
+                atomsciflow::Atom atm;
+                atm.name = atoms[k].name;
+                atm.x = x;
+                atm.y = y;
+                atm.z = z;
+                atoms.push_back(atm);
+            }
+        }
+
+        // replicate in the negative direction of structure.cell[i]
+        for (int l = 0; l < natom_now * n[i]; l++) {
+            x = atoms[l].x - n[i] * structure->cell[i][0];
+            y = atoms[l].y - n[i] * structure->cell[i][1];
+            z = atoms[l].z - n[i] * structure->cell[i][2];
+            atomsciflow::Atom atm;
+            atm.name = atoms[l].name;
+            atm.x = x;
+            atm.y = y;
+            atm.z = z;
+            atoms.push_back(atm);
+        }
+    }
+
+    return atoms;
 }
 
 

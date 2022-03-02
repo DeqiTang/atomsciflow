@@ -25,6 +25,24 @@ include_directories(
     ${Boost_INCLUDE_DIR}  
 )
 
+find_package(PkgConfig)
+set(YAML_CPP_PKGCONFIG_DIR "UNSET" CACHE STRING "Specify the dir path which contains the yaml-cpp.pc file")
+if (NOT ${YAML_CPP_PKGCONFIG_DIR} STREQUAL "UNSET")
+    if (${CMAKE_HOST_SYSTEM_NAME} MATCHES "Windows")
+        set(ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH};${YAML_CPP_PKGCONFIG_DIR}") # separated by semicolon
+    else()
+        set(ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:${YAML_CPP_PKGCONFIG_DIR}") # separated by colon
+    endif()
+    message(STATUS "PKG_CONFIG_PATH: $ENV{PKG_CONFIG_PATH}")
+endif()    
+pkg_check_modules(YAML_CPP yaml-cpp)
+include_directories(${YAML_CPP_INCLUDE_DIRS})
+link_directories(${YAML_CPP_LIBRARY_DIRS})
+link_libraries(${YAML_CPP_LIBRARIES})
+message(STATUS "YAML_CPP_INCLUDE_DIRS: ${YAML_CPP_INCLUDE_DIRS}")
+message(STATUS "YAML_CPP_LIBRARY_DIRS: ${YAML_CPP_LIBRARY_DIRS}")
+message(STATUS "YAML_CPP_LIBRARIES: ${YAML_CPP_LIBRARIES}")
+
 find_package(OpenSSL REQUIRED)
 if (OPENSSL_FOUND)
     message("Found OpenSSL include dir: ${OPENSSL_INCLUDE_DIR}")
@@ -49,9 +67,8 @@ else ()
 endif()
 
 if (NOT DEFINED LIBSSH2_FOUND_LIBS)
-    message("libssh2 not found, neither with cmake, nor PkgConfig")
-    message("Stop cmake")
-    exit()
+    message(STATUS "libssh2 not found, neither with cmake, nor PkgConfig")
+    message(FATAL_ERROR "Stop cmake due to failure in finding libssh2") # FATAL_ERROR will stop cmake
 endif()
 
 # OpenMP
@@ -87,6 +104,9 @@ file(GLOB PROJECT_LIB_SOURCES
     "./src/atomsciflow/cp2k/*.cpp"
     "./src/atomsciflow/qe/*.cpp"
     "./src/atomsciflow/qmcpack/*.cpp"
+    "./src/atomsciflow/elk/*.cpp"
+    "./src/atomsciflow/vasp/*.cpp"
+    "./src/atomsciflow/vasp/post/*.cpp"
     "./src/atomsciflow/cube_handle/*.cpp"
     "./src/atomsciflow/remote/*.cpp"
 )
@@ -100,6 +120,9 @@ file(GLOB PROJECT_HEADER_FILES
     "./src/atomsciflow/cp2k/*.h"
     "./src/atomsciflow/qe/*.h"
     "./src/atomsciflow/qmcpack/*.h"
+    "./src/atomsciflow/elk/*.h"
+    "./src/atomsciflow/vasp/*.h"
+    "./src/atomsciflow/post/*.h"
     "./src/atomsciflow/cube_handle/*.h"
     "./src/atomsciflow/remote/*.h"
 )
@@ -124,6 +147,7 @@ add_library(atomsciflow STATIC
 
 target_link_libraries(atomsciflow
     ${LIBSSH2_FOUND_LIBS}
+    ${YAML_CPP_LIBRARIES}
 )
 
 option(BUILD_CMD "Whether to build Command Line executables" OFF)

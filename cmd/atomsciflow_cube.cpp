@@ -26,9 +26,6 @@ namespace po = boost::program_options;
 namespace filesys = boost::filesystem;     // --std=c++11 -lboost_filesystem -lboost_system
 
 
-
-
-
 int main(int argc, char const* argv[]) {
     //
 
