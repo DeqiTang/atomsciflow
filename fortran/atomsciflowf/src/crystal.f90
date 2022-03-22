@@ -1,5 +1,6 @@
+!? The overall representation of crystal structure
 module asflowf_crystal
-
+    
     use asflowf_constants
     use asflowf_kinds, only : dp
 
@@ -32,6 +33,7 @@ module asflowf_crystal
     end type
 
     contains
+
     subroutine read_xyz(cryst, filename)
         implicit none
 

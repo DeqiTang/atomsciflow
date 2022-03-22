@@ -20,6 +20,9 @@ apt install -y libboost-program-options-dev libboost-filesystem-dev libboost-sys
 apt install -y libatlas-dev libblas-dev liblapack-dev  # needed for python3.10 to build scipy
 # need working pip3 command
 apt install -y python3-pip
+apt install -y libyaml-cpp-dev libssh2-1 libssh2-1-dev 
+# in Debian, the dev and header files for OpenSSL are provided by libssl-dev package
+apt install -y openssl libssl-dev
 
 for py in cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39 cp310-cp310
 do

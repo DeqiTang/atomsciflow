@@ -12,6 +12,8 @@ cmake_minimum_required(VERSION 3.20)
 project(atomsciflow LANGUAGES CXX VERSION 0.0.0)
 
 #set(CMAKE_INCLUDE_CURRENT_DIR ON)
+#include_directories("./include")
+include_directories("./src")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -24,6 +26,7 @@ find_package(Boost COMPONENTS program_options filesystem system  REQUIRED)
 include_directories( 
     ${Boost_INCLUDE_DIR}  
 )
+link_libraries(${Boost_LIBRARIES})
 
 find_package(PkgConfig)
 set(YAML_CPP_PKGCONFIG_DIR "UNSET" CACHE STRING "Specify the dir path which contains the yaml-cpp.pc file")
@@ -87,8 +90,6 @@ link_libraries(${ARMADILLO_LIBRARIES})
 #find_package(LAPACK REQUIRED)
 #find_package(BLAS REQUIRED)
 
-#include_directories("./include")
-include_directories("./src")
 
 #AUX_SOURCE_DIRECTORY(./src PROJECT_LIB_SOURCES)
 #file(GLOB_RECURSE PROJECT_LIB_SOURCES 
@@ -100,6 +101,7 @@ file(GLOB PROJECT_LIB_SOURCES
     "./src/atomsciflow/base/*.cpp"
     "./src/atomsciflow/variable/*.cpp"
     "./src/atomsciflow/parser/*.cpp"
+    "./src/atomsciflow/utils/*.cpp"
     "./src/atomsciflow/abinit/*.cpp"
     "./src/atomsciflow/cp2k/*.cpp"
     "./src/atomsciflow/qe/*.cpp"
@@ -107,8 +109,12 @@ file(GLOB PROJECT_LIB_SOURCES
     "./src/atomsciflow/elk/*.cpp"
     "./src/atomsciflow/vasp/*.cpp"
     "./src/atomsciflow/vasp/post/*.cpp"
+    "./src/atomsciflow/gamessus/*.cpp"
     "./src/atomsciflow/cube_handle/*.cpp"
     "./src/atomsciflow/remote/*.cpp"
+    "./src/atomsciflow/server/*.cpp"
+    "./src/atomsciflow/cmd/*.cpp"
+    "./src/atomsciflow/config/*.cpp"
 )
 
 file(GLOB PROJECT_HEADER_FILES
@@ -116,21 +122,28 @@ file(GLOB PROJECT_HEADER_FILES
     "./src/atomsciflow/base/*.h"
     "./src/atomsciflow/variable/*.h"
     "./src/atomsciflow/parser/*.h"
+    "./src/atomsciflow/utils/*.h"
     "./src/atomsciflow/abinit/*.h"
     "./src/atomsciflow/cp2k/*.h"
     "./src/atomsciflow/qe/*.h"
     "./src/atomsciflow/qmcpack/*.h"
     "./src/atomsciflow/elk/*.h"
     "./src/atomsciflow/vasp/*.h"
+    "./src/atomsciflow/vasp/post/*.h"
+    "./src/atomsciflow/gamessus/*.h"
     "./src/atomsciflow/post/*.h"
     "./src/atomsciflow/cube_handle/*.h"
     "./src/atomsciflow/remote/*.h"
+    "./src/atomsciflow/server/*.h"
+    "./src/atomsciflow/cmd/*.h"
+    "./src/atomsciflow/config/*.h"
 )
 
 file(GLOB PROJECT_TEST_SOURCES
     "./test/gtest/utils/*.cpp"
     "./test/gtest/cp2k/*.cpp"
     "./test/gtest/qmcpack/*.cpp"
+    "./test/gtest/config/*.cpp"
 )
 
 # set output path 
@@ -148,6 +161,7 @@ add_library(atomsciflow STATIC
 target_link_libraries(atomsciflow
     ${LIBSSH2_FOUND_LIBS}
     ${YAML_CPP_LIBRARIES}
+    ${Boost_LIBRARIES}
 )
 
 option(BUILD_CMD "Whether to build Command Line executables" OFF)

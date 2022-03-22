@@ -1,15 +1,10 @@
 module cube_1d_c_binding
-    ! Usage:
     use iso_c_binding
-
     use c_f_string_c_binding, only : c_f_string
-
     use asflowf_cube_1d, only : cube_1d
 
     implicit none
     
-    !real, parameter :: bohr_to_angstrom = 0.529177249
-
     contains 
     
     subroutine c_cube_1d(cube_file_in) bind(c)

@@ -177,6 +177,22 @@ ext_modules_fortran = cythonize(
             ],
             language="c"
         ),
+        Extension(
+            'cmd_utils',
+            sources=[
+                "fortran/pyx/cmd_utils.pyx"
+            ],
+            # other compile args for gcc
+            extra_compile_args=['-fPIC', '-O3'],
+            # other files to link to
+            extra_link_args=[
+                'fortran/atomsciflowf/build/lib/libatomsciflowf-c-binding.a',
+                'fortran/atomsciflowf/build/lib/libatomsciflowf.a',
+                "-lgfortran",
+                "-fopenmp" # important for OpenMP dependency
+            ],
+            language="c"
+        ),
     ],
     language_level="3"
 )
@@ -217,7 +233,7 @@ class CustomBuildExt(build_ext):
 
 setup(
     name = "atomsciflow",
-    version = '0.0.1a2',
+    version = '0.0.1a3',
     ## python3 setup.py build sdist bdist_wheel
     ## twine upload dist/*
     keywords = ("Atom Science, Workflow"),

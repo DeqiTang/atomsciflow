@@ -14,9 +14,11 @@ void add_class_abinit(py::module& m) {
 
     py::class_<atomsciflow::Abinit>(m, "Abinit")
         .def(py::init<>())
+        .def("get_xyz", &atomsciflow::Abinit::get_xyz)
         .def("to_string", &atomsciflow::Abinit::to_string)
+        .def("run", &atomsciflow::Abinit::run)
+        .def_readwrite("job", &atomsciflow::Abinit::job)
         ;
-
 }
 
 PYBIND11_MODULE(abinit, m) {
@@ -24,5 +26,4 @@ PYBIND11_MODULE(abinit, m) {
     
     add_class_abinit(m);
 }
-
 

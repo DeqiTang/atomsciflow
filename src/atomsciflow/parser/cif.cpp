@@ -1,15 +1,34 @@
-//
+/************************************************************************
+MIT License
+
+Copyright (c) 2021 Deqi Tang
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+************************************************************************/
 
 #include "atomsciflow/parser/cif.h"
-
 #include "atomsciflow/base/atom.h"
-
 
 namespace atomsciflow {
 
 int read_cif_file(atomsciflow::Crystal* crystal, std::string filepath) {
     //
-    
     std::ifstream ciffile;
     std::vector<std::string> lines;
     ciffile.open(filepath);
@@ -19,12 +38,16 @@ int read_cif_file(atomsciflow::Crystal* crystal, std::string filepath) {
     while (std::getline(ciffile, line)) {
         lines.push_back(line);
     }
-    
     ciffile.close();
-    
+
     // read the frac coords and a b c alpha beta gamma
     std::vector<Atom> atoms_frac;
-    double a, b, c, alpha, beta, gamma;
+    double a = 0;
+    double b = 0;
+    double c = 0;
+    double alpha = 0;
+    double beta = 0;
+    double gamma = 0;
 
     std::regex whitespace("\\s+");
     //std::regex whitespace(" ", std::regex::awk);
@@ -55,25 +78,23 @@ int read_cif_file(atomsciflow::Crystal* crystal, std::string filepath) {
         
         std::cout << "line->" << lines[i] << " line_split(size)->" << line_split.size() << "first->" << line_split[0] << std::endl;
         
-
-        
-        if (line_split[0] == "_cell_length_a") {
+        if ("_cell_length_a" == line_split[0]) {
             a = std::atof(line_split[1].c_str());
             std::cout << "_cell_length_a: " << i << " value: " << a <<  std::endl;
             continue;
-        } else if (line_split[0] == "_cell_length_b") {
+        } else if ("_cell_length_b" == line_split[0]) {
             b = std::atof(line_split[1].c_str());
             continue;
-        } else if (line_split[0] == "_cell_length_c") {
+        } else if ("_cell_length_c" == line_split[0]) {
             c = std::atof(line_split[1].c_str());
             continue;
-        } else if (line_split[0] == "_cell_angle_alpha") {
+        } else if ("_cell_angle_alpha" == line_split[0]) {
             alpha = std::atof(line_split[1].c_str());
             continue;
-        } else if (line_split[0] == "_cell_angle_beta") {
+        } else if ("_cell_angle_beta" == line_split[0]) {
             beta = std::atof(line_split[1].c_str());
             continue;
-        } else if (line_split[0] == "_cell_angle_gamma") {
+        } else if ("_cell_angle_gamma" == line_split[0]) {
             gamma = std::atof(line_split[1].c_str());
             continue;
         } else if (lines[i].find("_atom_site_fract_x") != std::string::npos) {
@@ -107,7 +128,6 @@ int read_cif_file(atomsciflow::Crystal* crystal, std::string filepath) {
     int ncol = 0;
     int loop_atom_block_truly_begin = 0;
     
-    
     std::cout << "loop_of_atom_i: " << loop_of_atom_i << std::endl;
     
     for (i = (loop_of_atom_i + 1); i < n_lines; i++) {
@@ -118,13 +138,13 @@ int read_cif_file(atomsciflow::Crystal* crystal, std::string filepath) {
             continue;
         } else if (line_split.size() == 1) {
             ncol += 1;
-            if (line_split[0] == "_atom_site_fract_x") {
+            if ("_atom_site_fract_x" == line_split[0]) {
                 col_x_i = ncol - 1;
-            } else if (line_split[0] == "_atom_site_fract_y") {
+            } else if ("_atom_site_fract_y" == line_split[0]) {
                 col_y_i = ncol - 1;
-            } else if (line_split[0] == "_atom_site_fract_z") {
+            } else if ("_atom_site_fract_z" == line_split[0]) {
                 col_z_i = ncol - 1;
-            } else if (line_split[0] == "_atom_site_type_symbol") {
+            } else if ("_atom_site_type_symbol" == line_split[0]) {
                 col_name_i = ncol - 1;
             }
         } else if (line_split.size() > 1) {
@@ -132,7 +152,6 @@ int read_cif_file(atomsciflow::Crystal* crystal, std::string filepath) {
             break;
         }
     }
-    
     
     std::cout << "col_x_i->" << col_x_i << "|" << "col_y_i->" << col_y_i << "|" << "col_z_i->" << col_z_i << "|" << "col_name_i->" << col_name_i << "|" << std::endl;
     
@@ -169,7 +188,6 @@ int read_cif_file(atomsciflow::Crystal* crystal, std::string filepath) {
         atoms_frac.push_back(atom);        
     }
     
-
     std::cout << "cif file reading done" << std::endl;
 
     // convert alpha, beta, gamma to arc
@@ -205,8 +223,6 @@ int read_cif_file(atomsciflow::Crystal* crystal, std::string filepath) {
     arma::vec xyz_cart(3);
     arma::vec xyz_frac(3);
 
-
-
     crystal->atoms.clear();
     for (auto& atom : atoms_frac) {
         Atom atm;
@@ -223,13 +239,10 @@ int read_cif_file(atomsciflow::Crystal* crystal, std::string filepath) {
         crystal->atoms.push_back(atm);
     }
     
-    
     std::cout << "cif parsing finished!" << std::endl;
     
     return 0;
 }
-
-
 
 int write_cif_file(atomsciflow::Crystal* crystal, std::string filepath) {
     std::ofstream ciffile;
@@ -268,7 +281,6 @@ int write_cif_file(atomsciflow::Crystal* crystal, std::string filepath) {
     double a = std::sqrt(arma::accu(arma::square(latcell.row(0))));
     double b = std::sqrt(arma::accu(arma::square(latcell.row(1))));
     double c = std::sqrt(arma::accu(arma::square(latcell.row(2))));
-
 
     // angle in arc
     double alpha = std::acos(arma::dot(latcell.row(1), latcell.row(2)) / (b*c));
@@ -324,19 +336,19 @@ int write_cif_file(atomsciflow::Crystal* crystal, std::string filepath) {
     std::map<std::string, Element> ele_num_map = get_element_number_map();
 
     std::map<std::string, int> elements;
-    for (auto atom : atom_frac) {
+    for (const auto& atom : atom_frac) {
         elements[atom.name] = ele_num_map[atom.name].number;
     }
 
     std::set<std::pair<int, std::string>> elements_index;
 
-    for (auto& atom : elements) {
+    for (const auto& atom : elements) {
         elements_index.emplace(atom.second, atom.first);
     }
 
     int i = 0;
-    for (auto& elem : elements_index) {
-        for (auto& atom : atom_frac) {
+    for (const auto& elem : elements_index) {
+        for (const auto& atom : atom_frac) {
             if (atom.name == elem.second) {
                 i += 1;
                 ciffile << 
@@ -351,12 +363,9 @@ int write_cif_file(atomsciflow::Crystal* crystal, std::string filepath) {
         }
         i = 0;
     }
-
     //
     ciffile.close();
     return 0;
 }
-
-
 
 } // end namespace atomsciflow

@@ -22,11 +22,6 @@ module asflowf_cube_to_vtk
         !character(len=128), intent(in) :: cube_file_in, vtk_file_out
         character(len=*), intent(in) :: cube_file_in, vtk_file_out
 
-        ! command line output
-        write(*, *) "*******************************************************************************"
-        write(*, *) "***                 CUBE FILE PROCESSOR FROM ATOMSCIKIT                     ***"
-        write(*, *) "*******************************************************************************"
-
         ! read cube file
         
         write(*, *) "On getting the command line argument:"

@@ -1,3 +1,28 @@
+/************************************************************************
+MIT License
+
+Copyright (c) 2021 Deqi Tang
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+************************************************************************/
+
+
 #include <boost/program_options.hpp>
 //#include <experimental/filesystem>
 #include <boost/filesystem.hpp>
@@ -10,7 +35,7 @@
 #include "atomsciflow/base/crystal.h"
 #include "atomsciflow/utils.h"
 
-#include "cmd_utils.h"
+#include "atomsciflow/cmd/cmd_utils.h"
 
 namespace po = boost::program_options;
 
@@ -25,7 +50,7 @@ int main(int argc, char const* argv[]) {
 
     po::options_description global("Global options");
     global.add_options()
-        ("command", po::value<std::string>(), "command to execute")
+        ("subcommand", po::value<std::string>(), "command to execute")
         ("subargs", po::value<std::vector<std::string> >(), "Arguments for command")
         ("help, h", "print out help information");
         
@@ -41,24 +66,19 @@ int main(int argc, char const* argv[]) {
         run();
         
     po::store(parsed, vm);
-    
-    std::cout << "**********************************************************************" << std::endl;
-    std::cout << "*                       skit.x utils runnig                          *" << std::endl;
-    std::cout << "**********************************************************************" << std::endl;
+   
+    log_cmd_start("atomsciflow.x");
     
     if (0 == vm.count("command")) { // or by vm.empty()
         std::cout << "You didn't specify any subcommand!\n";
         std::exit(1);
     }
-    std::string cmd = vm["command"].as<std::string>();
+    std::string subcommand = vm["subcommand"].as<std::string>();
 
 
-    if (cmd == "convert") {
+    if ("convert" == subcommand) {
         //
-        std::cout << "----------------------------------------------------------------------" << std::endl;    
-        std::cout << "sub commands -> convert                                               " << std::endl;
-        std::cout << "Run info:" << std::endl;
-
+        log_sub_cmd_start("convert");
         
         // convert command has the following options:
         po::options_description opt_convert("convert options");
@@ -118,16 +138,11 @@ int main(int argc, char const* argv[]) {
             }
         }
         
+        log_sub_cmd_end("convert"); 
         
-        std::cout << "----------------------------------------------------------------------" << std::endl;
-        std::cout << "sub command: convert finished!!!                                      " << std::endl;
-        std::cout << "----------------------------------------------------------------------" << std::endl;
-        
-    } else if (cmd == "supercell") {
+    } else if ("supercell" == subcommand) {
         //
-        std::cout << "----------------------------------------------------------------------" << std::endl;    
-        std::cout << "sub commands -> supercell                                             " << std::endl;
-        std::cout << "Run info:" << std::endl;
+        log_sub_cmd_start("supercell");
         
         // supercell command has the following options:
         po::options_description opt_supercell("supercell options");
@@ -191,16 +206,12 @@ int main(int argc, char const* argv[]) {
                 atomsciflow::write_xyz_file(&crystal, output_file);
             }
         }        
-        // end supercell cmd
-        std::cout << "----------------------------------------------------------------------" << std::endl;
-        std::cout << "sub command: supercell finished!!!                                    " << std::endl;
-        std::cout << "----------------------------------------------------------------------" << std::endl;
-    } else if (cmd == "redefine") {
+        
+        log_sub_cmd_end("supercell");
+    } else if ("redefine" == subcommand) {
         //
         //
-        std::cout << "----------------------------------------------------------------------" << std::endl;    
-        std::cout << "sub commands -> redefine                                              " << std::endl;
-        std::cout << "Run info:" << std::endl;
+        log_sub_cmd_start("redefine");
         
         // redefine command has the following options:
         po::options_description opt_redefine("redefine options");
@@ -276,16 +287,11 @@ int main(int argc, char const* argv[]) {
                 atomsciflow::write_xyz_file(&crystal, output_file);
             }
         }        
-        // end redefine lattice cmd
-        std::cout << "----------------------------------------------------------------------" << std::endl;
-        std::cout << "sub command: redefine finished!!!                                     " << std::endl;
-        std::cout << "----------------------------------------------------------------------" << std::endl;        
-    } else if (cmd == "tube") {
+        log_sub_cmd_end("redefine");
+    } else if ("tube" == subcommand) {
         //
         //
-        std::cout << "----------------------------------------------------------------------" << std::endl;    
-        std::cout << "sub commands -> tube                                                  " << std::endl;
-        std::cout << "Run info:" << std::endl;
+        log_sub_cmd_start("tube");
         
         // redefine command has the following options:
         po::options_description opt_tube("nanotube options");
@@ -357,17 +363,13 @@ int main(int argc, char const* argv[]) {
                 atomsciflow::write_xyz_file(&crystal, output_file);
             }
         }        
-        // end supercell cmd
-        std::cout << "----------------------------------------------------------------------" << std::endl;
-        std::cout << "sub command: tube finished!!!                                         " << std::endl;
-        std::cout << "----------------------------------------------------------------------" << std::endl;           
         
-    } else if (cmd == "merge") {
+        log_sub_cmd_end("tube");
+        
+    } else if ("merge" == subcommand) {
         //
         //
-        std::cout << "----------------------------------------------------------------------" << std::endl;    
-        std::cout << "sub commands -> merge                                                 " << std::endl;
-        std::cout << "Run info:" << std::endl;
+        log_sub_cmd_start("merge");
         
         // redefine command has the following options:
         po::options_description opt_merge("merge layers options");
@@ -444,17 +446,13 @@ int main(int argc, char const* argv[]) {
                 atomsciflow::write_xyz_file(&crystal, output_file);
             }
         }        
-        // end merge layers cmd
-        std::cout << "----------------------------------------------------------------------" << std::endl;
-        std::cout << "sub command: merge finished!!!                                        " << std::endl;
-        std::cout << "----------------------------------------------------------------------" << std::endl;               
-    } else if (cmd == "cleave") {
+        
+        log_sub_cmd_end("merge");
+    } else if ("cleave" == subcommand) {
         
         //
         //
-        std::cout << "----------------------------------------------------------------------" << std::endl;    
-        std::cout << "sub commands -> cleave                                                " << std::endl;
-        std::cout << "Run info:" << std::endl;
+        log_sub_cmd_start("cleave");
         
         // redefine command has the following options:
         po::options_description opt_cleave("cleave options");
@@ -521,17 +519,13 @@ int main(int argc, char const* argv[]) {
                 atomsciflow::write_xyz_file(&crystal, output_file);
             }
         }        
-        // end cleave surface cmd
-        std::cout << "----------------------------------------------------------------------" << std::endl;
-        std::cout << "sub command: cleave finished!!!                                       " << std::endl;
-        std::cout << "----------------------------------------------------------------------" << std::endl;            
+        
+        log_sub_cmd_end("cleave");
                 
-    } else if (cmd == "vacuum") {
+    } else if ("vacuum" == subcommand) {
 
         //
-        std::cout << "----------------------------------------------------------------------" << std::endl;    
-        std::cout << "sub commands -> vacuum                                                " << std::endl;
-        std::cout << "Run info:" << std::endl;
+        log_sub_cmd_start("vacuum");
         
         // redefine command has the following options:
         po::options_description opt_vacuum("vacuum options");
@@ -597,10 +591,8 @@ int main(int argc, char const* argv[]) {
                 atomsciflow::write_xyz_file(&crystal, output_file);
             }
         }        
-        // end supercell cmd
-        std::cout << "----------------------------------------------------------------------" << std::endl;
-        std::cout << "sub command: vacuum  finished!!!                                      " << std::endl;
-        std::cout << "----------------------------------------------------------------------" << std::endl;   
+        
+        log_sub_cmd_end("vacuum");
         
     } else {
         std::cout << "The specified subcommand is not defined!\n";
@@ -609,3 +601,5 @@ int main(int argc, char const* argv[]) {
     //
     return 0;
 }
+
+

@@ -24,11 +24,6 @@ module asflowf_cube_1d
         !character(len=128), intent(in) :: cube_file_in
         character(len=*), intent(in) :: cube_file_in
 
-        ! command line output 
-        write(*, *) "*******************************************************************************"
-        write(*, *) "***                 CUBE FILE PROCESSOR FROM ATOMSCIKIT                     ***"
-        write(*, *) "*******************************************************************************"
-
         ! read cube file
         write(*, *) "On getting the command line argument:"
         if ( cube_file_in == "") then

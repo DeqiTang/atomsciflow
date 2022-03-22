@@ -6,6 +6,7 @@
 #include "atomsciflow/base/atom.h"
 #include "atomsciflow/base/crystal.h"
 #include "atomsciflow/base/atomic_radius.h"
+#include "atomsciflow/base/kpath.h"
 
 namespace py = pybind11;
 
@@ -79,6 +80,22 @@ void add_class_atomic_radius(py::module& m) {
 
 }
 
+void add_class_kpath(py::module& m) {
+    m.doc() = "atomsciflow kpath module";
+
+    py::class_<atomsciflow::Kpath>(m, "Kpath")
+        .def(py::init<>())
+        .def_readwrite("coords", &atomsciflow::Kpath::coords)
+        .def_readwrite("labels", &atomsciflow::Kpath::labels)
+        .def_readwrite("links", &atomsciflow::Kpath::links)
+        ;
+}
+
+void add_func_get_kpath(py::module& m) {
+    m.def("get_kpath", &atomsciflow::get_kpath);
+}
+
+
 
 PYBIND11_MODULE(base, m) {
     m.doc() = "base module";
@@ -87,5 +104,7 @@ PYBIND11_MODULE(base, m) {
     add_class_atom(m);
     add_class_crystal(m);
     add_class_atomic_radius(m);
+    add_class_kpath(m);
 
+    add_func_get_kpath(m);
 }

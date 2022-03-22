@@ -1,3 +1,27 @@
+/************************************************************************
+MIT License
+
+Copyright (c) 2021 Deqi Tang
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+************************************************************************/
+
 #include "atomsciflow/base/xyz.h"
 #include "atomsciflow/base/atom.h"
 #include "atomsciflow/base/element.h"
@@ -11,16 +35,16 @@
 #include <armadillo>
 #include <iomanip>
 #include <string>
-
-
+#include <boost/filesystem.hpp>
 
 namespace atomsciflow {
 
+namespace fs = boost::filesystem;
 
-int XYZ::read_xyz_file(std::string filepath) {
-    
-    int i = 0; // for iteration
-    int j = 0; // for iteration
+int Xyz::read_xyz_file(std::string filepath) {
+    this->file = fs::absolute(fs::path(filepath)).string();
+    int i = 0;
+    int j = 0;
     
     int natom = 0; // number of atoms each image
 
@@ -50,9 +74,15 @@ int XYZ::read_xyz_file(std::string filepath) {
         std::exit(1);
     }
     
-    std::vector<std::string> cell_line_split(std::sregex_token_iterator(lines[1].begin(), lines[1].end(), whitespace, -1), 
-        std::sregex_token_iterator());
-        
+    std::vector<std::string> cell_line_split(
+        std::sregex_token_iterator(
+            lines[1].begin(),
+            lines[1].end(),
+            whitespace,
+            -1),
+        std::sregex_token_iterator()
+    );
+
     std::vector<double> a;
     std::vector<double> b;
     std::vector<double> c;
@@ -69,37 +99,35 @@ int XYZ::read_xyz_file(std::string filepath) {
     this->cell.push_back(b);
     this->cell.push_back(c);        
     
-            
     for (i = 0; i < natom; i++) {
-
-        std::vector<std::string> line_split(std::sregex_token_iterator(lines[i+2].begin(), lines[i+2].end(), whitespace, -1), 
-            std::sregex_token_iterator());
-        
+        std::vector<std::string> line_split(
+            std::sregex_token_iterator(
+                lines[i+2].begin(),
+                lines[i+2].end(),
+                whitespace,
+                -1
+            ),
+            std::sregex_token_iterator()
+        );
         Atom atom;
-        
-        //std::cout << line_split[0] << line_split[1] ;
 
         atom.set_name(line_split[0]);
         atom.set_x(std::atof(line_split[1].c_str()));
         atom.set_y(std::atof(line_split[2].c_str()));
         atom.set_z(std::atof(line_split[3].c_str()));
         this->atoms.push_back(atom);
-    }    
-
+        elements_set.insert(atom.name);
+    }
+    this->nspecies = this->elements_set.size();
     return 0;
-
 }
 
-
-
-
-int XYZ::write_xyz_file(std::string filepath) {
+int Xyz::write_xyz_file(std::string filepath) {
     std::ofstream xyzfile;
     xyzfile.open(filepath);
 
     xyzfile.setf(std::ios::fixed);
     xyzfile << this->atoms.size() << "\n";
-    
     xyzfile << "cell: "
         << std::setprecision(9) << std::setw(15) << this->cell[0][0] << " " 
         << std::setprecision(9) << std::setw(15) << this->cell[0][1] << " " 
@@ -110,18 +138,16 @@ int XYZ::write_xyz_file(std::string filepath) {
         << std::setprecision(9) << std::setw(15) << this->cell[2][0] << " " 
         << std::setprecision(9) << std::setw(15) << this->cell[2][1] << " " 
         << std::setprecision(9) << std::setw(15) << this->cell[2][2] << "\n";
-    
-    for (auto atom : this->atoms) {
-        xyzfile <<// atom.name << " " << atom.x << " " << atom.y << " " << atom.z << "\n";
+
+    for (const auto& atom : this->atoms) {
+        xyzfile << // atom.name << " " << atom.x << " " << atom.y << " " << atom.z << "\n";
             atom.name << "\t"
             << std::setprecision(9) << std::setw(15) << atom.x << "\t"
             << std::setprecision(9) << std::setw(15) << atom.y << "\t"
             << std::setprecision(9) << std::setw(15) << atom.z << "\t" << "\n";
     }
     xyzfile.close();
-    
     return 0;
 }
-
 
 } //namespace atomsciflow

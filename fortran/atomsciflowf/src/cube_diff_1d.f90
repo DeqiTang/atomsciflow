@@ -5,7 +5,6 @@ module asflowf_cube_diff_1d
     use asflowf_constants
 
     implicit none
-    
 
     contains 
     
@@ -23,12 +22,6 @@ module asflowf_cube_diff_1d
 
         !character(len=128), dimension(3), intent(in) :: cube_file_in_iii
         character(len=*), dimension(3), intent(in) :: cube_file_in_iii
-
-        ! command line output 
-        write(*, *) "*******************************************************************************"
-        write(*, *) "***                 CUBE FILE PROCESSOR FROM ATOMSCIKIT                     ***"
-        write(*, *) "*******************************************************************************"
-
 
         ! read cube file 
 
@@ -125,7 +118,6 @@ module asflowf_cube_diff_1d
         b = sqrt(b)
         call dot_3(cube_iii(1)%cube_crystal%cell(3, :), cube_iii(1)%cube_crystal%cell(3, :), c)
         c = sqrt(c)
-
 
         ! output dimension reduced data
         open(unit=11, file="diff.charge.1d.c.data", action="write")

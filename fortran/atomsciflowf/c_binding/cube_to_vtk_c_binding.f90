@@ -1,7 +1,10 @@
 module cube_to_vtk_c_binding
-    ! Usage:
-    ! Reference:
-    !   http://fortranwiki.org/fortran/show/c_interface_module
+    !> Reference:
+    !!   http://fortranwiki.org/fortran/show/c_interface_module
+    !! There are many nice tutorials on Fortran Wiki pages. 
+    !! And the code on Fortran Wiki is in public domain, thus
+    !! can be a good reference source for better understanding 
+    !! of fortran.
     use iso_c_binding
     use c_f_string_c_binding, only : c_f_string
     use asflowf_cube_to_vtk, only : cube_to_vtk

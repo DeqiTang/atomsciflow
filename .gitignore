@@ -7,6 +7,7 @@ atomsciflow.egg-info
 docs/_build/*
 
 .vscode
+CMakeLists.txt.user
 
 __pycache__
 *.pyc

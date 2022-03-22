@@ -1,7 +1,10 @@
 module c_f_string_c_binding
-    ! Usage:
-    ! Reference:
-    !   http://fortranwiki.org/fortran/show/c_interface_module
+    !> Reference:
+    !!   http://fortranwiki.org/fortran/show/c_interface_module
+    !! There are many nice tutorials on Fortran Wiki pages. 
+    !! And the code on Fortran Wiki is in public domain, thus
+    !! can be a good reference source for better understanding 
+    !! of fortran.
     use iso_c_binding, only : c_char, c_null_char, c_ptr, &
         c_associated, c_f_pointer
 
@@ -16,7 +19,6 @@ module c_f_string_c_binding
 
     contains
 
-    !
     subroutine c_f_string_chars(c_string, f_string)
         character(len=1, kind=c_char), intent(in) :: c_string(*)
         character(len=*), intent(out) :: f_string
@@ -36,7 +38,6 @@ module c_f_string_c_binding
         integer :: i
         if (.not. c_associated(c_string)) then
             f_string = ' '
-
         else
             call c_f_pointer(c_string, p_chars,[huge(0)])
             i=1
@@ -48,3 +49,4 @@ module c_f_string_c_binding
         end if
     end subroutine c_f_string_ptr
 end module c_f_string_c_binding
+

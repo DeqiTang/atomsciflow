@@ -1,3 +1,28 @@
+/************************************************************************
+MIT License
+
+Copyright (c) 2021 Deqi Tang
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+************************************************************************/
+
+
 #include <boost/program_options.hpp>
 //#include <experimental/filesystem>
 #include <boost/filesystem.hpp>
@@ -16,7 +41,8 @@
 
 #include "atomsciflow/cube_handle/cube_handle.h"
 
-#include "cmd_utils.h"
+#include "atomsciflow/cmd/cmd_utils.h"
+
 // needs: libboost-dev, libboost-program-options-dev
 
 namespace po = boost::program_options;
@@ -31,12 +57,12 @@ int main(int argc, char const* argv[]) {
 
     po::options_description global("Global options");
     global.add_options()
-        ("command", po::value<std::string>(), "command to execute")
+        ("subcommand", po::value<std::string>(), "command to execute")
         ("subargs", po::value<std::vector<std::string> >(), "Arguments for command")
         ("help, h", "print out help information");
         
     po::positional_options_description pos;
-    pos.add("command", 1).add("subargs", -1);
+    pos.add("subcommand", 1).add("subargs", -1);
     
     po::variables_map vm;
     
@@ -47,23 +73,19 @@ int main(int argc, char const* argv[]) {
         run();
         
     po::store(parsed, vm);
-    
-    std::cout << "**********************************************************************" << std::endl;
-    std::cout << "*                       skit-cube.x utils runnig                     *" << std::endl;
-    std::cout << "**********************************************************************" << std::endl;
+   
+    log_cmd_start("atomsciflow-cube.x");
     
     if (0 == vm.count("command")) { // or by vm.empty()
         std::cout << "You didn't specify any subcommand!\n";
         std::exit(1);
     }
-    std::string cmd = vm["command"].as<std::string>();
+    std::string subcommand = vm["subcommand"].as<std::string>();
 
 
-    if (cmd == "along") {
-        //
-        std::cout << "----------------------------------------------------------------------" << std::endl;    
-        std::cout << "sub commands -> along                                                 " << std::endl;
-        std::cout << "Run info:" << std::endl;
+    if ("along" == subcommand) {
+        
+        log_sub_cmd_start("along");//
 
         // along command has the following options:
         po::options_description opt_along("along options");
@@ -257,17 +279,12 @@ int main(int argc, char const* argv[]) {
             //fxx.close();
 
         }
+
+        log_sub_cmd_end("along");
         
-        
-        std::cout << "----------------------------------------------------------------------" << std::endl;
-        std::cout << "sub command: along finished!!!                                      " << std::endl;
-        std::cout << "----------------------------------------------------------------------" << std::endl;
-        
-    } else if (cmd == "diff") {
+    } else if ("diff" == subcommand) {
         //
-        std::cout << "----------------------------------------------------------------------" << std::endl;    
-        std::cout << "sub commands -> diff                                                 " << std::endl;
-        std::cout << "Run info:" << std::endl;
+        log_sub_cmd_start("diff");
 
         // along command has the following options:
         po::options_description opt_diff("diff options");
@@ -320,10 +337,7 @@ int main(int argc, char const* argv[]) {
 
         }
         
-        
-        std::cout << "----------------------------------------------------------------------" << std::endl;
-        std::cout << "sub command: diff finished!!!                                      " << std::endl;
-        std::cout << "----------------------------------------------------------------------" << std::endl;
+        log_sub_cmd_end("diff"); 
         
     } else {
         std::cout << "The specified subcommand is not defined!\n";
@@ -332,3 +346,5 @@ int main(int argc, char const* argv[]) {
     //
     return 0;
 }
+
+

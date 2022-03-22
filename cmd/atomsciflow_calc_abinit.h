@@ -1,3 +1,28 @@
+/************************************************************************
+MIT License
+
+Copyright (c) 2021 Deqi Tang
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+************************************************************************/
+
+
 // @file atomsciflow_calc_abinit.h
 // @author: DeqiTang
 // Mail: deqitang@gmail.com 
@@ -19,11 +44,8 @@
 #include "atomsciflow/base/crystal.h"
 #include "atomsciflow/utils.h"
 #include "atomsciflow/abinit/abinit.h"
-#include "atomsciflow/cp2k/cp2k.h"
-#include "atomsciflow/cp2k/opt.h"
-#include "atomsciflow/qe/pw.h"
 
-#include "cmd_utils.h"
+#include "atomsciflow/cmd/cmd_utils.h"
 
 
 void atomsciflow_calc_abinit(boost::program_options::parsed_options& parsed, boost::program_options::variables_map& vm);

@@ -43,6 +43,9 @@ file(GLOB PROJECT_LIB_SOURCES
     "../../src/atomsciflow/qe/*.cpp"
     "../../src/atomsciflow/qmcpack/*.cpp"
     "../../src/atomsciflow/cube_handle/*.cpp"
+    "../../src/atomsciflow/config/*.cpp"
+    "../../src/atomsciflow/server/*.cpp"
+    "../../src/atomsciflow/remote/*.cpp"
 )
 
 file(GLOB PROJECT_HEADER_FILES
@@ -54,12 +57,16 @@ file(GLOB PROJECT_HEADER_FILES
     "../../src/atomsciflow/qe/*.h"
     "../../src/atomsciflow/qmcpack/*.h"
     "../../src/atomsciflow/cube_handle/*.h"
+    "../../src/atomsciflow/config/*.h"
+    "../../src/atomsciflow/server/*.h"
+    "../../src/atomsciflow/remote/*.h"
 )
 
 file(GLOB PROJECT_TEST_SOURCES
     "utils/*.cpp"
     "cp2k/*.cpp"
     "qmcpack/*.cpp"
+    "config/*.cpp"
 )
 
 # set output path 
@@ -72,6 +79,9 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
 add_library(atomsciflow STATIC
     ${PROJECT_LIB_SOURCES}
+)
+target_link_libraries(atomsciflow
+    ${Boost_LIBRARIES}
 )
 
 

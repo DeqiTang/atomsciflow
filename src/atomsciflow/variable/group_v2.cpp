@@ -1,16 +1,37 @@
 /************************************************************************
-    > File Name: group.cpp
-    > Author: deqi
-    > Mail: deqi_tang@163.com 
-    > Created Time: Sat 30 Jan 2021 08:29:12 PM CST
+MIT License
+
+Copyright (c) 2021 Deqi Tang
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 ************************************************************************/
+
+/// @file src/atomsciflow/variable/group_v2.cpp
+/// @author deqi
+/// Mail: deqi_tang@163.com
+/// Created Time: Sat 30 Jan 2021 08:29:12 PM CST
 
 #include "atomsciflow/variable/group_v2.h"
 
 namespace atomsciflow {
 
 using namespace utils;
-
 
 void VariableGroupV2::set_param(std::string key, int value) {
     this->remove(key);
@@ -62,13 +83,13 @@ std::string VariableGroupV2::to_string() {
 
 std::string VariableGroupV2::to_string(int n) {
     std::string out = "";
-    for (auto item : this->params_int) {
+    for (const auto& item : this->params_int) {
         if (this->params_int[item.first].status == false) {
             continue;
         }
         out += this->params_int[item.first].to_string(n) + "\n";
     }
-    for (auto item : this->params_double) {
+    for (const auto& item : this->params_double) {
         if (this->params_double[item.first].status == false) {
             continue;
         }
@@ -92,7 +113,6 @@ void VariableGroupV2::remove(std::string key) {
     }
 }
 
-
 void VariableGroupV2::clear() {
     this->params_int.clear();
     this->params_double.clear();
@@ -100,7 +120,7 @@ void VariableGroupV2::clear() {
 
 template<typename U>
 U VariableGroupV2::get(std::string key) {
-    U out;
+    U out{};
     for (auto it = this->params_int.begin(); it != this->params_int.end(); ++it) {
         if (it->first == key) {
             //this->params_int[key].to(out);
@@ -120,6 +140,7 @@ U VariableGroupV2::get(std::string key) {
     return out;
 }
 
+// explicit template instantiation
 template int VariableGroupV2::get(std::string);
 //template double VariableGroupV2::get(std::string);
 template std::vector<int> VariableGroupV2::get(std::string);

@@ -1,3 +1,27 @@
+/************************************************************************
+MIT License
+
+Copyright (c) 2021 Deqi Tang
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+************************************************************************/
+
 #include "atomsciflow/base/crystal.h"
 #include "atomsciflow/base/atom.h"
 #include "atomsciflow/base/element.h"
@@ -12,10 +36,7 @@
 #include <iomanip>
 #include <string>
 
-
-
 namespace atomsciflow {
-
 
 int Crystal::read_xyz_file(std::string filepath) {
     
@@ -68,30 +89,25 @@ int Crystal::read_xyz_file(std::string filepath) {
     this->cell.push_back(a);
     this->cell.push_back(b);
     this->cell.push_back(c);        
-    
-            
+
     for (i = 0; i < natom; i++) {
-
-        std::vector<std::string> line_split(std::sregex_token_iterator(lines[i+2].begin(), lines[i+2].end(), whitespace, -1), 
-            std::sregex_token_iterator());
-        
+        std::vector<std::string> line_split(
+            std::sregex_token_iterator(
+                lines[i+2].begin(),
+                lines[i+2].end(),
+                whitespace, -1
+            ),
+            std::sregex_token_iterator()
+        );
         Atom atom;
-        
-        //std::cout << line_split[0] << line_split[1] ;
-
         atom.set_name(line_split[0]);
         atom.set_x(std::atof(line_split[1].c_str()));
         atom.set_y(std::atof(line_split[2].c_str()));
         atom.set_z(std::atof(line_split[3].c_str()));
         this->atoms.push_back(atom);
-    }    
-
+    }
     return 0;
-
 }
-
-
-
 
 int Crystal::write_xyz_file(std::string filepath) {
     std::ofstream xyzfile;
@@ -99,7 +115,6 @@ int Crystal::write_xyz_file(std::string filepath) {
 
     xyzfile.setf(std::ios::fixed);
     xyzfile << this->atoms.size() << "\n";
-    
     xyzfile << "cell: "
         << std::setprecision(9) << std::setw(15) << this->cell[0][0] << " " 
         << std::setprecision(9) << std::setw(15) << this->cell[0][1] << " " 
@@ -111,32 +126,34 @@ int Crystal::write_xyz_file(std::string filepath) {
         << std::setprecision(9) << std::setw(15) << this->cell[2][1] << " " 
         << std::setprecision(9) << std::setw(15) << this->cell[2][2] << "\n";
     
-    for (auto atom : this->atoms) {
-        xyzfile <<// atom.name << " " << atom.x << " " << atom.y << " " << atom.z << "\n";
+    for (const auto& atom : this->atoms) {
+        xyzfile << // atom.name << " " << atom.x << " " << atom.y << " " << atom.z << "\n";
             atom.name << "\t"
             << std::setprecision(9) << std::setw(15) << atom.x << "\t"
             << std::setprecision(9) << std::setw(15) << atom.y << "\t"
             << std::setprecision(9) << std::setw(15) << atom.z << "\t" << "\n";
     }
     xyzfile.close();
-    
     return 0;
 }
-
 
 int Crystal::read_xyz_str(std::string str) {
     
     int i = 0; // for iteration
     int j = 0; // for iteration
-    
-    int natom = 0; // number of atoms each image
 
+    int natom = 0; // number of atoms each image
     std::regex newline("\\n+");
 
-    std::vector<std::string> lines(std::sregex_token_iterator(str.begin(), str.end(), newline, -1),
-        std::sregex_token_iterator());
-
-    
+    std::vector<std::string> lines(
+        std::sregex_token_iterator(
+            str.begin(),
+            str.end(),
+            newline,
+            -1
+        ),
+        std::sregex_token_iterator()
+    );
     std::regex whitespace("\\s+");
     
     std::vector<std::string> line_split(std::sregex_token_iterator(lines[0].begin(), lines[0].end(), whitespace, -1), 
@@ -147,9 +164,15 @@ int Crystal::read_xyz_str(std::string str) {
         std::cout <<  "Warning!!!" << " number of atoms specified in the first line is not equal to total line number of file minus 2(empty lines are removed)" << std::endl;
         std::exit(1);
     }
-    
-    std::vector<std::string> cell_line_split(std::sregex_token_iterator(lines[1].begin(), lines[1].end(), whitespace, -1), 
-        std::sregex_token_iterator());
+
+    std::vector<std::string> cell_line_split(
+        std::sregex_token_iterator(
+            lines[1].begin(),
+            lines[1].end(),
+            whitespace,
+            -1),
+        std::sregex_token_iterator()
+    );
         
     std::vector<double> a;
     std::vector<double> b;
@@ -167,25 +190,23 @@ int Crystal::read_xyz_str(std::string str) {
     this->cell.push_back(b);
     this->cell.push_back(c);        
     
-            
     for (i = 0; i < natom; i++) {
-
-        std::vector<std::string> line_split(std::sregex_token_iterator(lines[i+2].begin(), lines[i+2].end(), whitespace, -1), 
-            std::sregex_token_iterator());
-        
+        std::vector<std::string> line_split(
+            std::sregex_token_iterator(
+                lines[i+2].begin(),
+                lines[i+2].end(),
+                whitespace,
+                -1),
+            std::sregex_token_iterator()
+        );
         Atom atom;
-        
-        //std::cout << line_split[0] << line_split[1] ;
-
         atom.set_name(line_split[0]);
         atom.set_x(std::atof(line_split[1].c_str()));
         atom.set_y(std::atof(line_split[2].c_str()));
         atom.set_z(std::atof(line_split[3].c_str()));
         this->atoms.push_back(atom);
     }    
-
     return 0;
-
 }
 
 int Crystal::write_xyz_str(std::string& str) { 
@@ -198,7 +219,6 @@ std::string Crystal::write_xyz_str() {
     xyz_str_stream.setf(std::ios::fixed);
 
     xyz_str_stream << this->atoms.size() << "\n";
-    
     xyz_str_stream << "cell: "
         << std::setprecision(9) << std::setw(15) << this->cell[0][0] << " " 
         << std::setprecision(9) << std::setw(15) << this->cell[0][1] << " " 
@@ -210,17 +230,15 @@ std::string Crystal::write_xyz_str() {
         << std::setprecision(9) << std::setw(15) << this->cell[2][1] << " " 
         << std::setprecision(9) << std::setw(15) << this->cell[2][2] << "\n";
     
-    for (auto atom : this->atoms) {
-        xyz_str_stream <<// atom.name << " " << atom.x << " " << atom.y << " " << atom.z << "\n";
+    for (const auto& atom : this->atoms) {
+        xyz_str_stream << // atom.name << " " << atom.x << " " << atom.y << " " << atom.z << "\n";
             atom.name << "\t"
             << std::setprecision(9) << std::setw(15) << atom.x << "\t"
             << std::setprecision(9) << std::setw(15) << atom.y << "\t"
             << std::setprecision(9) << std::setw(15) << atom.z << "\t" << "\n";
     }
-   
     return xyz_str_stream.str();
 }
-
 
 int Crystal::build_supercell(std::vector<int> n) {
     
@@ -234,16 +252,11 @@ int Crystal::build_supercell(std::vector<int> n) {
     new_cell.row(1) = n[1] * arma::conv_to<arma::rowvec>::from(this->cell[1]);
     new_cell.row(2) = n[2] * arma::conv_to<arma::rowvec>::from(this->cell[2]);
     
-    //std::cout << "n1: " << n[0] << std::endl;
-    //std::cout << "n2: " << n[1] << std::endl;
-    //std::cout << "n3: " << n[2] << std::endl;
-    
     // build supercell: replica in three vector one by one
     
     int natom_now = 0;
     double x, y, z;
     for (i = 0; i < 3; i++) {
-        //
         natom_now = this->atoms.size();
         for (j = 0;j < (n[i] - 1); j++) {
             for (k = 0; k < natom_now; k++) {
@@ -265,7 +278,6 @@ int Crystal::build_supercell(std::vector<int> n) {
         }
         
     }
-    
     this->cell[0]  = arma::conv_to<std::vector<double>>::from(new_cell.row(0));
     this->cell[1]  = arma::conv_to<std::vector<double>>::from(new_cell.row(1));
     this->cell[2]  = arma::conv_to<std::vector<double>>::from(new_cell.row(2));

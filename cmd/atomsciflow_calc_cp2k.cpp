@@ -1,3 +1,30 @@
+/************************************************************************
+MIT License
+
+Copyright (c) 2021 Deqi Tang
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+************************************************************************/
+
+
+#include "atomsciflow_calc_cp2k.h"
+
 #include <boost/program_options.hpp>
 //#include <filesystem>
 #include <boost/filesystem.hpp>
@@ -8,33 +35,28 @@
 #include "atomsciflow/parser/cif.h"
 #include "atomsciflow/parser/xyz.h"
 #include "atomsciflow/parser/tools.h"
-#include "atomsciflow/base/crystal.h"
 #include "atomsciflow/utils.h"
 #include "atomsciflow/abinit/abinit.h"
 #include "atomsciflow/cp2k/cp2k.h"
 #include "atomsciflow/cp2k/opt.h"
-#include "atomsciflow/qe/pw.h"
-
-#include "cmd_utils.h"
-
-// needs: libboost-dev, libboost-program-options-dev
 
 namespace po = boost::program_options;
 
 
-//namespace filesys = std::filesystem; 
-namespace filesys = boost::filesystem;     // --std=c++11 -lboost_filesystem -lboost_system
+//namespace fs = std::filesystem;
+namespace fs = boost::filesystem;     // --std=c++11 -lboost_filesystem -lboost_system
     
 
 void atomsciflow_calc_cp2k(po::parsed_options& parsed, po::variables_map& vm) {
 
-    // convert command has the following options:
+    // convert subcommand has the following options:
     po::options_description opt_cp2k("cp2k options");
     opt_cp2k.add_options()
         ("help, h", "Print out help information for cp2k sub command")
         ("runtype, r", po::value<int>()->default_value(0), "Choice of the calculation type: 0 -> static run, 1 -> geometric optimization")
-        ("input, i", po::value<std::string>()->required(), "input structure file")
-        ("directory, d", po::value<std::string>()->default_value("askit-calc-running"), "The directory to put all the resources")
+        //("input, i", po::value<std::string>()->required(), "input structure file")
+        ("xyz", po::value<std::string>(), "input xyz structure file")
+        ("directory, d", po::value<std::string>()->default_value("asflow-calc-running"), "The directory to put all the resources")
         ("runopt", po::value<std::string>()->default_value("gen"), "Rnning option, generation only, or running at the same time")
         ("auto", po::value<int>()->default_value(3), "Automation level: 0 -> doing nothing, 1 -> copying files to server")
         ("mpi", po::value<std::string>()->default_value(""))
@@ -59,43 +81,13 @@ void atomsciflow_calc_cp2k(po::parsed_options& parsed, po::variables_map& vm) {
     }
     po::notify(vm);
 
-    if (vm.count("input")) {
-        atomsciflow::Crystal crystal;
-        //crystal.read_xyz_file(vm["input"].as<std::string>());
-        //crystal.write_cif_file(vm["output"].as<std::string>());
+    fs::path xyz_path(vm["xyz"].as<std::string>());
 
+    std::cout << "working directory: " << vm["directory"].as<std::string>() << std::endl;
+    auto task = new atomsciflow::Cp2k();
+    task->get_xyz(xyz_path.string());
+    //std::cout << task->to_string() << std::endl;
+    task->run(vm["directory"].as<std::string>());
+    delete task;
+}
 
-        std::string input_file = vm["input"].as<std::string>();
-        //std::string output_file = vm["output"].as<std::string>();
-
-        filesys::path in_path(input_file);
-        //filesys::path out_path(output_file);
-
-
-        std::cout << "input: " << input_file << std::endl;
-        //std::cout << "output: " << output_file << std::endl;
-
-        // read structure file
-        // std::cout << "in_path(extension)->" << in_path.extension().string() << std::endl;
-        crystal = atomsciflow::read_structure_file(input_file); 
-
-        //atomsciflow::Cp2k calculator;
-        //calculator.set_subsys(crystal);
-        //std::cout << calculator.to_string() << std::endl;
-    
-        if (vm["runtype"].as<int>() == 1) {
-
-            auto task = atomsciflow::Cp2kOpt();
-            task.set_subsys(crystal);
-            task.geo_opt(
-                vm["directory"].as<std::string>(),
-                "geo-opt.in", 
-                "geo-opt.out", 
-                vm["runopt"].as<std::string>(), 
-                vm["auto"].as<int>()
-            );
-        }
-
-    }
-
-}  
