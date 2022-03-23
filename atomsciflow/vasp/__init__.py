@@ -22,5 +22,4 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from atomsciflow.cpp.cmd import log_cmd_start
-from atomsciflow.cpp.cmd import log_sub_cmd_start, log_sub_cmd_end
+from atomsciflow.vasp.vasp import Vasp

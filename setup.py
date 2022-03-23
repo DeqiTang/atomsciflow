@@ -25,7 +25,6 @@ class CleanCommand(Command):
         os.system('rm -vrf ./build ./dist ./*.pyc ./*.tgz ./*.egg-info')
         os.system("rm -rf _skbuild")
 
-
 # Convert distutils Windows platform specifiers to CMake -A arguments
 PLAT_TO_CMAKE = {
     "win32": "Win32",
@@ -41,8 +40,6 @@ class CMakeExtension(Extension):
     def __init__(self, name, sourcedir=""):
         super().__init__(name, sources=[])
         self.sourcedir = os.path.abspath(sourcedir)
-
-
 
 def pybind11_build_ext(builder, ext):
     extdir = os.path.abspath(os.path.dirname(builder.get_ext_fullpath(ext.name)))
@@ -126,7 +123,6 @@ def pybind11_build_ext(builder, ext):
     #if ext.name in ["pyaskit"]:
     #    os.system("mv _skbuild/linux-x86_64-*/setuptools/lib.linux-x86_64-*/%s.*.so _skbuild/linux-x86_64-*/setuptools/lib.linux-x86_64-*/atomsciflow/cpp/" % ext.name)
 
-
 # -----------------------------
 # make sure pybind11 is working
 # -----------------------------
@@ -153,7 +149,6 @@ if "CPLUS_INCLUDE_PATH" not in os.environ:
     os.environ["CPLUS_INCLUDE_PATH"] = ":".join(list_paths)
 else:
     os.environ["CPLUS_INCLUDE_PATH"] = os.environ["CPLUS_INCLUDE_PATH"] + ":%s" % ":".join(list_paths)
-
 
 # --------------------------------
 # fortran support
@@ -209,7 +204,6 @@ def fortran_build_ext(builder, ext):
     # TODO: more strong code here
     os.system("mv _skbuild/linux-x86_64-*/setuptools/lib.linux-x86_64-*/%s.*.so _skbuild/linux-x86_64-*/setuptools/lib.linux-x86_64-*/atomsciflow/fortran/" % ext.name)
 
-
 class CustomBuildExt(build_ext):
     """
     """
@@ -230,7 +224,6 @@ class CustomBuildExt(build_ext):
         else:
             pybind11_build_ext(self, ext)
 
-
 setup(
     name = "atomsciflow",
     version = '0.0.1a3',
@@ -239,7 +232,7 @@ setup(
     keywords = ("Atom Science, Workflow"),
     description = "A workflow manger for scientific research involving atoms",
     license = "MIT",
-    url = "https://gitlab.com/deqitang/atomsciflow",
+    url = "https://github.com/deqitang/atomsciflow",
     author_email = "deqitang@gmail.com",
     packages = find_packages(),
     #data_files
@@ -270,6 +263,7 @@ setup(
     entry_points = {
         'console_scripts': [
             'atomsciflow = atomsciflow.cmd.atomsciflow:main',
+            "atomsciflow-calc = atomsciflow.cmd.atomsciflow_calc:main",
         ]
     },
 )

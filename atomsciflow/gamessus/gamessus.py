@@ -22,5 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from atomsciflow.cpp.cmd import log_cmd_start
-from atomsciflow.cpp.cmd import log_sub_cmd_start, log_sub_cmd_end
+from atomsciflow.cpp import gamessus
+from atomsciflow.cpp.server import JobScheduler
+
+class GamessUS(gamessus.GamessUS):
+    def __init__(self):
+        super().__init__()

@@ -1,4 +1,4 @@
-"""
+/************************************************************************
 MIT License
 
 Copyright (c) 2021 Deqi Tang
@@ -20,7 +20,24 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-"""
+************************************************************************/
 
-from atomsciflow.cpp.cmd import log_cmd_start
-from atomsciflow.cpp.cmd import log_sub_cmd_start, log_sub_cmd_end
+/// @file src/atomsciflow/siesta/siesta.h
+/// @author DeqiTang
+/// Mail: deqitang@gmail.com 
+/// Created Time: Tue 22 Mar 2022 10:18:22 PM CST
+
+#ifndef ATOMSCIFLOW_SIEATA_SIESTA_H_
+#define ATOMSCIFLOW_SIEATA_SIESTA_H_
+
+namespace atomsciflow {
+
+class Siesta {
+public:
+    Siesta();
+    ~Siesta() = default;
+};
+
+} // namespace atomsciflow
+
+#endif // ATOMSCIFLOW_SIEATA_SIESTA_H_

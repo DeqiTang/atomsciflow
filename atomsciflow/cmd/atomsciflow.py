@@ -22,18 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-# Copyright (c) 2021 DeqiTang
-# Distributed under the terms of the MIT license
-# @author: DeqiTang
-# email: deqi_tang@163.com 
-
-
 import os
 import sys
 import argparse
 
-from atomsciflow.cmd.cmd_utils import log_sub_cmd_start, log_sub_cmd_end
-
+from atomsciflow.cmd.cmd_utils import log_cmd_start, log_sub_cmd_start, log_sub_cmd_end
 
 def main():
     parser = argparse.ArgumentParser()
@@ -45,8 +38,6 @@ def main():
 
     #subparser.add_argument("")
 
-
-
     # ==========================================================
     # transfer parameters from the praser
     # ==========================================================
@@ -57,13 +48,13 @@ def main():
         parser.print_help()
         sys.exit(1)        
 
-    log_sub_cmd_start(args.driver)
+    log_cmd_start("atomsciflow")
 
+    log_sub_cmd_start(args.driver)
 
     if args.driver == "version":
         from atomsciflow.cpp.utils import version
         print("the version is:", version())
-
 
     log_sub_cmd_end(args.driver)
 

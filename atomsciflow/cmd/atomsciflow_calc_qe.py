@@ -22,5 +22,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from atomsciflow.cpp.cmd import log_cmd_start
-from atomsciflow.cpp.cmd import log_sub_cmd_start, log_sub_cmd_end
+def add_qe_subparser(subparsers):
+    subparser = subparsers.add_parser("qe", 
+        help="The Quantum Espresso calculator")
+
+    subparser.add_argument("-d", "--directory", type=str, default="atomsciflow-calc-running-dir",
+        help="The working directory where calculation is happening")
+
+    ag = subparser.add_argument_group(title="Structure", description="Specification of structure files")
+
+    ag.add_argument("--xyz", type=str, default=None, required=True,
+        help="Specify the xyz structure file")
+
+def qe_processor(args):
+
+    from atomsciflow.cpp.qe import PwScf
+    job = PwScf()
+    job.get_xyz(args.xyz)
+    job.run("atomsciflow-running-dir")
+    
