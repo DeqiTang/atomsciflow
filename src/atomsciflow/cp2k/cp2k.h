@@ -45,7 +45,22 @@ public:
     Cp2k();
     ~Cp2k();
 
-    void new_section(const std::string& name);
+    void new_section(const std::string& path);
+    bool exists_section(const std::string& path);
+    
+    template <typename T>
+    void set_param(const std::string& path, T value);
+
+    void py_set_param(const std::string& path, int value);
+    void py_set_param(const std::string& path, double value);
+    void py_set_param(const std::string& path, std::string value);
+    void py_set_param(const std::string& path, std::vector<int> value);
+    void py_set_param(const std::string& path, std::vector<double> value);
+    void py_set_param(const std::string& path, std::vector<std::string> value);
+    void py_set_param(const std::string& path, std::vector<std::vector<int>> value);
+    void py_set_param(const std::string& path, std::vector<std::vector<double>> value);
+    void py_set_param(const std::string& path, std::vector<std::vector<std::string>> value);
+
     std::string to_string();
     void get_xyz(const std::string& xyzfile);
     Cp2kSection& set_subsys(Xyz& xyz);

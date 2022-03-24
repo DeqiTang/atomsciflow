@@ -37,7 +37,7 @@ SOFTWARE.
 #include "atomsciflow/variable/group.h"
 #include "atomsciflow/base/kpath.h"
 
-namespace atomsciflow {
+namespace atomsciflow::qe {
 
 class PwScfPseudo {
 public:
@@ -85,6 +85,6 @@ public:
     Kpath crystal_b;
 };
 
-} // namespace atomsciflow
+} // namespace atomsciflow::qe
 
 #endif // ATOMSCIFLOW_QE_MISC_H_

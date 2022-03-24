@@ -23,3 +23,4 @@ SOFTWARE.
 """
 
 from atomsciflow.vasp.vasp import Vasp
+from atomsciflow.vasp.vasp import Static, Opt

@@ -36,7 +36,7 @@ SOFTWARE.
 #include "atomsciflow/base/element.h"
 #include "atomsciflow/utils/structure.h"
 
-namespace atomsciflow {
+namespace atomsciflow::qe {
 
 namespace fs = boost::filesystem;
 
@@ -275,4 +275,4 @@ void PwScfMisc::basic_setting(bool ifstatic = true) {
     this->ifstatic = ifstatic;
 }
 
-} //namespace atomsciflow
+} //namespace atomsciflow::qe

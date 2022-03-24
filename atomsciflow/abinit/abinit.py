@@ -22,5 +22,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from atomsciflow.gamessus.gamessus import GamessUS
-from atomsciflow.gamessus.gamessus import Static, Opt
+from atomsciflow.cpp import abinit
+
+class Abinit(abinit.Abinit):
+    def __init__(self):
+        super().__init__()
+
+class Static(Abinit):
+    def __init__(self):
+        super().__init__()
+
+class Opt(Abinit):
+    def __init__(self):
+        super().__init__()

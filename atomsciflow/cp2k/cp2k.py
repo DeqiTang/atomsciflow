@@ -22,5 +22,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from atomsciflow.gamessus.gamessus import GamessUS
-from atomsciflow.gamessus.gamessus import Static, Opt
+from atomsciflow.cpp import cp2k
+from atomsciflow.cpp.server import JobScheduler
+
+class Cp2k(cp2k.Cp2k):
+    def __init__(self):
+        super().__init__()
+
+class Static(cp2k.Cp2kStatic):
+    def __init__(self):
+        super().__init__()
+
+class Opt(cp2k.Cp2kOpt):
+    def __init__(self):
+        super().__init__()
+        #self.sections["global"].set_param("run_type", "geo_opt")
+        self.set_param("global/run_type", "geo_opt")
+        self.set_param("global/project", "optimization")
+        #self.new_section("motion/geo_opt")
+        #self.new_section("motion")
+        #self.sections["motion"].add_section("geo_opt")
+        

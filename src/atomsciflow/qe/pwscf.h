@@ -47,6 +47,17 @@ public:
     std::string to_string();
     std::string to_string(std::string indent);
     void get_xyz(const std::string& xyzfile);
+
+    void set_param(const std::string& namelist, std::string key, int value);
+    void set_param(const std::string& namelist, std::string key, double value);
+    void set_param(const std::string& namelist, std::string key, std::string value);
+    void set_param(const std::string& namelist, std::string key, std::vector<int> value);
+    void set_param(const std::string& namelist, std::string key, std::vector<double> value);
+    void set_param(const std::string& namelist, std::string key, std::vector<std::string> value);
+    void set_param(const std::string& namelist, std::string key, std::vector<std::vector<int>> value);
+    void set_param(const std::string& namelist, std::string key, std::vector<std::vector<double>> value);
+    void set_param(const std::string& namelist, std::string key, std::vector<std::vector<std::string>> value);
+
     void set_kpoints(std::string kpoints_option, std::vector<int>& kpoints_mp, Kpath crystal_b);
     void basic_setting_ions(std::string calc);
     void basic_setting_electrons();

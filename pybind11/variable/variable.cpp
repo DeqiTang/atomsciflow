@@ -52,9 +52,7 @@ void add_class_variable(py::module& m) {
         .def("to_string", py::overload_cast<int>(&atomsciflow::Variable::to_string))
         .def("to_string", py::overload_cast<std::string, std::string>(&atomsciflow::Variable::to_string))
         .def("to_string", py::overload_cast<std::string, std::string, int>(&atomsciflow::Variable::to_string))
-
         ;
-    
 }
 
 

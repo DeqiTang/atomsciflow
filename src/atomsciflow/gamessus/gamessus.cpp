@@ -32,6 +32,8 @@ SOFTWARE.
 #include <fstream>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/format.hpp>
+#include <iomanip>
 
 #include "atomsciflow/gamessus/utils.h"
 #include "atomsciflow/base/element.h"
@@ -85,19 +87,28 @@ void GamessUS::get_xyz(const std::string& xyzfile) {
 
     auto element_map = get_element_number_map();
     this->set_param("data", "Cnv", 2);
-    std::string atm;
+    std::ostringstream atm;
     int i = 0;
+    //std::cout << "GamessUS::get_xyz -> natom -> " << this->xyz.atoms.size() << "\n";
     for (const auto& item : this->xyz.atoms) {
-        atm = "";
-        atm += boost::lexical_cast<std::string>(element_map[item.name].mass);
-        atm += " ";
-        atm += std::to_string(item.x);
-        atm += " ";
-        atm += std::to_string(item.y);
-        atm += " ";
-        atm += std::to_string(item.z);
-        this->set_param("data", item.name + std::to_string(i+1), atm);
-        i += 0;
+        atm.setf(std::ios::fixed);
+        atm << std::setprecision(6) << std::setw(9) 
+            << element_map[item.name].mass << " "
+            << item.x << " " << item.y << " " << item.z;
+    
+        // atm << boost::format("%1$3.7f %2% %3% %4%") 
+        //     % element_map[item.name].mass 
+        //     % item.x % item.y % item.z;
+        std::cout << "GamessUS::get_xyz -> " 
+            << (boost::format("%1%%2%") % item.name % (i + 1)).str()
+            << atm.str() << "\n";
+        this->set_param("data", 
+            (boost::format("%1%%2%") % item.name % (i + 1)).str(), 
+            atm.str()
+        );
+        atm.str("");
+        atm.clear();
+        i += 1;
     }
     this->set_job_steps_default();
 }

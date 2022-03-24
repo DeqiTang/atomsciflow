@@ -35,6 +35,7 @@ SOFTWARE.
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include "atomsciflow/server/submit_script.h"
 #include "atomsciflow/remote/server.h"
@@ -42,6 +43,7 @@ SOFTWARE.
 namespace atomsciflow {
 
 namespace fs = boost::filesystem;
+namespace ba = boost::algorithm;
 
 Cp2k::Cp2k() {
 
@@ -54,38 +56,36 @@ Cp2k::Cp2k() {
     this->sections["force_eval"].set_param("method", "quickstep");
 
     Cp2kSection dft{"dft"};
-    dft.set_param("basis_set_file_name", "basis_set");
-    dft.set_param("potential_file_name", "gth_poetntials");
+    dft.set_param("basis_set_file_name", "BASIS_SET");
+    dft.set_param("potential_file_name", "GTH_POTENTIALS");
 
-    auto& qs = dft.add_subsection("qs");
+    auto& qs = dft.add_section("qs");
     qs.set_param("eps_default", "1.0e-14");
 
-    auto& mgrid = dft.add_subsection("mgrid");
+    auto& mgrid = dft.add_section("mgrid");
     mgrid.set_param("ngrids", 4);
     mgrid.set_param("cutoff", 100);
     mgrid.set_param("rel_cutoff", 60);
 
-    auto& xc = dft.add_subsection("xc");
-    auto& xc_functional = xc.add_subsection("xc_functional");
+    auto& xc = dft.add_section("xc");
+    auto& xc_functional = xc.add_section("xc_functional");
     xc_functional.section_parameter = "pbe";
 
-
-    auto& scf = dft.add_subsection("scf");
+    auto& scf = dft.add_section("scf");
     scf.set_param("scf_guess", "atomic");
     scf.set_param("eps_scf", "1.0e-7");
     scf.set_param("max_scf", 100);
-    auto& diag = scf.add_subsection("diagonalization");
+    auto& diag = scf.add_section("diagonalization");
     diag.set_param("algorithm", "standard");
 
-    auto& mixing = dft.add_subsection("mixing");
+    auto& mixing = scf.add_section("mixing");
     mixing.set_param("method", "broyden_mixing");
     mixing.set_param("alpha", 0.4);
     mixing.set_param("nbroyden", 8);
 
-    auto& print = dft.add_subsection("print");
-    print.add_subsection("forces").section_parameter = "on";
+    auto& print = dft.add_section("print");
 
-    this->sections["force_eval"].add_subsection("dft", dft);
+    this->sections["force_eval"].add_section("dft", dft);
 
     job.set_run("cmd", "$CP2K_BIN");
     job.set_run("input", "cp2k.inp");
@@ -98,14 +98,241 @@ Cp2k::~Cp2k() {
 
 }
 
-void Cp2k::new_section(const std::string& name) {
-    this->sections[name] = Cp2kSection{name};
+/**
+ * @brief 
+ * 
+ * @param path The path to the section, like "force_eval/dft/scf"
+ */
+void Cp2k::new_section(const std::string& path) {
+    //this->sections[path] = Cp2kSection{path};
+    if (this->exists_section(path)) {
+        return;
+    }
+
+    std::vector<std::string> vec_str;
+    ba::split(vec_str, path, boost::is_any_of("/"));
+    int length =vec_str.size();
+
+    auto new_recursive = [&] (auto&& new_recursive, std::map<std::string, Cp2kSection>& sections, int i) {
+        std::cout << "new_recursive: vec_str[i] -> " << vec_str[i] << "\n";
+        if (sections.find(vec_str[i]) == sections.end()) {
+            sections[vec_str[i]] = Cp2kSection{vec_str[i]};
+            //sections.insert(std::make_pair(vec_str[i], Cp2kSection{vec_str[i]}));
+            std::cout << "Cp2k::new_section -> sections[vec_str[i]].name -> " << sections[vec_str[i]].name << "\n";
+        } else {
+            return;
+        }
+        if (i + 1 >= length) {
+            return;
+        }
+        new_recursive(new_recursive, sections[vec_str[i]].sections, i + 1);
+    };
+    new_recursive(new_recursive, this->sections, 0);
+
+    // auto& sec = this->sections;
+    // int i = 0;
+    // std::string mid_name = "";
+    // while (i < length) {
+    //     mid_name = vec_str[i];
+    //     if (sec.find(mid_name) == sec.end()) {
+    //         sec[mid_name] = Cp2kSection{mid_name};
+    //         std::cout << "Cp2k::new_section -> sec[?].name: " << sec[mid_name].name << "\n";
+    //     }
+    //     std::cout << "Cp2k::new_section -> sec.size(): " << sec.size() << "\n";
+    //     sec = sec[mid_name].sections;
+    //     i++;
+    // }
+    return;
+}
+
+bool Cp2k::exists_section(const std::string& path) {
+    bool exists = false;
+
+    std::vector<std::string> vec_str;
+    ba::split(vec_str, path, boost::is_any_of("/"));
+    
+    switch (vec_str.size()) {
+        case 0:
+            exists = false;
+            break;
+        case 1:
+            if (this->sections.find(vec_str[0]) != this->sections.end()) {
+                exists = true;
+            }
+            break;
+        case 2:
+            try {
+                auto& sec = this->sections[vec_str[0]].sections;
+                if (sec.find(vec_str[1]) != sec.end()) {
+                    exists = true;
+                }
+            } catch (const std::exception& e) {
+                exists = false;
+            }
+            break;
+        case 3:
+            try {
+                auto& sec = this->sections[vec_str[0]].sections[vec_str[1]].sections;
+                if (sec.find(vec_str[1]) != sec.end()) {
+                    exists = true;
+                }
+            } catch (const std::exception& e) {
+                exists = false;
+            }        
+            break;
+        case 4:
+            try {
+                auto& sec = this->sections[vec_str[0]].sections[vec_str[1]].sections[vec_str[2]].sections;
+                if (sec.find(vec_str[1]) != sec.end()) {
+                    exists = true;
+                }
+            } catch (const std::exception& e) {
+                exists = false;
+            }        
+            break;
+        case 5:
+            try {
+                auto& sec = this->sections[vec_str[0]].sections[vec_str[1]].sections[vec_str[2]].sections[vec_str[3]].sections;
+                if (sec.find(vec_str[1]) != sec.end()) {
+                    exists = true;
+                }
+            } catch (const std::exception& e) {
+                exists = false;
+            }        
+            break;
+        case 6:
+            try {
+                auto& sec = this->sections[vec_str[0]].sections[vec_str[1]].sections[vec_str[2]].sections[vec_str[3]].sections[vec_str[4]].sections;
+                if (sec.find(vec_str[1]) != sec.end()) {
+                    exists = true;
+                }
+            } catch (const std::exception& e) {
+                exists = false;
+            }        
+            break; 
+        case 7:
+            try {
+                auto& sec = this->sections[vec_str[0]].sections[vec_str[1]].sections[vec_str[2]].sections[vec_str[3]].sections[vec_str[4]].sections[vec_str[5]].sections;
+                if (sec.find(vec_str[1]) != sec.end()) {
+                    exists = true;
+                }
+            } catch (const std::exception& e) {
+                exists = false;
+            }        
+            break;  
+        case 8:
+            try {
+                auto& sec = this->sections[vec_str[0]].sections[vec_str[1]].sections[vec_str[2]].sections[vec_str[3]].sections[vec_str[4]].sections[vec_str[5]].sections[vec_str[6]].sections;
+                if (sec.find(vec_str[1]) != sec.end()) {
+                    exists = true;
+                }
+            } catch (const std::exception& e) {
+                exists = false;
+            }        
+            break;  
+        case 9:
+            try {
+                auto& sec = this->sections[vec_str[0]].sections[vec_str[1]].sections[vec_str[2]].sections[vec_str[3]].sections[vec_str[4]].sections[vec_str[5]].sections[vec_str[6]].sections[vec_str[7]].sections;
+                if (sec.find(vec_str[1]) != sec.end()) {
+                    exists = true;
+                }
+            } catch (const std::exception& e) {
+                exists = false;
+            }        
+            break;                                        
+        default:
+            break;
+    }
+
+    return exists;
+}
+
+template <typename T>
+void Cp2k::set_param(const std::string& path, T value) {
+    if (false == this->exists_section(path)) {
+        //this->new_section(path);
+    }
+
+    std::vector<std::string> vec_str;
+    ba::split(vec_str, path, boost::is_any_of("/"));
+
+    switch (vec_str.size()) {
+        case 0:
+            break;
+        case 1:
+            break;
+        case 2:
+            this->sections[vec_str[0]].set_param(vec_str[1], value);
+            break;
+        case 3:
+            this->sections[vec_str[0]].sections[vec_str[1]].set_param(vec_str[2], value);
+            break;
+        case 4:
+            this->sections[vec_str[0]].sections[vec_str[1]].sections[vec_str[2]].set_param(vec_str[3], value);
+            break;
+        case 5:
+            this->sections[vec_str[0]].sections[vec_str[1]].sections[vec_str[2]].sections[vec_str[3]].set_param(vec_str[4], value);
+            break;
+        case 6:
+            this->sections[vec_str[0]].sections[vec_str[1]].sections[vec_str[2]].sections[vec_str[3]].sections[vec_str[4]].set_param(vec_str[5], value);
+            break; 
+        case 7:
+            this->sections[vec_str[0]].sections[vec_str[1]].sections[vec_str[2]].sections[vec_str[3]].sections[vec_str[4]].sections[vec_str[5]].set_param(vec_str[6], value);
+            break;  
+        case 8:
+            this->sections[vec_str[0]].sections[vec_str[1]].sections[vec_str[2]].sections[vec_str[3]].sections[vec_str[4]].sections[vec_str[5]].sections[vec_str[6]].set_param(vec_str[7], value);
+            break;  
+        case 9:
+            this->sections[vec_str[0]].sections[vec_str[1]].sections[vec_str[2]].sections[vec_str[3]].sections[vec_str[4]].sections[vec_str[5]].sections[vec_str[6]].sections[vec_str[7]].set_param(vec_str[8], value);
+            break;                                           
+        default:
+            break;
+    }
+
+    return;
+}
+
+void Cp2k::py_set_param(const std::string& path, int value) {
+    this->set_param(path, value);
+}
+
+void Cp2k::py_set_param(const std::string& path, double value) {
+    this->set_param(path, value);
+}
+
+void Cp2k::py_set_param(const std::string& path, std::string value) {
+    this->set_param(path, value);
+}
+
+void Cp2k::py_set_param(const std::string& path, std::vector<int> value) {
+    this->set_param(path, value);
+}
+
+void Cp2k::py_set_param(const std::string& path, std::vector<double> value) {
+    this->set_param(path, value);
+}
+
+void Cp2k::py_set_param(const std::string& path, std::vector<std::string> value) {
+    this->set_param(path, value);
+}
+
+void Cp2k::py_set_param(const std::string& path, std::vector<std::vector<int>> value) {
+    this->set_param(path, value);
+}
+
+void Cp2k::py_set_param(const std::string& path, std::vector<std::vector<double>> value) {
+    this->set_param(path, value);
+}
+
+void Cp2k::py_set_param(const std::string& path, std::vector<std::vector<std::string>> value) {
+    this->set_param(path, value);
 }
 
 std::string Cp2k::to_string() {
     std::string out = "";
     for (const auto& item : this->sections) {
         out += this->sections[item.first].to_string("  ") + "\n";
+        std::cout << "Cp2k::to_string -> section -> " << this->sections[item.first].name << "\n";
         out += "\n";
     }
     return out;
@@ -124,13 +351,13 @@ Cp2kSection& Cp2k::set_subsys(Xyz& xyz) {
 }
 
 Cp2kSection& Cp2k::set_subsys() {
-    auto& subsys = this->sections["force_eval"].add_subsection("subsys"); 
-    auto& cell = subsys.add_subsection("cell");
+    auto& subsys = this->sections["force_eval"].add_section("subsys"); 
+    auto& cell = subsys.add_section("cell");
     cell.set_param("a", this->xyz.cell[0]);
     cell.set_param("b", this->xyz.cell[1]);
     cell.set_param("c", this->xyz.cell[2]);
     
-    auto& coord = subsys.add_subsection("coord");
+    auto& coord = subsys.add_section("coord");
     std::vector<std::vector<std::string>> matrix_str;
     for (const auto& atom : this->xyz.atoms) {
         matrix_str.push_back(std::vector<std::string>{
@@ -141,6 +368,18 @@ Cp2kSection& Cp2k::set_subsys() {
         });
     }
     coord.section_var.set("", matrix_str);
+    int i = 0;
+    for (const auto& element : this->xyz.elements_set) {
+        auto kind_name = (boost::format("kind[%1%]") % i).str();
+        this->sections["force_eval"].sections["subsys"].add_section(
+        kind_name);
+        //this->sections["force_eval"].sections["subsys"].sections[kind_name].set_param("basis_set", "DZVP-MOLOPT-SR-GTH");
+        //this->sections["force_eval"].sections["subsys"].sections[kind_name].set_param("potential", "GTH-PBE");
+        this->set_param((boost::format("force_eval/subsys/%1%/basis_set") % kind_name).str(), "DZVP-MOLOPT-SR-GTH");
+        this->set_param((boost::format("force_eval/subsys/%1%/potential") % kind_name).str(), "GTH-PBE");
+        this->sections["force_eval"].sections["subsys"].sections[kind_name].section_parameter = element;
+        i++;
+    }
     return subsys;
 }
 
@@ -166,5 +405,16 @@ void Cp2k::set_job_steps_default() {
 void Cp2k::run(const std::string& directory) {
     job.run(directory);
 }
+
+// template explicit instantiation
+template void Cp2k::set_param<int>(const std::string&, int);
+template void Cp2k::set_param<double>(const std::string&, double);
+template void Cp2k::set_param<std::string>(const std::string&, std::string);
+template void Cp2k::set_param<std::vector<int>>(const std::string&, std::vector<int>);
+template void Cp2k::set_param<std::vector<double>>(const std::string&, std::vector<double>);
+template void Cp2k::set_param<std::vector<std::string>>(const std::string&, std::vector<std::string>);
+template void Cp2k::set_param<std::vector<std::vector<int>>>(const std::string&, std::vector<std::vector<int>>);
+template void Cp2k::set_param<std::vector<std::vector<double>>>(const std::string&, std::vector<std::vector<double>>);
+template void Cp2k::set_param<std::vector<std::vector<std::string>>>(const std::string&, std::vector<std::vector<std::string>>);
 
 } // namespace atomsciflow

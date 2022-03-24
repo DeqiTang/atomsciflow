@@ -28,3 +28,13 @@ from atomsciflow.cpp.server import JobScheduler
 class GamessUS(gamessus.GamessUS):
     def __init__(self):
         super().__init__()
+
+class Static(gamessus.GamessUSStatic):
+    def __init__(self):
+        super().__init__()
+
+class Opt(gamessus.GamessUSOpt):
+    def __init__(self):
+        super().__init__()
+        self.set_param("statpt", "nwrods", 1)
+        self.set_param("guess", "guess", "huckel")

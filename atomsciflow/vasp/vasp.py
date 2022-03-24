@@ -28,4 +28,11 @@ from atomsciflow.cpp.server import JobScheduler
 class Vasp(vasp.Vasp):
     def __init__(self):
         super().__init__()
-        
+
+class Static(vasp.Static):
+    def __init__(self):
+        super().__init__()
+
+class Opt(Vasp):
+    def __init__(self):
+        super().__init__()

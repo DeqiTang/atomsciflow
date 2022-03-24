@@ -93,6 +93,42 @@ void PwScf::get_xyz(const std::string& xyzfile) {
     this->set_job_steps_default();
 }
 
+void PwScf::set_param(const std::string& namelist, std::string key, int value) {
+    this->namelists[namelist].set_param(key, value);
+}
+
+void PwScf::set_param(const std::string& namelist, std::string key, double value) {
+    this->namelists[namelist].set_param(key, value);
+}
+
+void PwScf::set_param(const std::string& namelist, std::string key, std::string value) {
+    this->namelists[namelist].set_param(key, value);
+}
+
+void PwScf::set_param(const std::string& namelist, std::string key, std::vector<int> value) {
+    this->namelists[namelist].set_param(key, value);
+}
+
+void PwScf::set_param(const std::string& namelist, std::string key, std::vector<double> value) {
+    this->namelists[namelist].set_param(key, value);
+}
+
+void PwScf::set_param(const std::string& namelist, std::string key, std::vector<std::string> value) {
+    this->namelists[namelist].set_param(key, value);
+}
+
+void PwScf::set_param(const std::string& namelist, std::string key, std::vector<std::vector<int>> value) {
+    this->namelists[namelist].set_param(key, value);
+}
+
+void PwScf::set_param(const std::string& namelist, std::string key, std::vector<std::vector<double>> value) {
+    this->namelists[namelist].set_param(key, value);
+}
+
+void PwScf::set_param(const std::string& namelist, std::string key, std::vector<std::vector<std::string>> value) {
+    this->namelists[namelist].set_param(key, value);
+}
+
 void PwScf::set_kpoints(std::string kpoints_option, std::vector<int>& kpoints_mp, Kpath crystal_b) {
     this->misc.set_kpoints(kpoints_option, kpoints_mp, crystal_b);
 }

@@ -45,8 +45,6 @@ public:
     int read_xyz_file(std::string filepath);
     int write_xyz_file(std::string filepath);
 
-    void set_species_number();
-
     std::vector<std::vector<double>> get_cell() {
         return this->cell;
     }

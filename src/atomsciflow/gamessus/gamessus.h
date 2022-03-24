@@ -64,6 +64,7 @@ public:
     virtual void run(const std::string& directory);
 
     std::map<std::string, VariableGroup*> groups;
+    //std::unordered_map<std::string, VariableGroup*> groups;
     Xyz xyz;
     JobScheduler job;
 };

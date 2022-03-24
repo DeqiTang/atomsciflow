@@ -111,18 +111,21 @@ file(GLOB CUBE_HANDLE_SOURCES
 )
 pybind11_add_module(cube_handle MODULE ${CUBE_HANDLE_SOURCES})
 
-file(GLOB BASE_SOURCES
+file(GLOB ATOMSCIFLOW_BASE_SOURCES
     "./base/*.cpp"
     "../src/atomsciflow/base/*.cpp"
 )
-pybind11_add_module(base MODULE ${BASE_SOURCES})
-#add_library(base MODULE ${BASE_SOURCES})
-#target_link_libraries(base PRIVATE pybind11::module)
-#set_target_properties(base PROPERTIES 
-#    PREFIX "${PYTHON_MODULE_PREFIX}"
-#    SUFFIX "${PYTHON_MODULE_EXTENSION}"
-#)
-#pybind11_add_module(base MODULE ${BASE_SOURCES})
+#pybind11_add_module(base MODULE ${ATOMSCIFLOW_BASE_SOURCES})
+add_library(base MODULE ${ATOMSCIFLOW_BASE_SOURCES})
+target_link_libraries(base
+    PRIVATE pybind11::module
+    ${Boost_LIBRARIES}
+)
+set_target_properties(base PROPERTIES 
+    PREFIX "${PYTHON_MODULE_PREFIX}"
+    SUFFIX "${PYTHON_MODULE_EXTENSION}"
+)
+#pybind11_add_module(base MODULE ${ATOMSCIFLOW_BASE_SOURCES})
 
 file(GLOB ATOMSCIFLOW_CP2K_SOURCES
     "./cp2k/*.cpp"

@@ -66,6 +66,6 @@ public:
     std::map<std::string, Variable> params;
 }; 
 
-} // namespace atomsciflow
+} // namespace atomsciflow::qe
 
 #endif // ATOMSCIFLOW_QE_NAMELIST_H_

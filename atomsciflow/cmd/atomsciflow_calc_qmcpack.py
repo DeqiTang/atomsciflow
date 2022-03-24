@@ -34,10 +34,27 @@ def add_qmcpack_subparser(subparsers):
     ag.add_argument("--xyz", type=str, default=None, required=True,
         help="Specify the xyz structure file")
 
-def qmcpack_processor(args):
+    subparser.add_argument("-c", "--calc", type=str, default="static",
+        choices=["static", "opt", "md"],
+        help="The calculation to do. The specified value is case insensitive")
 
-    from atomsciflow.cpp.qmcpack import Qmcpack
-    job = Qmcpack()
-    job.get_xyz(args.xyz)
-    job.run("atomsciflow-running-dir")
+    subparser.add_argument("-a", "--auto-level", type=int, default=0,
+        choices=[0, 1, 2, 3],
+        help="The automation level of the task")
+        
+def qmcpack_processor(args):
+    print("working directory: %s" % args.directory)
+    if args.calc.lower() == "static":
+        from atomsciflow.qmcpack import Static
+        job = Static()
+        job.get_xyz(args.xyz)
+        job.run(args.directory)
+    elif args.calc.lower() == "opt":
+        from atomsciflow.qmcpack import Opt
+        job = Opt()
+        job.get_xyz(args.xyz)
+        job.run(args.directory)
+    else:
+        print("The specified calculation type is unfound!")
+        sys.exit(1)
     

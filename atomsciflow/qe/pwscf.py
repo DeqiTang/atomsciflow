@@ -22,5 +22,32 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from atomsciflow.gamessus.gamessus import GamessUS
-from atomsciflow.gamessus.gamessus import Static, Opt
+from atomsciflow.cpp import qe
+from atomsciflow.cpp.qe import PwScfMisc
+from atomsciflow.cpp.base import Xyz
+from atomsciflow.cpp.server import JobScheduler
+
+class PwScf(qe.PwScf):
+    def __init__(self):
+        super().__init__()
+
+class Static(PwScf):
+    def __init__(self):
+        super().__init__()
+
+    def run(self, directory):
+        self.set_job_steps_default()
+        super().run(directory)
+        
+class Opt(PwScf):
+    def __init__(self):
+        super().__init__()
+        self.set_param("control", "calculation", "relax")
+        self.set_param("control", "title", "structure relaxation")
+        self.set_param("control", "nstep", 200)
+        self.set_param("control", "etot_conv_thr", 1.0e-6)
+        self.set_param("control", "forc_conv_thr", 1.0e-5)
+        
+    def run(self, directory):
+        self.set_job_steps_default()
+        super().run(directory)

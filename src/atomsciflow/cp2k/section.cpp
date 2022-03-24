@@ -29,24 +29,33 @@ SOFTWARE.
 
 #include "atomsciflow/cp2k/section.h"
 
+#include <boost/algorithm/string.hpp>
+
 namespace atomsciflow {
+
+namespace ba = boost::algorithm;
 
 std::string Cp2kSection::to_string() {
     if (this->status == false) {
         return "";
     }
+    // this->name may contain array in formation, so remove it.
+    std::vector<std::string> vec_str;
+    ba::split(vec_str, this->name, boost::is_any_of("["));
+    std::string name_inp = vec_str[0];
+    
     std::string out = "";
-    out += "&" + this->name + " " + this->section_parameter + "\n";
+    out += "&" + name_inp + " " + this->section_parameter + "\n";
     out += this->section_var.to_string() + "\n";
     for (const auto& item : this->params) {
         out += this->params[item.first].to_string() + "\n";
     }
-    for (const auto& item : this->subsections) {
+    for (const auto& item : this->sections) {
         out += "\n";
-        out += this->subsections[item.first].to_string();
+        out += this->sections[item.first].to_string();
         out += "\n";
     }
-    out += "&end " + this->name;
+    out += "&end " + name_inp;
     return out;
 }
 
@@ -54,83 +63,89 @@ std::string Cp2kSection::to_string(std::string indent) {
     if (false == this->status) {
         return "";
     }
+    // this->name may contain array in formation, so remove it.
+    std::vector<std::string> vec_str;
+    ba::split(vec_str, this->name, boost::is_any_of("["));
+    std::string name_inp = vec_str[0];
+
     std::string out = "";
-    out += indent + "&" + this->name + " " + this->section_parameter + "\n";
+    out += indent + "&" + name_inp + " " + this->section_parameter + "\n";
     out += this->section_var.to_string("same-line", indent + indent) + "\n";
 
     for (const auto& item : this->params) {
         out += indent + indent + this->params[item.first].to_string("same-line", "") + "\n";
     }
-    for (const auto& item : this->subsections) {
+    for (const auto& item : this->sections) {
         //out += "\n";
-        out += this->subsections[item.first].to_string(indent + indent);
+        out += this->sections[item.first].to_string(indent + indent);
         out += "\n";
     }
-    out += indent + "&end " + this->name;
+    out += indent + "&end " + name_inp;
     return out;
 }
 
-Cp2kSection& Cp2kSection::add_subsection(std::string key) {
-    this->subsections[key] = Cp2kSection{key};
-    return this->subsections[key];
+Cp2kSection& Cp2kSection::add_section(const std::string& name) {
+    this->sections[name] = Cp2kSection{name};
+    this->sections[name].name = name;
+    return this->sections[name];
 }
 
-Cp2kSection& Cp2kSection::add_subsection(std::string key, Cp2kSection section) {
-    this->subsections[key] = section;
-    this->subsections[key].name = key;
-    return this->subsections[key];
+Cp2kSection& Cp2kSection::add_section(const std::string& name, Cp2kSection section) {
+    this->sections[name] = section;
+    this->sections[name].name = name;
+    return this->sections[name];
 }
 
-void Cp2kSection::remove_subsection(std::string key) {
-    for (auto it = this->subsections.begin(); it != this->subsections.end(); ++it) {
-        if (it->first == key) {
-            this->subsections.erase(it);
+void Cp2kSection::remove_section(std::string name) {
+    for (auto it = this->sections.begin(); it != this->sections.end(); ++it) {
+        if (it->first == name) {
+            this->sections.erase(it);
         }
     }
 }
 
 void Cp2kSection::set_param(std::string key, int value) {
-    this->remove(key);
+    //this->remove(key);
     this->params[key] = Variable{key, value};
 }
 
 void Cp2kSection::set_param(std::string key, double value) {
-    this->remove(key);
+    //this->remove(key);
     this->params[key] = Variable{key, value};
 }
 
 void Cp2kSection::set_param(std::string key, std::string value) {
-    this->remove(key);
+    //this->remove(key);
     this->params[key] = Variable{key, value};
 }
 
 void Cp2kSection::set_param(std::string key, std::vector<int> value) {
-    this->remove(key);
+    //this->remove(key);
     this->params[key] = Variable{key, value};
 }
 
 void Cp2kSection::set_param(std::string key, std::vector<double> value) {
-    this->remove(key);
+    //this->remove(key);
     this->params[key] = Variable{key, value};
 }
 
 void Cp2kSection::set_param(std::string key, std::vector<std::string> value) {
-    this->remove(key);
+    //this->remove(key);
     this->params[key] = Variable{key, value};
 }
 
 void Cp2kSection::set_param(std::string key, std::vector<std::vector<int>> value) {
-    this->remove(key);
+    //this->remove(key);
     this->params[key] = Variable{key, value};
 }
 
 void Cp2kSection::set_param(std::string key, std::vector<std::vector<double>> value) {
-    this->remove(key);
+    //this->remove(key);
     this->params[key] = Variable{key, value};
 }
 
 void Cp2kSection::set_param(std::string key, std::vector<std::vector<std::string>> value) {
-    this->remove(key);
+    //this->remove(key);
     this->params[key] = Variable{key, value};
 }
 
@@ -149,7 +164,7 @@ void Cp2kSection::set_status(std::string key, bool status) {
     this->params[key].status = status;
 }
 
-void Cp2kSection::remove(std::string key) {
+void Cp2kSection::remove_param(std::string key) {
     for (auto it = this->params.begin(); it != this->params.end(); ++it) {
         if (it->first == key) {
             this->params.erase(it);

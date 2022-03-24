@@ -38,16 +38,34 @@ namespace atomsciflow {
 
 class Cp2kSection {
 public:
-    Cp2kSection() {};
-    explicit Cp2kSection(std::string name) { this->name = name; }
+
+    Cp2kSection() {
+    };
+    explicit Cp2kSection(const std::string& name) { 
+        this->name = name; 
+    }
     ~Cp2kSection() {};
+
+    // Cp2kSection(const Cp2kSection& section) {
+    //     *this = section;
+    // }
+
+    // Cp2kSection& operator=(const Cp2kSection& rhs) {
+    //     this->name = rhs.name;
+    //     this->section_parameter = rhs.section_parameter;
+    //     this->section_var = rhs.section_var;
+    //     this->status = rhs.status;
+    //     this->sections = rhs.sections;
+    //     this->params = rhs.params;  
+    //     return *this;      
+    // }
 
     std::string to_string();
     std::string to_string(std::string indent);
 
-    Cp2kSection& add_subsection(std::string);
-    Cp2kSection& add_subsection(std::string, Cp2kSection);
-    void remove_subsection(std::string);
+    Cp2kSection& add_section(const std::string& name);
+    Cp2kSection& add_section(const std::string& name, Cp2kSection);
+    void remove_section(std::string name);
 
     void set_param(std::string key, int value);
     void set_param(std::string key, double value);
@@ -61,7 +79,7 @@ public:
 
     bool contains(std::string key);
     void set_status(std::string key, bool status);
-    void remove(std::string key);
+    void remove_param(std::string key);
 
     void clear();
 
@@ -72,7 +90,7 @@ public:
     std::string section_parameter;
     Variable section_var;
     bool status = true;
-    std::map<std::string, Cp2kSection> subsections;
+    std::map<std::string, Cp2kSection> sections;
 
     private:
     std::map<std::string, Variable> params;
