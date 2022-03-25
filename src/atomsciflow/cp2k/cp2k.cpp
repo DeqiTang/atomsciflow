@@ -48,50 +48,56 @@ namespace ba = boost::algorithm;
 Cp2k::Cp2k() {
 
     this->new_section("global");
-    this->sections["global"].set_param("project", "cp2k_job");
-    this->sections["global"].set_param("print_level", "low");
-    this->sections["global"].set_param("run_type", "energy_force");
+    this->sections["global"]->set_param("project", "cp2k_job");
+    this->sections["global"]->set_param("print_level", "low");
+    this->sections["global"]->set_param("run_type", "energy_force");
 
     this->new_section("force_eval");
-    this->sections["force_eval"].set_param("method", "quickstep");
+    this->sections["force_eval"]->set_param("method", "quickstep");
 
-    Cp2kSection dft{"dft"};
-    dft.set_param("basis_set_file_name", "BASIS_SET");
-    dft.set_param("potential_file_name", "GTH_POTENTIALS");
+    //Cp2kSection dft{"dft"};
+    auto dft = std::make_shared<Cp2kSection>("dft");
+    dft->set_param("basis_set_file_name", "BASIS_SET");
+    dft->set_param("potential_file_name", "GTH_POTENTIALS");
 
-    auto& qs = dft.add_section("qs");
-    qs.set_param("eps_default", "1.0e-14");
+    std::cout << "Cp2k::Cp2k -> adding qs\n";
 
-    auto& mgrid = dft.add_section("mgrid");
-    mgrid.set_param("ngrids", 4);
-    mgrid.set_param("cutoff", 100);
-    mgrid.set_param("rel_cutoff", 60);
+    auto& qs = dft->add_section("qs");
+    qs->set_param("eps_default", "1.0e-14");
 
-    auto& xc = dft.add_section("xc");
-    auto& xc_functional = xc.add_section("xc_functional");
-    xc_functional.section_parameter = "pbe";
+    auto& mgrid = dft->add_section("mgrid");
+    mgrid->set_param("ngrids", 4);
+    mgrid->set_param("cutoff", 100);
+    mgrid->set_param("rel_cutoff", 60);
 
-    auto& scf = dft.add_section("scf");
-    scf.set_param("scf_guess", "atomic");
-    scf.set_param("eps_scf", "1.0e-7");
-    scf.set_param("max_scf", 100);
-    auto& diag = scf.add_section("diagonalization");
-    diag.set_param("algorithm", "standard");
+    auto& xc = dft->add_section("xc");
+    auto& xc_functional = xc->add_section("xc_functional");
+    xc_functional->section_parameter = "pbe";
 
-    auto& mixing = scf.add_section("mixing");
-    mixing.set_param("method", "broyden_mixing");
-    mixing.set_param("alpha", 0.4);
-    mixing.set_param("nbroyden", 8);
+    auto& scf = dft->add_section("scf");
+    scf->set_param("scf_guess", "atomic");
+    scf->set_param("eps_scf", "1.0e-7");
+    scf->set_param("max_scf", 100);
+    auto& diag = scf->add_section("diagonalization");
+    diag->set_param("algorithm", "standard");
 
-    auto& print = dft.add_section("print");
+    auto& mixing = scf->add_section("mixing");
+    mixing->set_param("method", "broyden_mixing");
+    mixing->set_param("alpha", 0.4);
+    mixing->set_param("nbroyden", 8);
 
-    this->sections["force_eval"].add_section("dft", dft);
+    auto& print = dft->add_section("print");
+
+    this->sections["force_eval"]->add_section("dft", dft);
 
     job.set_run("cmd", "$CP2K_BIN");
     job.set_run("input", "cp2k.inp");
     job.set_run("output", "cp2k.out");
 
     job.set_run("script_name_head", "cp2k-run");
+
+    std::cout << "Cp2k::Cp2k -> finished!\n";
+
 }
 
 Cp2k::~Cp2k() {
@@ -104,28 +110,33 @@ Cp2k::~Cp2k() {
  * @param path The path to the section, like "force_eval/dft/scf"
  */
 void Cp2k::new_section(const std::string& path) {
+    std::cout << "Cp2k::new_section -> starting\n";
+    std::cout << "Cp2k::new_section -> processing path: " << path << "\n";
     //this->sections[path] = Cp2kSection{path};
     if (this->exists_section(path)) {
         return;
     }
 
+    std::cout << "Cp2k::new_section -> splitting path: " << path << "\n";
+
     std::vector<std::string> vec_str;
     ba::split(vec_str, path, boost::is_any_of("/"));
     int length =vec_str.size();
 
-    auto new_recursive = [&] (auto&& new_recursive, std::map<std::string, Cp2kSection>& sections, int i) {
+    std::cout << "Cp2k::new_section -> new_recursive starting\n";
+    auto new_recursive = [&] (auto&& new_recursive, std::map<std::string, std::shared_ptr<Cp2kSection>>& sections, int i) {
         std::cout << "new_recursive: vec_str[i] -> " << vec_str[i] << "\n";
         if (sections.find(vec_str[i]) == sections.end()) {
-            sections[vec_str[i]] = Cp2kSection{vec_str[i]};
-            //sections.insert(std::make_pair(vec_str[i], Cp2kSection{vec_str[i]}));
-            std::cout << "Cp2k::new_section -> sections[vec_str[i]].name -> " << sections[vec_str[i]].name << "\n";
+            sections[vec_str[i]] = std::make_shared<Cp2kSection>(vec_str[i]);
+            std::cout << "Cp2k::new_section -> sections[vec_str[i]].name -> " << sections[vec_str[i]]->name << "\n";
         } else {
             return;
         }
         if (i + 1 >= length) {
             return;
         }
-        new_recursive(new_recursive, sections[vec_str[i]].sections, i + 1);
+        //std::cout << "Cp2k::new_section -> new_recursive entering recursion\n";
+        new_recursive(new_recursive, sections[vec_str[i]]->sections, i + 1);
     };
     new_recursive(new_recursive, this->sections, 0);
 
@@ -135,114 +146,138 @@ void Cp2k::new_section(const std::string& path) {
     // while (i < length) {
     //     mid_name = vec_str[i];
     //     if (sec.find(mid_name) == sec.end()) {
-    //         sec[mid_name] = Cp2kSection{mid_name};
-    //         std::cout << "Cp2k::new_section -> sec[?].name: " << sec[mid_name].name << "\n";
+    //         sec[mid_name] = std::make_shared<Cp2kSection>(mid_name);
+    //         std::cout << "Cp2k::new_section -> sec[?].name: " << sec[mid_name]->name << "\n";
     //     }
     //     std::cout << "Cp2k::new_section -> sec.size(): " << sec.size() << "\n";
-    //     sec = sec[mid_name].sections;
+    //     sec = sec[mid_name]->sections;
     //     i++;
     // }
     return;
 }
 
 bool Cp2k::exists_section(const std::string& path) {
-    bool exists = false;
+
+    bool exists = true;
 
     std::vector<std::string> vec_str;
     ba::split(vec_str, path, boost::is_any_of("/"));
-    
-    switch (vec_str.size()) {
-        case 0:
+    int length = vec_str.size();
+
+    int i = 0;
+    auto sec = this->sections;
+    while (i < length) {
+        if (0 == sec.count(vec_str[i])) {
             exists = false;
             break;
-        case 1:
-            if (this->sections.find(vec_str[0]) != this->sections.end()) {
-                exists = true;
-            }
-            break;
-        case 2:
-            try {
-                auto& sec = this->sections[vec_str[0]].sections;
-                if (sec.find(vec_str[1]) != sec.end()) {
-                    exists = true;
-                }
-            } catch (const std::exception& e) {
-                exists = false;
-            }
-            break;
-        case 3:
-            try {
-                auto& sec = this->sections[vec_str[0]].sections[vec_str[1]].sections;
-                if (sec.find(vec_str[1]) != sec.end()) {
-                    exists = true;
-                }
-            } catch (const std::exception& e) {
-                exists = false;
-            }        
-            break;
-        case 4:
-            try {
-                auto& sec = this->sections[vec_str[0]].sections[vec_str[1]].sections[vec_str[2]].sections;
-                if (sec.find(vec_str[1]) != sec.end()) {
-                    exists = true;
-                }
-            } catch (const std::exception& e) {
-                exists = false;
-            }        
-            break;
-        case 5:
-            try {
-                auto& sec = this->sections[vec_str[0]].sections[vec_str[1]].sections[vec_str[2]].sections[vec_str[3]].sections;
-                if (sec.find(vec_str[1]) != sec.end()) {
-                    exists = true;
-                }
-            } catch (const std::exception& e) {
-                exists = false;
-            }        
-            break;
-        case 6:
-            try {
-                auto& sec = this->sections[vec_str[0]].sections[vec_str[1]].sections[vec_str[2]].sections[vec_str[3]].sections[vec_str[4]].sections;
-                if (sec.find(vec_str[1]) != sec.end()) {
-                    exists = true;
-                }
-            } catch (const std::exception& e) {
-                exists = false;
-            }        
-            break; 
-        case 7:
-            try {
-                auto& sec = this->sections[vec_str[0]].sections[vec_str[1]].sections[vec_str[2]].sections[vec_str[3]].sections[vec_str[4]].sections[vec_str[5]].sections;
-                if (sec.find(vec_str[1]) != sec.end()) {
-                    exists = true;
-                }
-            } catch (const std::exception& e) {
-                exists = false;
-            }        
-            break;  
-        case 8:
-            try {
-                auto& sec = this->sections[vec_str[0]].sections[vec_str[1]].sections[vec_str[2]].sections[vec_str[3]].sections[vec_str[4]].sections[vec_str[5]].sections[vec_str[6]].sections;
-                if (sec.find(vec_str[1]) != sec.end()) {
-                    exists = true;
-                }
-            } catch (const std::exception& e) {
-                exists = false;
-            }        
-            break;  
-        case 9:
-            try {
-                auto& sec = this->sections[vec_str[0]].sections[vec_str[1]].sections[vec_str[2]].sections[vec_str[3]].sections[vec_str[4]].sections[vec_str[5]].sections[vec_str[6]].sections[vec_str[7]].sections;
-                if (sec.find(vec_str[1]) != sec.end()) {
-                    exists = true;
-                }
-            } catch (const std::exception& e) {
-                exists = false;
-            }        
-            break;                                        
-        default:
-            break;
+        }
+        sec = sec[vec_str[i]]->sections;
+        i++;
     }
+
+    std::cout << path << " exists ? -> " << exists << "\n";
+
+    // switch (vec_str.size()) {
+    //     case 0:
+    //         exists = false;
+    //         break;
+    //     case 1:
+    //         if (this->sections.find(vec_str[0]) != this->sections.end()) {
+    //             exists = true;
+    //         }
+    //         break;
+    //     case 2:
+    //         std::cout << "Cp2k::exists_section -> case 2 start\n";
+    //         try {
+    //             std::cout << "Cp2k::exists_section -> case 2 start try 1\n";
+    //             std::cout << "Cp2k::exists_section -> case 2 vec_str[0]: " << vec_str[0] << "\n";
+    //             std::cout << "Cp2k::exists_section -> case 2 this->sections.count(motion): " << this->sections.count(vec_str[0]) << "\n";                
+    //             auto& sec = this->sections[vec_str[0]]->sections;
+    //             std::cout << "Cp2k::exists_section -> sec[motion]->name: " << sec["motion"]->name << "\n";
+    //             std::cout << "Cp2k::exists_section -> case 2 start try 2\n";
+    //             if (sec.find(vec_str[1]) != sec.end()) {
+    //                 std::cout << "Cp2k::exists_section -> case 2 if found\n";
+    //                 exists = true;
+    //             }
+    //             std::cout << "Cp2k::exists_section -> case 2 end try\n";
+    //         } catch (const std::exception& e) {
+    //             std::cout << "Cp2k::exists_section -> case 2 caught exception\n";
+    //             exists = false;
+    //         }
+    //         break;
+    //     case 3:
+    //         try {
+    //             auto& sec = this->sections[vec_str[0]]->sections[vec_str[1]]->sections;
+    //             if (sec.find(vec_str[1]) != sec.end()) {
+    //                 exists = true;
+    //             }
+    //         } catch (const std::exception& e) {
+    //             exists = false;
+    //         }        
+    //         break;
+    //     case 4:
+    //         try {
+    //             auto& sec = this->sections[vec_str[0]]->sections[vec_str[1]]->sections[vec_str[2]]->sections;
+    //             if (sec.find(vec_str[1]) != sec.end()) {
+    //                 exists = true;
+    //             }
+    //         } catch (const std::exception& e) {
+    //             exists = false;
+    //         }        
+    //         break;
+    //     case 5:
+    //         try {
+    //             auto& sec = this->sections[vec_str[0]]->sections[vec_str[1]]->sections[vec_str[2]]->sections[vec_str[3]]->sections;
+    //             if (sec.find(vec_str[1]) != sec.end()) {
+    //                 exists = true;
+    //             }
+    //         } catch (const std::exception& e) {
+    //             exists = false;
+    //         }        
+    //         break;
+    //     case 6:
+    //         try {
+    //             auto& sec = this->sections[vec_str[0]]->sections[vec_str[1]]->sections[vec_str[2]]->sections[vec_str[3]]->sections[vec_str[4]]->sections;
+    //             if (sec.find(vec_str[1]) != sec.end()) {
+    //                 exists = true;
+    //             }
+    //         } catch (const std::exception& e) {
+    //             exists = false;
+    //         }        
+    //         break; 
+    //     case 7:
+    //         try {
+    //             auto& sec = this->sections[vec_str[0]]->sections[vec_str[1]]->sections[vec_str[2]]->sections[vec_str[3]]->sections[vec_str[4]]->sections[vec_str[5]]->sections;
+    //             if (sec.find(vec_str[1]) != sec.end()) {
+    //                 exists = true;
+    //             }
+    //         } catch (const std::exception& e) {
+    //             exists = false;
+    //         }        
+    //         break;  
+    //     case 8:
+    //         try {
+    //             auto& sec = this->sections[vec_str[0]]->sections[vec_str[1]]->sections[vec_str[2]]->sections[vec_str[3]]->sections[vec_str[4]]->sections[vec_str[5]]->sections[vec_str[6]]->sections;
+    //             if (sec.find(vec_str[1]) != sec.end()) {
+    //                 exists = true;
+    //             }
+    //         } catch (const std::exception& e) {
+    //             exists = false;
+    //         }        
+    //         break;  
+    //     case 9:
+    //         try {
+    //             auto& sec = this->sections[vec_str[0]]->sections[vec_str[1]]->sections[vec_str[2]]->sections[vec_str[3]]->sections[vec_str[4]]->sections[vec_str[5]]->sections[vec_str[6]]->sections[vec_str[7]]->sections;
+    //             if (sec.find(vec_str[1]) != sec.end()) {
+    //                 exists = true;
+    //             }
+    //         } catch (const std::exception& e) {
+    //             exists = false;
+    //         }        
+    //         break;                                        
+    //     default:
+    //         break;
+    // }
 
     return exists;
 }
@@ -262,28 +297,28 @@ void Cp2k::set_param(const std::string& path, T value) {
         case 1:
             break;
         case 2:
-            this->sections[vec_str[0]].set_param(vec_str[1], value);
+            this->sections[vec_str[0]]->set_param(vec_str[1], value);
             break;
         case 3:
-            this->sections[vec_str[0]].sections[vec_str[1]].set_param(vec_str[2], value);
+            this->sections[vec_str[0]]->sections[vec_str[1]]->set_param(vec_str[2], value);
             break;
         case 4:
-            this->sections[vec_str[0]].sections[vec_str[1]].sections[vec_str[2]].set_param(vec_str[3], value);
+            this->sections[vec_str[0]]->sections[vec_str[1]]->sections[vec_str[2]]->set_param(vec_str[3], value);
             break;
         case 5:
-            this->sections[vec_str[0]].sections[vec_str[1]].sections[vec_str[2]].sections[vec_str[3]].set_param(vec_str[4], value);
+            this->sections[vec_str[0]]->sections[vec_str[1]]->sections[vec_str[2]]->sections[vec_str[3]]->set_param(vec_str[4], value);
             break;
         case 6:
-            this->sections[vec_str[0]].sections[vec_str[1]].sections[vec_str[2]].sections[vec_str[3]].sections[vec_str[4]].set_param(vec_str[5], value);
+            this->sections[vec_str[0]]->sections[vec_str[1]]->sections[vec_str[2]]->sections[vec_str[3]]->sections[vec_str[4]]->set_param(vec_str[5], value);
             break; 
         case 7:
-            this->sections[vec_str[0]].sections[vec_str[1]].sections[vec_str[2]].sections[vec_str[3]].sections[vec_str[4]].sections[vec_str[5]].set_param(vec_str[6], value);
+            this->sections[vec_str[0]]->sections[vec_str[1]]->sections[vec_str[2]]->sections[vec_str[3]]->sections[vec_str[4]]->sections[vec_str[5]]->set_param(vec_str[6], value);
             break;  
         case 8:
-            this->sections[vec_str[0]].sections[vec_str[1]].sections[vec_str[2]].sections[vec_str[3]].sections[vec_str[4]].sections[vec_str[5]].sections[vec_str[6]].set_param(vec_str[7], value);
+            this->sections[vec_str[0]]->sections[vec_str[1]]->sections[vec_str[2]]->sections[vec_str[3]]->sections[vec_str[4]]->sections[vec_str[5]]->sections[vec_str[6]]->set_param(vec_str[7], value);
             break;  
         case 9:
-            this->sections[vec_str[0]].sections[vec_str[1]].sections[vec_str[2]].sections[vec_str[3]].sections[vec_str[4]].sections[vec_str[5]].sections[vec_str[6]].sections[vec_str[7]].set_param(vec_str[8], value);
+            this->sections[vec_str[0]]->sections[vec_str[1]]->sections[vec_str[2]]->sections[vec_str[3]]->sections[vec_str[4]]->sections[vec_str[5]]->sections[vec_str[6]]->sections[vec_str[7]]->set_param(vec_str[8], value);
             break;                                           
         default:
             break;
@@ -331,8 +366,8 @@ void Cp2k::py_set_param(const std::string& path, std::vector<std::vector<std::st
 std::string Cp2k::to_string() {
     std::string out = "";
     for (const auto& item : this->sections) {
-        out += this->sections[item.first].to_string("  ") + "\n";
-        std::cout << "Cp2k::to_string -> section -> " << this->sections[item.first].name << "\n";
+        out += this->sections[item.first]->to_string("  ") + "\n";
+        std::cout << "Cp2k::to_string -> section -> " << this->sections[item.first]->name << "\n";
         out += "\n";
     }
     return out;
@@ -345,19 +380,19 @@ void Cp2k::get_xyz(const std::string &xyzfile) {
     this->set_job_steps_default();
 }
 
-Cp2kSection& Cp2k::set_subsys(Xyz& xyz) {
+std::shared_ptr<Cp2kSection>& Cp2k::set_subsys(Xyz& xyz) {
     this->xyz = xyz;
     return this->set_subsys();
 }
 
-Cp2kSection& Cp2k::set_subsys() {
-    auto& subsys = this->sections["force_eval"].add_section("subsys"); 
-    auto& cell = subsys.add_section("cell");
-    cell.set_param("a", this->xyz.cell[0]);
-    cell.set_param("b", this->xyz.cell[1]);
-    cell.set_param("c", this->xyz.cell[2]);
+std::shared_ptr<Cp2kSection>& Cp2k::set_subsys() {
+    auto& subsys = this->sections["force_eval"]->add_section("subsys"); 
+    auto& cell = subsys->add_section("cell");
+    cell->set_param("a", this->xyz.cell[0]);
+    cell->set_param("b", this->xyz.cell[1]);
+    cell->set_param("c", this->xyz.cell[2]);
     
-    auto& coord = subsys.add_section("coord");
+    auto& coord = subsys->add_section("coord");
     std::vector<std::vector<std::string>> matrix_str;
     for (const auto& atom : this->xyz.atoms) {
         matrix_str.push_back(std::vector<std::string>{
@@ -367,17 +402,17 @@ Cp2kSection& Cp2k::set_subsys() {
             std::to_string(atom.z),
         });
     }
-    coord.section_var.set("", matrix_str);
+    coord->section_var.set("", matrix_str);
     int i = 0;
     for (const auto& element : this->xyz.elements_set) {
         auto kind_name = (boost::format("kind[%1%]") % i).str();
-        this->sections["force_eval"].sections["subsys"].add_section(
+        this->sections["force_eval"]->sections["subsys"]->add_section(
         kind_name);
         //this->sections["force_eval"].sections["subsys"].sections[kind_name].set_param("basis_set", "DZVP-MOLOPT-SR-GTH");
         //this->sections["force_eval"].sections["subsys"].sections[kind_name].set_param("potential", "GTH-PBE");
         this->set_param((boost::format("force_eval/subsys/%1%/basis_set") % kind_name).str(), "DZVP-MOLOPT-SR-GTH");
         this->set_param((boost::format("force_eval/subsys/%1%/potential") % kind_name).str(), "GTH-PBE");
-        this->sections["force_eval"].sections["subsys"].sections[kind_name].section_parameter = element;
+        this->sections["force_eval"]->sections["subsys"]->sections[kind_name]->section_parameter = element;
         i++;
     }
     return subsys;

@@ -30,6 +30,7 @@ SOFTWARE.
 #ifndef ATOMSCIFLOW_CP2K_SECTION_H_
 #define ATOMSCIFLOW_CP2K_SECTION_H_
 
+#include <memory>
 #include <map>
 
 #include "atomsciflow/variable/variable.h"
@@ -63,8 +64,8 @@ public:
     std::string to_string();
     std::string to_string(std::string indent);
 
-    Cp2kSection& add_section(const std::string& name);
-    Cp2kSection& add_section(const std::string& name, Cp2kSection);
+    std::shared_ptr<Cp2kSection>& add_section(const std::string& name);
+    std::shared_ptr<Cp2kSection>& add_section(const std::string& name, const std::shared_ptr<Cp2kSection>&);
     void remove_section(std::string name);
 
     void set_param(std::string key, int value);
@@ -90,7 +91,7 @@ public:
     std::string section_parameter;
     Variable section_var;
     bool status = true;
-    std::map<std::string, Cp2kSection> sections;
+    std::map<std::string, std::shared_ptr<Cp2kSection>> sections;
 
     private:
     std::map<std::string, Variable> params;

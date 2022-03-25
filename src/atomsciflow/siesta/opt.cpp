@@ -22,27 +22,28 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ************************************************************************/
 
-///  @file src/atomsciflow/cp2k/static.h
-///  @author Deqi Tang
-///  Mail: deqi_tang@163.com 
-///  Created Time: Tue 02 Feb 2021 04:29:35 PM CST
+/// @file src/atomsciflow/siesta/opt.cpp
+/// @author DeqiTang
+/// Mail: deqitang@gmail.com 
+/// Created Time: Fri 25 Mar 2022 12:12:06 PM CST
 
-#ifndef ATOMSCIFLOW_CP2K_STATIC_H_
-#define ATOMSCIFLOW_CP2K_STATIC_H_
+#include "atomsciflow/siesta/opt.h"
 
 namespace atomsciflow {
 
-class Cp2kStatic: public Cp2k {
-   
-public:
+SiestaOpt::SiestaOpt() {
+    new_group("ions");
+    set_param("ions", "MD.TypeOfRun", "CG");
+    set_param("ions", "MD.VariableCell", "false");
+    set_param("ions", "MD.ConstantVolume", "true");
+    set_param("ions", "MD.MaxForceTol", "0.001 eV/Ang");
+    set_param("ions", "MD.MaxStressTol", "0.01 GPa");
+    set_param("ions", "MD.Steps", 60);
+    set_param("ions", "MD.MaxDispl", "0.2 Bohr");
+    set_param("ions", "MD.PreconditionVariableCell", "5 Ang");
 
-    Cp2kStatic() {};
-    ~Cp2kStatic() {};
-    
-private:
-
-};
+    job.set_run("cmd", "$SIESTA_BIN");
+    job.set_run("script_name_head", "siesta-run");
+}
 
 } // namespace atomsciflow
-
-#endif // ATOMSCIFLOW_CP2K_STATIC_H_

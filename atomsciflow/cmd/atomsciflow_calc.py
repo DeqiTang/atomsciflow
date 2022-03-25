@@ -34,6 +34,8 @@ from atomsciflow.cmd.atomsciflow_calc_abinit import add_abinit_subparser, abinit
 from atomsciflow.cmd.atomsciflow_calc_elk import add_elk_subparser, elk_processor
 from atomsciflow.cmd.atomsciflow_calc_qe import add_qe_subparser, qe_processor
 from atomsciflow.cmd.atomsciflow_calc_qmcpack import add_qmcpack_subparser, qmcpack_processor
+from atomsciflow.cmd.atomsciflow_calc_siesta import add_siesta_subparser, siesta_processor
+from atomsciflow.cmd.atomsciflow_calc_dalton import add_dalton_subparser, dalton_processor
 
 def main():
     parser = argparse.ArgumentParser()
@@ -46,6 +48,8 @@ def main():
     add_elk_subparser(subparsers)
     add_qe_subparser(subparsers)
     add_qmcpack_subparser(subparsers)
+    add_siesta_subparser(subparsers)
+    add_dalton_subparser(subparsers)
     #
     args = parser.parse_args()
 
@@ -82,7 +86,15 @@ def main():
     if args.subcommand == "qmcpack":
         log_sub_cmd_start(args.subcommand)
         qmcpack_processor(args)
-        log_sub_cmd_end(args.subcommand)                        
+        log_sub_cmd_end(args.subcommand)   
+    if args.subcommand == "siesta":
+        log_sub_cmd_start(args.subcommand)
+        siesta_processor(args)
+        log_sub_cmd_end(args.subcommand)   
+    if args.subcommand == "dalton":
+        log_sub_cmd_start(args.subcommand)
+        dalton_processor(args)
+        log_sub_cmd_end(args.subcommand)                                        
 
 if __name__ == "__main__":
     main()

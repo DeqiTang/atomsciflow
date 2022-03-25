@@ -22,27 +22,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ************************************************************************/
 
-///  @file src/atomsciflow/cp2k/static.h
-///  @author Deqi Tang
-///  Mail: deqi_tang@163.com 
-///  Created Time: Tue 02 Feb 2021 04:29:35 PM CST
+/// @file src/atomsciflow/siesta/utils.h
+/// @author DeqiTang
+/// Mail: deqitang@gmail.com 
+/// Created Time: Fri 25 Mar 2022 12:04:12 PM CST
 
-#ifndef ATOMSCIFLOW_CP2K_STATIC_H_
-#define ATOMSCIFLOW_CP2K_STATIC_H_
+#ifndef ATOMSCIFLOW_SIEATA_UTILS_H_
+#define ATOMSCIFLOW_SIEATA_UTILS_H_
+
+#include <string>
 
 namespace atomsciflow {
 
-class Cp2kStatic: public Cp2k {
-   
-public:
-
-    Cp2kStatic() {};
-    ~Cp2kStatic() {};
-    
-private:
-
-};
+std::string siesta_group_title(const std::string& title);
 
 } // namespace atomsciflow
 
-#endif // ATOMSCIFLOW_CP2K_STATIC_H_
+#endif // ATOMSCIFLOW_SIEATA_UTILS_H_

@@ -18,7 +18,7 @@ void add_class_cp2ksection(py::module& m) {
             return _this.to_string();
         })
         .def("add_section", py::overload_cast<const std::string&>(&atomsciflow::Cp2kSection::add_section))
-        .def("add_section", py::overload_cast<const std::string&, atomsciflow::Cp2kSection>(&atomsciflow::Cp2kSection::add_section))
+        .def("add_section", py::overload_cast<const std::string&, const std::shared_ptr<atomsciflow::Cp2kSection>&>(&atomsciflow::Cp2kSection::add_section))
         .def("remove_section", &atomsciflow::Cp2kSection::remove_section)
         .def("set_param", py::overload_cast<std::string, int>(&atomsciflow::Cp2kSection::set_param))
         .def("set_param", py::overload_cast<std::string, double>(&atomsciflow::Cp2kSection::set_param))
@@ -56,7 +56,8 @@ void add_class_cp2k(py::module& m) {
         // atomsciflow::Cp2k::set_subsys is a overloaded function
         // and atomsciflow::Cp2k::set_subsys() is private
         // we don't expose it to python. so only provide the following
-        .def("set_subsys", py::overload_cast<atomsciflow::Xyz&>(&atomsciflow::Cp2k::set_subsys), py::return_value_policy::reference)
+        //.def("set_subsys", py::overload_cast<atomsciflow::Xyz&>(&atomsciflow::Cp2k::set_subsys), py::return_value_policy::reference)
+        .def("set_subsys", py::overload_cast<atomsciflow::Xyz&>(&atomsciflow::Cp2k::set_subsys))
         .def("get_xyz", &atomsciflow::Cp2k::get_xyz)
         .def("run", &atomsciflow::Cp2k::run)
         .def_readwrite("sections", &atomsciflow::Cp2k::sections)
@@ -69,7 +70,7 @@ void add_class_cp2kstatic(py::module& m) {
     py::class_<atomsciflow::Cp2kStatic>(m, "Cp2kStatic")
         .def(py::init<>())
         .def("new_section", &atomsciflow::Cp2kStatic::new_section)  
-        .def("exists_section", &atomsciflow::Cp2k::exists_section)       
+        .def("exists_section", &atomsciflow::Cp2kStatic::exists_section)       
         .def("to_string", &atomsciflow::Cp2kStatic::to_string)
         .def("set_param", py::overload_cast<const std::string&, int>(&atomsciflow::Cp2k::py_set_param))
         .def("set_param", py::overload_cast<const std::string&, double>(&atomsciflow::Cp2k::py_set_param))
@@ -83,7 +84,8 @@ void add_class_cp2kstatic(py::module& m) {
         // atomsciflow::Cp2k::set_subsys is a overloaded function
         // and atomsciflow::Cp2k::set_subsys() is private
         // we don't expose it to python. so only provide the following
-        .def("set_subsys", py::overload_cast<atomsciflow::Xyz&>(&atomsciflow::Cp2kStatic::set_subsys), py::return_value_policy::reference)
+        //.def("set_subsys", py::overload_cast<atomsciflow::Xyz&>(&atomsciflow::Cp2kStatic::set_subsys), py::return_value_policy::reference)
+        .def("set_subsys", py::overload_cast<atomsciflow::Xyz&>(&atomsciflow::Cp2kStatic::set_subsys))
         .def("get_xyz", &atomsciflow::Cp2kStatic::get_xyz)
         .def("run", &atomsciflow::Cp2kStatic::run)
         .def_readwrite("sections", &atomsciflow::Cp2kStatic::sections)
@@ -96,7 +98,7 @@ void add_class_cp2kopt(py::module& m) {
     py::class_<atomsciflow::Cp2kOpt>(m, "Cp2kOpt")
         .def(py::init<>())
         .def("new_section", &atomsciflow::Cp2kOpt::new_section)
-        .def("exists_section", &atomsciflow::Cp2k::exists_section)
+        .def("exists_section", &atomsciflow::Cp2kOpt::exists_section)
         .def("to_string", &atomsciflow::Cp2kOpt::to_string)
         .def("set_param", py::overload_cast<const std::string&, int>(&atomsciflow::Cp2k::py_set_param))
         .def("set_param", py::overload_cast<const std::string&, double>(&atomsciflow::Cp2k::py_set_param))
@@ -110,7 +112,8 @@ void add_class_cp2kopt(py::module& m) {
         // atomsciflow::Cp2k::set_subsys is a overloaded function
         // and atomsciflow::Cp2k::set_subsys() is private
         // we don't expose it to python. so only provide the following
-        .def("set_subsys", py::overload_cast<atomsciflow::Xyz&>(&atomsciflow::Cp2kOpt::set_subsys), py::return_value_policy::reference)
+        //.def("set_subsys", py::overload_cast<atomsciflow::Xyz&>(&atomsciflow::Cp2kOpt::set_subsys), py::return_value_policy::reference)
+        .def("set_subsys", py::overload_cast<atomsciflow::Xyz&>(&atomsciflow::Cp2kOpt::set_subsys))
         .def("get_xyz", &atomsciflow::Cp2kOpt::get_xyz)
         .def("run", &atomsciflow::Cp2kOpt::run)
         .def_readwrite("sections", &atomsciflow::Cp2kOpt::sections)
@@ -119,7 +122,7 @@ void add_class_cp2kopt(py::module& m) {
 }
 
 PYBIND11_MODULE(cp2k, m) {
-    m.doc() = "cpptest module";
+    m.doc() = "cp2k module";
     m.attr("__version__") = "0.0.0";
 
     add_class_cp2ksection(m);
@@ -127,4 +130,3 @@ PYBIND11_MODULE(cp2k, m) {
     add_class_cp2kstatic(m);
     add_class_cp2kopt(m);
 }
-

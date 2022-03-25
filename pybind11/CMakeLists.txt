@@ -328,7 +328,7 @@ file(GLOB ATOMSCIFLOW_QMCPACK_SOURCES
     "../src/atomsciflow/config/*.cpp"
     "../src/atomsciflow/utils/*.cpp"
 )
-#add_library(elk MODULE ${ATOMSCIFLOW_QMCPACK_SOURCES})
+#add_library(qmcpack MODULE ${ATOMSCIFLOW_QMCPACK_SOURCES})
 add_library(qmcpack MODULE ${ATOMSCIFLOW_QMCPACK_SOURCES})
 target_link_libraries(qmcpack
     PRIVATE pybind11::module
@@ -342,7 +342,59 @@ set_target_properties(qmcpack PROPERTIES
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
 )
-#pybind11_add_module(elk MODULE ${ATOMSCIFLOW_QMCPACK_SOURCES})
+#pybind11_add_module(qmcpack MODULE ${ATOMSCIFLOW_QMCPACK_SOURCES})
+
+file(GLOB ATOMSCIFLOW_DALTON_SOURCES
+    "./dalton/dalton.cpp"
+    "../src/atomsciflow/dalton/*.cpp"
+    "../src/atomsciflow/base/*.cpp"
+    "../src/atomsciflow/variable/*.cpp"
+    "../src/atomsciflow/server/*.cpp"
+    "../src/atomsciflow/remote/*.cpp"
+    "../src/atomsciflow/config/*.cpp"
+    "../src/atomsciflow/utils/*.cpp"
+)
+#add_library(dalton MODULE ${ATOMSCIFLOW_DALTON_SOURCES})
+add_library(dalton MODULE ${ATOMSCIFLOW_DALTON_SOURCES})
+target_link_libraries(dalton
+    PRIVATE pybind11::module
+    ${Boost_LIBRARIES}
+    ${YAML_CPP_LIBRARIES}
+    OpenSSL::SSL
+    OpenSSL::Crypto
+    ${LIBSSH2_FOUND_LIBS}
+)
+set_target_properties(dalton PROPERTIES 
+    PREFIX "${PYTHON_MODULE_PREFIX}"
+    SUFFIX "${PYTHON_MODULE_EXTENSION}"
+)
+#pybind11_add_module(dalton MODULE ${ATOMSCIFLOW_DALTON_SOURCES})
+
+file(GLOB ATOMSCIFLOW_SIESTA_SOURCES
+    "./siesta/siesta.cpp"
+    "../src/atomsciflow/siesta/*.cpp"
+    "../src/atomsciflow/base/*.cpp"
+    "../src/atomsciflow/variable/*.cpp"
+    "../src/atomsciflow/server/*.cpp"
+    "../src/atomsciflow/remote/*.cpp"
+    "../src/atomsciflow/config/*.cpp"
+    "../src/atomsciflow/utils/*.cpp"
+)
+#add_library(siesta MODULE ${ATOMSCIFLOW_SIESTA_SOURCES})
+add_library(siesta MODULE ${ATOMSCIFLOW_SIESTA_SOURCES})
+target_link_libraries(siesta
+    PRIVATE pybind11::module
+    ${Boost_LIBRARIES}
+    ${YAML_CPP_LIBRARIES}
+    OpenSSL::SSL
+    OpenSSL::Crypto
+    ${LIBSSH2_FOUND_LIBS}
+)
+set_target_properties(siesta PROPERTIES 
+    PREFIX "${PYTHON_MODULE_PREFIX}"
+    SUFFIX "${PYTHON_MODULE_EXTENSION}"
+)
+#pybind11_add_module(siesta MODULE ${ATOMSCIFLOW_SIESTA_SOURCES})
 
 file(GLOB ATOMSCIFLOW_SERVER_SOURCES
     "./server/*.cpp"
@@ -382,6 +434,8 @@ if(SKBUILD)
     install(TARGETS gamessus DESTINATION .)
     install(TARGETS elk DESTINATION .)
     install(TARGETS qmcpack DESTINATION .)
+    install(TARGETS dalton DESTINATION .)
+    install(TARGETS siesta DESTINATION .)
     install(TARGETS server DESTINATION .)
 endif()
 

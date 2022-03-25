@@ -22,27 +22,35 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ************************************************************************/
 
-///  @file src/atomsciflow/cp2k/static.h
-///  @author Deqi Tang
-///  Mail: deqi_tang@163.com 
-///  Created Time: Tue 02 Feb 2021 04:29:35 PM CST
+/// @file src/atomsciflow/siesta/utils.cpp
+/// @author DeqiTang
+/// Mail: deqitang@gmail.com 
+/// Created Time: Fri 25 Mar 2022 12:04:16 PM CST
 
-#ifndef ATOMSCIFLOW_CP2K_STATIC_H_
-#define ATOMSCIFLOW_CP2K_STATIC_H_
+#include "atomsciflow/siesta/utils.h"
 
 namespace atomsciflow {
 
-class Cp2kStatic: public Cp2k {
-   
-public:
+std::string siesta_group_title(const std::string& title) {
+    std::string out = "#----------------------------------------------------------------------#\n";
+    int n_vacancies_left = 0;
+    int n_vacancies_right = 0;
+    n_vacancies_left = (72 - title.size() - 2) / 2;
+    n_vacancies_right = 72 - 2 - title.size() - n_vacancies_left;
+    out += "#";
+    while (n_vacancies_left > 0) {
+        out += " ";
+        n_vacancies_left -= 1;
+    }
+    out += title;
+    while (n_vacancies_right > 0) {
+        out += " ";
+        n_vacancies_right -= 1;
+    }
+    out += "#\n";
+    out += "#----------------------------------------------------------------------#\n";
 
-    Cp2kStatic() {};
-    ~Cp2kStatic() {};
-    
-private:
-
-};
+    return out;
+}
 
 } // namespace atomsciflow
-
-#endif // ATOMSCIFLOW_CP2K_STATIC_H_

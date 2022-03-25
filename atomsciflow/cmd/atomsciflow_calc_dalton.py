@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-def add_cp2k_subparser(subparsers):
-    subparser = subparsers.add_parser("cp2k", 
-        help="The CP2K calculator")
+def add_dalton_subparser(subparsers):
+    subparser = subparsers.add_parser("dalton", 
+        help="The Dalton calculator")
 
     subparser.add_argument("-d", "--directory", type=str, default="atomsciflow-calc-running-dir",
         help="The working directory where calculation is happening")
@@ -46,22 +46,17 @@ def add_cp2k_subparser(subparsers):
         choices=[0, 1, 2, 3],
         help="The automation level of the task")
         
-def cp2k_processor(args):
+def dalton_processor(args):
     print("working directory: %s" % args.directory)
     if args.calc.lower() == "static":
-        from atomsciflow.cp2k import Static
-        job = Static()
+        from atomsciflow.dalton import Dalton
+        job = Dalton()
         job.get_xyz(args.xyz)
-        job.job.set_run("runopt", args.runopt)
         job.run(args.directory)
     elif args.calc.lower() == "opt":
-        from atomsciflow.cp2k import Opt
-        print("calculator cp2k.opt start")
-        job = Opt()
-        print("calculator cp2k.opt get_xyz")
+        from atomsciflow.dalton import Dalton
+        job = Dalton()
         job.get_xyz(args.xyz)
-        print("calculator cp2k.opt set_run")
-        job.job.set_run("runopt", args.runopt)
         job.run(args.directory)
     else:
         print("The specified calculation type is unfound!")

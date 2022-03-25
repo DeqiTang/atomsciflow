@@ -52,7 +52,7 @@ std::string Cp2kSection::to_string() {
     }
     for (const auto& item : this->sections) {
         out += "\n";
-        out += this->sections[item.first].to_string();
+        out += this->sections[item.first]->to_string();
         out += "\n";
     }
     out += "&end " + name_inp;
@@ -77,22 +77,23 @@ std::string Cp2kSection::to_string(std::string indent) {
     }
     for (const auto& item : this->sections) {
         //out += "\n";
-        out += this->sections[item.first].to_string(indent + indent);
+        out += this->sections[item.first]->to_string(indent + indent);
         out += "\n";
     }
     out += indent + "&end " + name_inp;
     return out;
 }
 
-Cp2kSection& Cp2kSection::add_section(const std::string& name) {
-    this->sections[name] = Cp2kSection{name};
-    this->sections[name].name = name;
+std::shared_ptr<Cp2kSection>& Cp2kSection::add_section(const std::string& name) {
+    //this->sections[name] = std::shared_ptr<Cp2kSection>(new Cp2kSection{name});
+    this->sections[name] = std::make_shared<Cp2kSection>(name);
+    this->sections[name]->name = name;
     return this->sections[name];
 }
 
-Cp2kSection& Cp2kSection::add_section(const std::string& name, Cp2kSection section) {
+std::shared_ptr<Cp2kSection>& Cp2kSection::add_section(const std::string& name, const std::shared_ptr<Cp2kSection>& section) {
     this->sections[name] = section;
-    this->sections[name].name = name;
+    this->sections[name]->name = name;
     return this->sections[name];
 }
 

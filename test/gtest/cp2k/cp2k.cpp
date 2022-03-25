@@ -39,14 +39,14 @@ TEST(cp2k, section) {
     
     //std::cout << cp2k->to_string() << std::endl;
 
-    EXPECT_EQ(cp2k->sections["global"].get<std::string>("project"), "cp2k_job");
-    cp2k->sections["global"].set_param("project", "cp2k_test");
-    EXPECT_EQ(cp2k->sections["global"].get<std::string>("project"), "cp2k_test");
+    EXPECT_EQ(cp2k->sections["global"]->get<std::string>("project"), "cp2k_job");
+    cp2k->sections["global"]->set_param("project", "cp2k_test");
+    EXPECT_EQ(cp2k->sections["global"]->get<std::string>("project"), "cp2k_test");
 
     
-    cp2k->sections["global"].add_section("test");
-    cp2k->sections["global"].sections["test"].set_param("test", std::vector<int>{3, 2, 1});
-    auto out = cp2k->sections["global"].sections["test"].get<std::vector<int> >("test");
+    cp2k->sections["global"]->add_section("test");
+    cp2k->sections["global"]->sections["test"]->set_param("test", std::vector<int>{3, 2, 1});
+    auto out = cp2k->sections["global"]->sections["test"]->get<std::vector<int> >("test");
     auto compare = std::vector<int>{3, 2, 1};
     EXPECT_EQ(out, compare);
 

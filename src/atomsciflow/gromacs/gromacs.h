@@ -22,27 +22,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ************************************************************************/
 
-///  @file src/atomsciflow/cp2k/static.h
-///  @author Deqi Tang
-///  Mail: deqi_tang@163.com 
-///  Created Time: Tue 02 Feb 2021 04:29:35 PM CST
+/// @file src/atomsciflow/gromacs/gromacs.h
+/// @author DeqiTang
+/// Mail: deqitang@gmail.com 
+/// Created Time: Fri 25 Mar 2022 03:06:25 PM CST
 
-#ifndef ATOMSCIFLOW_CP2K_STATIC_H_
-#define ATOMSCIFLOW_CP2K_STATIC_H_
+#ifndef ATOMSCIFLOW_GROMACS_GROMACS_H_
+#define ATOMSCIFLOW_GROMACS_GROMACS_H_
 
 namespace atomsciflow {
 
-class Cp2kStatic: public Cp2k {
-   
+class Gromacs {
 public:
-
-    Cp2kStatic() {};
-    ~Cp2kStatic() {};
+    Gromacs();
     
-private:
-
 };
 
 } // namespace atomsciflow
 
-#endif // ATOMSCIFLOW_CP2K_STATIC_H_
+#endif // ATOMSCIFLOW_GROMACS_GROMACS_H_

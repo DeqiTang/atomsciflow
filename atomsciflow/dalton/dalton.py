@@ -1,4 +1,4 @@
-/************************************************************************
+"""
 MIT License
 
 Copyright (c) 2021 Deqi Tang
@@ -20,29 +20,10 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-************************************************************************/
+"""
 
-///  @file src/atomsciflow/cp2k/static.h
-///  @author Deqi Tang
-///  Mail: deqi_tang@163.com 
-///  Created Time: Tue 02 Feb 2021 04:29:35 PM CST
+from atomsciflow.cpp import dalton
 
-#ifndef ATOMSCIFLOW_CP2K_STATIC_H_
-#define ATOMSCIFLOW_CP2K_STATIC_H_
-
-namespace atomsciflow {
-
-class Cp2kStatic: public Cp2k {
-   
-public:
-
-    Cp2kStatic() {};
-    ~Cp2kStatic() {};
-    
-private:
-
-};
-
-} // namespace atomsciflow
-
-#endif // ATOMSCIFLOW_CP2K_STATIC_H_
+class Dalton(dalton.Dalton):
+    def __init__(self):
+        super().__init__()

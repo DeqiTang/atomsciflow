@@ -30,12 +30,34 @@ SOFTWARE.
 #ifndef ATOMSCIFLOW_SIEATA_SIESTA_H_
 #define ATOMSCIFLOW_SIEATA_SIESTA_H_
 
+#include <memory>
+#include <map>
+
+#include "atomsciflow/variable/group.h"
+#include "atomsciflow/base/xyz.h"
+#include "atomsciflow/server/job_scheduler.h"
+
 namespace atomsciflow {
 
 class Siesta {
 public:
     Siesta();
     ~Siesta() = default;
+    std::string to_string();
+    
+    void new_group(const std::string& name);
+
+    template <typename T>
+    void set_param(const std::string& group, std::string key, T value);
+
+    void get_xyz(const std::string& xyzfile);
+
+    void set_job_steps_default();
+    virtual void run(const std::string& directory);
+
+    std::map<std::string, std::shared_ptr<VariableGroup>> groups;
+    Xyz xyz;
+    JobScheduler job;    
 };
 
 } // namespace atomsciflow

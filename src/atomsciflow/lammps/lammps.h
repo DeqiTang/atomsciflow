@@ -22,27 +22,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ************************************************************************/
 
-///  @file src/atomsciflow/cp2k/static.h
-///  @author Deqi Tang
-///  Mail: deqi_tang@163.com 
-///  Created Time: Tue 02 Feb 2021 04:29:35 PM CST
+/// @file src/atomsciflow/lammps/lammps.h
+/// @author DeqiTang
+/// Mail: deqitang@gmail.com 
+/// Created Time: Fri 25 Mar 2022 03:07:29 PM CST
 
-#ifndef ATOMSCIFLOW_CP2K_STATIC_H_
-#define ATOMSCIFLOW_CP2K_STATIC_H_
+#ifndef ATOMSCIFLOW_LAMMPS_LAMMPS_H_
+#define ATOMSCIFLOW_LAMMPS_LAMMPS_H_
 
 namespace atomsciflow {
 
-class Cp2kStatic: public Cp2k {
-   
+class Lammps {
 public:
 
-    Cp2kStatic() {};
-    ~Cp2kStatic() {};
-    
-private:
+    Lammps();
 
 };
 
 } // namespace atomsciflow
 
-#endif // ATOMSCIFLOW_CP2K_STATIC_H_
+#endif // ATOMSCIFLOW_LAMMPS_LAMMPS_H_

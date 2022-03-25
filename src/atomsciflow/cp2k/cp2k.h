@@ -63,16 +63,16 @@ public:
 
     std::string to_string();
     void get_xyz(const std::string& xyzfile);
-    Cp2kSection& set_subsys(Xyz& xyz);
+    std::shared_ptr<Cp2kSection>& set_subsys(Xyz& xyz);
     void set_job_steps_default();
 
     virtual void run(const std::string& directory);
 
-    std::map<std::string, Cp2kSection> sections;
+    std::map<std::string, std::shared_ptr<Cp2kSection>> sections;
     JobScheduler job;
     Xyz xyz;
 private:
-    Cp2kSection& set_subsys();
+    std::shared_ptr<Cp2kSection>& set_subsys();
 };
 
 } // namespace atomsciflow
