@@ -22,50 +22,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ************************************************************************/
 
-/// @file src/atomsciflow/siesta/siesta.h
+/// @file src/atomsciflow/siesta/block.h
 /// @author DeqiTang
 /// Mail: deqitang@gmail.com 
-/// Created Time: Tue 22 Mar 2022 10:18:22 PM CST
+/// Created Time: Fri 25 Mar 2022 04:04:42 PM CST
 
-#ifndef ATOMSCIFLOW_SIEATA_SIESTA_H_
-#define ATOMSCIFLOW_SIEATA_SIESTA_H_
+#ifndef ATOMSCIFLOW_SIESTA_BLOCK_H_
+#define ATOMSCIFLOW_SIESTA_BLOCK_H_
 
-#include <memory>
-#include <map>
+#include <string>
+#include <vector>
 
-#include "atomsciflow/variable/group.h"
-#include "atomsciflow/siesta/block.h"
-#include "atomsciflow/siesta/incharge.h"
-#include "atomsciflow/base/xyz.h"
-#include "atomsciflow/server/job_scheduler.h"
+namespace atomsciflow::siesta {
 
-namespace atomsciflow {
-
-class Siesta {
+class Block {
 public:
-    Siesta();
-    ~Siesta() = default;
+    
+    Block();
+    explicit Block(const std::string& name);
+
     std::string to_string();
 
-    template <typename T>
-    void set_param(std::string key, T value);
-
-    void new_block(const std::string& name);
-
-    void get_xyz(const std::string& xyzfile);
-
-    void set_job_steps_default();
-    virtual void run(const std::string& directory);
-
-    std::shared_ptr<VariableGroup> non_block;
-    std::map<std::string, std::shared_ptr<siesta::Block>> blocks;
-    SiestaInCharge grouping;
-    std::vector<std::pair<std::string, int>> elem_index_in_number_order;
-    std::map<std::string, int> elem_index_map;
-    Xyz xyz;
-    JobScheduler job;
+    std::string name;
+    std::vector<std::string> data;
 };
 
-} // namespace atomsciflow
+} // namespace atomsciflow::siesta
 
-#endif // ATOMSCIFLOW_SIEATA_SIESTA_H_
+#endif // ATOMSCIFLOW_SIESTA_BLOCK_H_

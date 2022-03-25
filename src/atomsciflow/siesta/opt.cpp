@@ -32,15 +32,14 @@ SOFTWARE.
 namespace atomsciflow {
 
 SiestaOpt::SiestaOpt() {
-    new_group("ions");
-    set_param("ions", "MD.TypeOfRun", "CG");
-    set_param("ions", "MD.VariableCell", "false");
-    set_param("ions", "MD.ConstantVolume", "true");
-    set_param("ions", "MD.MaxForceTol", "0.001 eV/Ang");
-    set_param("ions", "MD.MaxStressTol", "0.01 GPa");
-    set_param("ions", "MD.Steps", 60);
-    set_param("ions", "MD.MaxDispl", "0.2 Bohr");
-    set_param("ions", "MD.PreconditionVariableCell", "5 Ang");
+    set_param("MD.TypeOfRun", "CG");
+    set_param("MD.VariableCell", "false");
+    set_param("MD.ConstantVolume", "true");
+    set_param("MD.MaxForceTol", "0.001 eV/Ang");
+    set_param("MD.MaxStressTol", "0.01 GPa");
+    set_param("MD.Steps", 60);
+    set_param("MD.MaxDispl", "0.2 Bohr");
+    set_param("MD.PreconditionVariableCell", "5 Ang");
 
     job.set_run("cmd", "$SIESTA_BIN");
     job.set_run("script_name_head", "siesta-run");

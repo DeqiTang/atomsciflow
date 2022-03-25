@@ -22,50 +22,38 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ************************************************************************/
 
-/// @file src/atomsciflow/siesta/siesta.h
+/// @file src/atomsciflow/siesta/incharge.cpp
 /// @author DeqiTang
 /// Mail: deqitang@gmail.com 
-/// Created Time: Tue 22 Mar 2022 10:18:22 PM CST
+/// Created Time: Fri 25 Mar 2022 08:19:10 PM CST
 
-#ifndef ATOMSCIFLOW_SIEATA_SIESTA_H_
-#define ATOMSCIFLOW_SIEATA_SIESTA_H_
-
-#include <memory>
-#include <map>
-
-#include "atomsciflow/variable/group.h"
-#include "atomsciflow/siesta/block.h"
 #include "atomsciflow/siesta/incharge.h"
-#include "atomsciflow/base/xyz.h"
-#include "atomsciflow/server/job_scheduler.h"
 
 namespace atomsciflow {
 
-class Siesta {
-public:
-    Siesta();
-    ~Siesta() = default;
-    std::string to_string();
+SiestaInCharge::SiestaInCharge() {
+    this->init();
+}
 
-    template <typename T>
-    void set_param(std::string key, T value);
+void SiestaInCharge::init() {
+    electrons_incharge.insert("XC.functional");
+    electrons_incharge.insert("DM.Tolerance");
+    electrons_incharge.insert("DM.MixingWeight");
+    electrons_incharge.insert("DM.NumberPulay");
+    electrons_incharge.insert("DM.AllowExtrapolation");
+    electrons_incharge.insert("DM.UseSaveDM");
+    electrons_incharge.insert("SolutionMethod");
+    electrons_incharge.insert("MeshCutOff");
 
-    void new_block(const std::string& name);
+    ions_incharge.insert("MD.TypeOfRun");
+    ions_incharge.insert("MD.VariableCell");
+    ions_incharge.insert("MD.ConstantVolume");
+    ions_incharge.insert("MD.MaxForceTol");
+    ions_incharge.insert("MD.MaxStressTol");
+    ions_incharge.insert("MD.Steps");
+    ions_incharge.insert("MD.MaxDispl");
+    ions_incharge.insert("MD.PreconditionVariableCell");
 
-    void get_xyz(const std::string& xyzfile);
-
-    void set_job_steps_default();
-    virtual void run(const std::string& directory);
-
-    std::shared_ptr<VariableGroup> non_block;
-    std::map<std::string, std::shared_ptr<siesta::Block>> blocks;
-    SiestaInCharge grouping;
-    std::vector<std::pair<std::string, int>> elem_index_in_number_order;
-    std::map<std::string, int> elem_index_map;
-    Xyz xyz;
-    JobScheduler job;
-};
+}
 
 } // namespace atomsciflow
-
-#endif // ATOMSCIFLOW_SIEATA_SIESTA_H_

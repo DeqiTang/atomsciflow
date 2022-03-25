@@ -1,4 +1,4 @@
-/************************************************************************
+"""
 MIT License
 
 Copyright (c) 2021 Deqi Tang
@@ -20,36 +20,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-************************************************************************/
+"""
 
-/// @file src/atomsciflow/nwchem/nwchem.h
-/// @author DeqiTang
-/// Mail: deqitang@gmail.com 
-/// Created Time: Fri 25 Mar 2022 03:28:10 PM CST
-
-#ifndef ATOMSCIFLOW_NWCHEM_NWCHEM_H_
-#define ATOMSCIFLOW_NWCHEM_NWCHEM_H_
-
-#include "atomsciflow/variable/group.h"
-#include "atomsciflow/base/xyz.h"
-#include "atomsciflow/server/job_scheduler.h"
-
-namespace atomsciflow {
-
-class NWChem {
-public:
-    NWChem();
-    
-    void get_xyz(const std::string& filepath);
-    std::string to_string();
-    
-    void set_job_steps_default();
-    void run(const std::string& directory);
-
-    Xyz xyz;
-    JobScheduler job;
-};
-
-} // namespace atomsciflow
-
-#endif // ATOMSCIFLOW_NWCHEM_NWCHEM_H_
+from atomsciflow.qchem.qchem import QChem

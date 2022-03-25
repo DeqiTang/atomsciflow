@@ -29,10 +29,54 @@ SOFTWARE.
 
 #include "atomsciflow/nwchem/nwchem.h"
 
+#include <fstream>
+#include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/format.hpp>
+#include <iomanip>
+
 namespace atomsciflow {
 
+namespace fs = boost::filesystem;
+
 NWChem::NWChem() {
-    
+
+    job.set_run("cmd", "$NWCHEM_BIN");
+
+    job.set_run_default("llhpc");
+    job.set_run_default("pbs");
+    job.set_run_default("bash");
+    job.set_run_default("lsf_sz");
+    job.set_run_default("lsf_sustc");
+    job.set_run_default("cdcloud");
+
+    job.set_run("script_name_head", "nwchem-run");    
+}
+
+void NWChem::get_xyz(const std::string& filepath) {
+    this->xyz.read_xyz_file(filepath);
+    job.set_run("xyz_file", fs::absolute(filepath).string());
+}
+
+std::string NWChem::to_string() {
+    std::string out = "";
+    return out;
+}
+
+void NWChem::set_job_steps_default() {
+    job.steps.clear();
+    std::ostringstream step;
+    step << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
+    step << "cat > nwchem.in<<EOF\n";
+    step << this->to_string();
+    step << "EOF\n";
+    step << "$CMD_HEAD " << job.run_params["cmd"] << "\n";
+    job.steps.push_back(step.str());
+    step.clear();
+}
+
+void NWChem::run(const std::string& directory) {
+    job.run(directory);
 }
 
 } // namespace atomsciflow

@@ -396,6 +396,266 @@ set_target_properties(siesta PROPERTIES
 )
 #pybind11_add_module(siesta MODULE ${ATOMSCIFLOW_SIESTA_SOURCES})
 
+file(GLOB ATOMSCIFLOW_DFTBPLUS_SOURCES
+    "./dftbplus/dftbplus.cpp"
+    "../src/atomsciflow/dftbplus/*.cpp"
+    "../src/atomsciflow/base/*.cpp"
+    "../src/atomsciflow/variable/*.cpp"
+    "../src/atomsciflow/server/*.cpp"
+    "../src/atomsciflow/remote/*.cpp"
+    "../src/atomsciflow/config/*.cpp"
+    "../src/atomsciflow/utils/*.cpp"
+)
+#add_library(dftbplus MODULE ${ATOMSCIFLOW_DFTBPLUS_SOURCES})
+add_library(dftbplus MODULE ${ATOMSCIFLOW_DFTBPLUS_SOURCES})
+target_link_libraries(dftbplus
+    PRIVATE pybind11::module
+    ${Boost_LIBRARIES}
+    ${YAML_CPP_LIBRARIES}
+    OpenSSL::SSL
+    OpenSSL::Crypto
+    ${LIBSSH2_FOUND_LIBS}
+)
+set_target_properties(dftbplus PROPERTIES 
+    PREFIX "${PYTHON_MODULE_PREFIX}"
+    SUFFIX "${PYTHON_MODULE_EXTENSION}"
+)
+#pybind11_add_module(dftbplus MODULE ${ATOMSCIFLOW_DFTBPLUS_SOURCES})
+
+file(GLOB ATOMSCIFLOW_NWCHEM_SOURCES
+    "./nwchem/nwchem.cpp"
+    "../src/atomsciflow/nwchem/*.cpp"
+    "../src/atomsciflow/base/*.cpp"
+    "../src/atomsciflow/variable/*.cpp"
+    "../src/atomsciflow/server/*.cpp"
+    "../src/atomsciflow/remote/*.cpp"
+    "../src/atomsciflow/config/*.cpp"
+    "../src/atomsciflow/utils/*.cpp"
+)
+#add_library(nwchem MODULE ${ATOMSCIFLOW_NWCHEM_SOURCES})
+add_library(nwchem MODULE ${ATOMSCIFLOW_NWCHEM_SOURCES})
+target_link_libraries(nwchem
+    PRIVATE pybind11::module
+    ${Boost_LIBRARIES}
+    ${YAML_CPP_LIBRARIES}
+    OpenSSL::SSL
+    OpenSSL::Crypto
+    ${LIBSSH2_FOUND_LIBS}
+)
+set_target_properties(nwchem PROPERTIES 
+    PREFIX "${PYTHON_MODULE_PREFIX}"
+    SUFFIX "${PYTHON_MODULE_EXTENSION}"
+)
+#pybind11_add_module(nwchem MODULE ${ATOMSCIFLOW_NWCHEM_SOURCES})
+
+file(GLOB ATOMSCIFLOW_EXCITING_SOURCES
+    "./exciting/exciting.cpp"
+    "../src/atomsciflow/exciting/*.cpp"
+    "../src/atomsciflow/base/*.cpp"
+    "../src/atomsciflow/variable/*.cpp"
+    "../src/atomsciflow/server/*.cpp"
+    "../src/atomsciflow/remote/*.cpp"
+    "../src/atomsciflow/config/*.cpp"
+    "../src/atomsciflow/utils/*.cpp"
+)
+#add_library(exciting MODULE ${ATOMSCIFLOW_EXCITING_SOURCES})
+add_library(exciting MODULE ${ATOMSCIFLOW_EXCITING_SOURCES})
+target_link_libraries(exciting
+    PRIVATE pybind11::module
+    ${Boost_LIBRARIES}
+    ${YAML_CPP_LIBRARIES}
+    OpenSSL::SSL
+    OpenSSL::Crypto
+    ${LIBSSH2_FOUND_LIBS}
+)
+set_target_properties(exciting PROPERTIES 
+    PREFIX "${PYTHON_MODULE_PREFIX}"
+    SUFFIX "${PYTHON_MODULE_EXTENSION}"
+)
+#pybind11_add_module(exciting MODULE ${ATOMSCIFLOW_EXCITING_SOURCES})
+
+file(GLOB ATOMSCIFLOW_GAUSSIAN_SOURCES
+    "./gaussian/gaussian.cpp"
+    "../src/atomsciflow/gaussian/*.cpp"
+    "../src/atomsciflow/base/*.cpp"
+    "../src/atomsciflow/variable/*.cpp"
+    "../src/atomsciflow/server/*.cpp"
+    "../src/atomsciflow/remote/*.cpp"
+    "../src/atomsciflow/config/*.cpp"
+    "../src/atomsciflow/utils/*.cpp"
+)
+#add_library(gaussian MODULE ${ATOMSCIFLOW_GAUSSIAN_SOURCES})
+add_library(gaussian MODULE ${ATOMSCIFLOW_GAUSSIAN_SOURCES})
+target_link_libraries(gaussian
+    PRIVATE pybind11::module
+    ${Boost_LIBRARIES}
+    ${YAML_CPP_LIBRARIES}
+    OpenSSL::SSL
+    OpenSSL::Crypto
+    ${LIBSSH2_FOUND_LIBS}
+)
+set_target_properties(gaussian PROPERTIES 
+    PREFIX "${PYTHON_MODULE_PREFIX}"
+    SUFFIX "${PYTHON_MODULE_EXTENSION}"
+)
+#pybind11_add_module(gaussian MODULE ${ATOMSCIFLOW_GAUSSIAN_SOURCES})
+
+file(GLOB ATOMSCIFLOW_GROMACS_SOURCES
+    "./gromacs/gromacs.cpp"
+    "../src/atomsciflow/gromacs/*.cpp"
+    "../src/atomsciflow/base/*.cpp"
+    "../src/atomsciflow/variable/*.cpp"
+    "../src/atomsciflow/server/*.cpp"
+    "../src/atomsciflow/remote/*.cpp"
+    "../src/atomsciflow/config/*.cpp"
+    "../src/atomsciflow/utils/*.cpp"
+)
+#add_library(gromacs MODULE ${ATOMSCIFLOW_GROMACS_SOURCES})
+add_library(gromacs MODULE ${ATOMSCIFLOW_GROMACS_SOURCES})
+target_link_libraries(gromacs
+    PRIVATE pybind11::module
+    ${Boost_LIBRARIES}
+    ${YAML_CPP_LIBRARIES}
+    OpenSSL::SSL
+    OpenSSL::Crypto
+    ${LIBSSH2_FOUND_LIBS}
+)
+set_target_properties(gromacs PROPERTIES 
+    PREFIX "${PYTHON_MODULE_PREFIX}"
+    SUFFIX "${PYTHON_MODULE_EXTENSION}"
+)
+#pybind11_add_module(gromacx MODULE ${ATOMSCIFLOW_GROMACS_SOURCES})
+
+file(GLOB ATOMSCIFLOW_LAMMPS_SOURCES
+    "./lammps/lammps.cpp"
+    "../src/atomsciflow/lammps/*.cpp"
+    "../src/atomsciflow/base/*.cpp"
+    "../src/atomsciflow/variable/*.cpp"
+    "../src/atomsciflow/server/*.cpp"
+    "../src/atomsciflow/remote/*.cpp"
+    "../src/atomsciflow/config/*.cpp"
+    "../src/atomsciflow/utils/*.cpp"
+)
+#add_library(lammps MODULE ${ATOMSCIFLOW_LAMMPS_SOURCES})
+add_library(lammps MODULE ${ATOMSCIFLOW_LAMMPS_SOURCES})
+target_link_libraries(lammps
+    PRIVATE pybind11::module
+    ${Boost_LIBRARIES}
+    ${YAML_CPP_LIBRARIES}
+    OpenSSL::SSL
+    OpenSSL::Crypto
+    ${LIBSSH2_FOUND_LIBS}
+)
+set_target_properties(lammps PROPERTIES 
+    PREFIX "${PYTHON_MODULE_PREFIX}"
+    SUFFIX "${PYTHON_MODULE_EXTENSION}"
+)
+#pybind11_add_module(lammps MODULE ${ATOMSCIFLOW_LAMMPS_SOURCES})
+
+file(GLOB ATOMSCIFLOW_OCTOPUS_SOURCES
+    "./octopus/octopus.cpp"
+    "../src/atomsciflow/octopus/*.cpp"
+    "../src/atomsciflow/base/*.cpp"
+    "../src/atomsciflow/variable/*.cpp"
+    "../src/atomsciflow/server/*.cpp"
+    "../src/atomsciflow/remote/*.cpp"
+    "../src/atomsciflow/config/*.cpp"
+    "../src/atomsciflow/utils/*.cpp"
+)
+#add_library(octopus MODULE ${ATOMSCIFLOW_OCTOPUS_SOURCES})
+add_library(octopus MODULE ${ATOMSCIFLOW_OCTOPUS_SOURCES})
+target_link_libraries(octopus
+    PRIVATE pybind11::module
+    ${Boost_LIBRARIES}
+    ${YAML_CPP_LIBRARIES}
+    OpenSSL::SSL
+    OpenSSL::Crypto
+    ${LIBSSH2_FOUND_LIBS}
+)
+set_target_properties(octopus PROPERTIES 
+    PREFIX "${PYTHON_MODULE_PREFIX}"
+    SUFFIX "${PYTHON_MODULE_EXTENSION}"
+)
+#pybind11_add_module(octopus MODULE ${ATOMSCIFLOW_OCTOPUS_SOURCES})
+
+file(GLOB ATOMSCIFLOW_ORCA_SOURCES
+    "./orca/orca.cpp"
+    "../src/atomsciflow/orca/*.cpp"
+    "../src/atomsciflow/base/*.cpp"
+    "../src/atomsciflow/variable/*.cpp"
+    "../src/atomsciflow/server/*.cpp"
+    "../src/atomsciflow/remote/*.cpp"
+    "../src/atomsciflow/config/*.cpp"
+    "../src/atomsciflow/utils/*.cpp"
+)
+#add_library(orca MODULE ${ATOMSCIFLOW_ORCA_SOURCES})
+add_library(orca MODULE ${ATOMSCIFLOW_ORCA_SOURCES})
+target_link_libraries(orca
+    PRIVATE pybind11::module
+    ${Boost_LIBRARIES}
+    ${YAML_CPP_LIBRARIES}
+    OpenSSL::SSL
+    OpenSSL::Crypto
+    ${LIBSSH2_FOUND_LIBS}
+)
+set_target_properties(orca PROPERTIES 
+    PREFIX "${PYTHON_MODULE_PREFIX}"
+    SUFFIX "${PYTHON_MODULE_EXTENSION}"
+)
+#pybind11_add_module(orca MODULE ${ATOMSCIFLOW_ORCA_SOURCES})
+
+file(GLOB ATOMSCIFLOW_QCHEM_SOURCES
+    "./qchem/qchem.cpp"
+    "../src/atomsciflow/qchem/*.cpp"
+    "../src/atomsciflow/base/*.cpp"
+    "../src/atomsciflow/variable/*.cpp"
+    "../src/atomsciflow/server/*.cpp"
+    "../src/atomsciflow/remote/*.cpp"
+    "../src/atomsciflow/config/*.cpp"
+    "../src/atomsciflow/utils/*.cpp"
+)
+#add_library(qchem MODULE ${ATOMSCIFLOW_QCHEM_SOURCES})
+add_library(qchem MODULE ${ATOMSCIFLOW_QCHEM_SOURCES})
+target_link_libraries(qchem
+    PRIVATE pybind11::module
+    ${Boost_LIBRARIES}
+    ${YAML_CPP_LIBRARIES}
+    OpenSSL::SSL
+    OpenSSL::Crypto
+    ${LIBSSH2_FOUND_LIBS}
+)
+set_target_properties(qchem PROPERTIES 
+    PREFIX "${PYTHON_MODULE_PREFIX}"
+    SUFFIX "${PYTHON_MODULE_EXTENSION}"
+)
+#pybind11_add_module(qchem MODULE ${ATOMSCIFLOW_QCHEM_SOURCES})
+
+file(GLOB ATOMSCIFLOW_XTB_SOURCES
+    "./xtb/xtb.cpp"
+    "../src/atomsciflow/xtb/*.cpp"
+    "../src/atomsciflow/base/*.cpp"
+    "../src/atomsciflow/variable/*.cpp"
+    "../src/atomsciflow/server/*.cpp"
+    "../src/atomsciflow/remote/*.cpp"
+    "../src/atomsciflow/config/*.cpp"
+    "../src/atomsciflow/utils/*.cpp"
+)
+#add_library(xtb MODULE ${ATOMSCIFLOW_XTB_SOURCES})
+add_library(xtb MODULE ${ATOMSCIFLOW_XTB_SOURCES})
+target_link_libraries(xtb
+    PRIVATE pybind11::module
+    ${Boost_LIBRARIES}
+    ${YAML_CPP_LIBRARIES}
+    OpenSSL::SSL
+    OpenSSL::Crypto
+    ${LIBSSH2_FOUND_LIBS}
+)
+set_target_properties(xtb PROPERTIES 
+    PREFIX "${PYTHON_MODULE_PREFIX}"
+    SUFFIX "${PYTHON_MODULE_EXTENSION}"
+)
+#pybind11_add_module(xtb MODULE ${ATOMSCIFLOW_XTB_SOURCES})
+
 file(GLOB ATOMSCIFLOW_SERVER_SOURCES
     "./server/*.cpp"
     "../src/atomsciflow/server/*.cpp"
@@ -436,6 +696,16 @@ if(SKBUILD)
     install(TARGETS qmcpack DESTINATION .)
     install(TARGETS dalton DESTINATION .)
     install(TARGETS siesta DESTINATION .)
+    install(TARGETS dftbplus DESTINATION .)
+    install(TARGETS nwchem DESTINATION .)
+    install(TARGETS exciting DESTINATION .)
+    install(TARGETS gaussian DESTINATION .)
+    install(TARGETS gromacs DESTINATION .)
+    install(TARGETS lammps DESTINATION .)
+    install(TARGETS octopus DESTINATION .)
+    install(TARGETS orca DESTINATION .)
+    install(TARGETS qchem DESTINATION .)
+    install(TARGETS xtb DESTINATION .)
     install(TARGETS server DESTINATION .)
 endif()
 

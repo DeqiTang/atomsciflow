@@ -29,7 +29,7 @@ class Vasp(vasp.Vasp):
     def __init__(self):
         super().__init__()
 
-class Static(vasp.Static):
+class Static(vasp.VaspStatic):
     def __init__(self):
         super().__init__()
 
