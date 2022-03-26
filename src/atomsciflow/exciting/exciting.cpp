@@ -50,7 +50,7 @@ Exciting::Exciting() {
     
     input.root.put("input.groundstate.solver.<xmlattr>.type", "Lapack");
 
-    job.set_run("cmd", "$EXCITING_BIN");
+    job.set_run("cmd", "$ASF_CMD_EXCITING");
     job.set_run("input", "exciting.in");
     job.set_run("output", "exciting.out");
 

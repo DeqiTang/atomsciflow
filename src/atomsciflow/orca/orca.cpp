@@ -57,7 +57,7 @@ Orca::Orca() {
     job.set_run_default("lsf_sustc");
     job.set_run_default("cdcloud");
 
-    job.set_run("cmd", "$ORCA_BIN");
+    job.set_run("cmd", "$ASF_CMD_ORCA");
     job.set_run("script_name_head", "orca-run");
 }
 

@@ -28,3 +28,11 @@ from atomsciflow.cpp.server import JobScheduler
 class DftbPlus(dp.DftbPlus):
     def __init__(self):
         super().__init__()
+
+class Static(DftbPlus):
+    def __init__(self):
+        super().__init__()
+
+class Opt(DftbPlus):
+    def __init__(self):
+        super().__init__()

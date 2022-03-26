@@ -53,7 +53,7 @@ Vasp::Vasp() {
     this->job.set_run_default("lsf_sz");
     this->job.set_run_default("lsf_sustc");
     this->job.set_run_default("cdcloud");
-    this->job.set_run("cmd", "$VASP_STD_BIN");
+    this->job.set_run("cmd", "$ASF_CMD_VASP_STD");
 
     this->incar->basic_setting();
     job.set_run("script_name_head", "vasp-run");

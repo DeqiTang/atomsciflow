@@ -90,7 +90,7 @@ Cp2k::Cp2k() {
 
     this->sections["force_eval"]->add_section("dft", dft);
 
-    job.set_run("cmd", "$CP2K_BIN");
+    job.set_run("cmd", "$ASF_CMD_CP2K");
     job.set_run("input", "cp2k.inp");
     job.set_run("output", "cp2k.out");
 

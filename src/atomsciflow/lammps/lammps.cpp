@@ -43,7 +43,7 @@ namespace fs = boost::filesystem;
 
 Lammps::Lammps() {
     
-    job.set_run("cmd", "$LAMMPS_BIN");
+    job.set_run("cmd", "$ASF_CMD_LAMMPS");
     job.set_run("input", "lammps.in");
     job.set_run("output", "lammps.out");
 

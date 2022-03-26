@@ -72,7 +72,7 @@ Qmcpack::Qmcpack() {
     this->input.put_i_key_attr("simulation.qmc", 1, "parameter", "name", 20);
     this->input.put_i_key_attr("simulation.qmc", 2, "parameter", "name", 30);
 
-    job.set_run("cmd", "$QMCPACK_BIN");
+    job.set_run("cmd", "$ASF_CMD_QMCPACK");
     job.set_run("input", "qmcpack.in");
     job.set_run("output", "qmcpack.out");
 

@@ -57,7 +57,7 @@ QChem::QChem() {
     job.set_run_default("lsf_sustc");
     job.set_run_default("cdcloud");
 
-    job.set_run("cmd", "$QCHEM_BIN");
+    job.set_run("cmd", "$ASF_CMD_QCHEM");
     job.set_run("script_name_head", "qchem-run");
 }
 

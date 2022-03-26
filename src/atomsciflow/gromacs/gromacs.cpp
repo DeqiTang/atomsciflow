@@ -43,7 +43,7 @@ namespace fs = boost::filesystem;
 
 Gromacs::Gromacs() {
     
-    job.set_run("cmd", "$GROMACS_BIN");
+    job.set_run("cmd", "$ASF_CMD_GROMACS");
     job.set_run("input", "gromacs.in");
     job.set_run("output", "gromacs.out");
 

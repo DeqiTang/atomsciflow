@@ -54,12 +54,12 @@ PwScf::PwScf() {
     job.set_run_default("lsf_sz");
     job.set_run_default("lsf_sustc");
     job.set_run_default("cdcloud");
-    job.set_run("cmd", "$QE_PW_BIN");
     job.set_run("runopt", "genrun");
     job.set_run("auto_level", "0");
     job.set_run("input", "pw.in");
     job.set_run("output", "pw.out");
 
+    job.set_run("cmd", "$ASF_CMD_QE_PWSCF");
     job.set_run("script_name_head", "pwscf-run");
 }
 

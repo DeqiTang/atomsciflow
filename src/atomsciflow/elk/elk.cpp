@@ -43,19 +43,18 @@ namespace fs = boost::filesystem;
 
 Elk::Elk() {
 
-    this->job.set_run("cmd", "$ELK_BIN");
+    job.set_run_default("bash");
+    job.set_run_default("llhpc");
+    job.set_run_default("pbs");
+    job.set_run_default("bash");
+    job.set_run_default("lsf_sz");
+    job.set_run_default("lsf_sustc");
+    job.set_run_default("cdcloud");
+    job.set_run("cmd", "$ELK_BIN");
+    job.set_run("runopt", "genrun");
+    job.set_run("auto_level", "0");
 
-    this->job.set_run_default("bash");
-    this->job.set_run_default("llhpc");
-    this->job.set_run_default("pbs");
-    this->job.set_run_default("bash");
-    this->job.set_run_default("lsf_sz");
-    this->job.set_run_default("lsf_sustc");
-    this->job.set_run_default("cdcloud");
-    this->job.set_run("cmd", "$ELK_BIN");
-    this->job.set_run("runopt", "genrun");
-    this->job.set_run("auto_level", "0");
-
+    job.set_run("cmd", "$ASF_CMD_ELK");
     job.set_run("script_name_head", "elk-run");
 }
 

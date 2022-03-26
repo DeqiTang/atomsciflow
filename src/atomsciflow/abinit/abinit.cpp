@@ -59,7 +59,7 @@ Abinit::Abinit() {
     }
     this->datasets[0]->electrons->basic_setting();
     this->pseudo_input_str = "";
-    job.set_run("cmd", "$ABINIT_BIN");
+    job.set_run("cmd", "$ASF_CMD_ABINIT");
     job.set_run("script_name_head", "abinit-run");
 }
 

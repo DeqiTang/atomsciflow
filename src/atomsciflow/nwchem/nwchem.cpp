@@ -53,7 +53,7 @@ NWChem::NWChem() {
     job.set_run_default("lsf_sustc");
     job.set_run_default("cdcloud");
 
-    job.set_run("cmd", "$NWCHEM_BIN");
+    job.set_run("cmd", "$ASF_CMD_NWCHEM");
     job.set_run("script_name_head", "nwchem-run");    
 }
 

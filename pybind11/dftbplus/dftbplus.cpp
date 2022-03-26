@@ -16,6 +16,10 @@ namespace py = pybind11;
 void add_class_dftbplus(py::module& m) {
     py::class_<atomsciflow::DftbPlus>(m, "DftbPlus")
         .def(py::init<>())
+        .def("to_string", &atomsciflow::DftbPlus::to_string)
+        .def("get_xyz", &atomsciflow::DftbPlus::get_xyz)
+        .def("run", &atomsciflow::DftbPlus::run)
+        .def_readwrite("job", &atomsciflow::DftbPlus::job)
         ;
 }
 

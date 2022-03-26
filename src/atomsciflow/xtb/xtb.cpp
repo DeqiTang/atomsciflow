@@ -52,7 +52,7 @@ Xtb::Xtb() {
     job.set_run_default("lsf_sustc");
     job.set_run_default("cdcloud");
 
-    job.set_run("cmd", "$XTB_BIN");
+    job.set_run("cmd", "$ASF_CMD_XTB");
     job.set_run("script_name_head", "xtb-run");
 }
 

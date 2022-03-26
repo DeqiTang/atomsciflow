@@ -59,7 +59,7 @@ Octopus::Octopus() {
     job.set_run_default("lsf_sustc");
     job.set_run_default("cdcloud");
 
-    job.set_run("cmd", "$OCTOPUS_BIN");
+    job.set_run("cmd", "$ASF_CMD_OCTOPUS");
     job.set_run("input", "inp");
     job.set_run("script_name_head", "octopus-run");
 }

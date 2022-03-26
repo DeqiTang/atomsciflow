@@ -45,6 +45,7 @@ from atomsciflow.cmd.atomsciflow_calc_exciting import add_exciting_subparser, ex
 from atomsciflow.cmd.atomsciflow_calc_xtb import add_xtb_subparser, xtb_processor
 from atomsciflow.cmd.atomsciflow_calc_gromacs import add_gromacs_subparser, gromacs_processor
 from atomsciflow.cmd.atomsciflow_calc_lammps import add_lammps_subparser, lammps_processor
+from atomsciflow.cmd.atomsciflow_calc_dftbplus import add_dftbplus_subparser, dftbplus_processor
 
 def main():
     parser = argparse.ArgumentParser()
@@ -68,6 +69,7 @@ def main():
     add_xtb_subparser(subparsers)
     add_gromacs_subparser(subparsers)
     add_lammps_subparser(subparsers)
+    add_dftbplus_subparser(subparsers)
     #
     args = parser.parse_args()
 
@@ -148,6 +150,10 @@ def main():
     if args.subcommand == "lammps":
         log_sub_cmd_start(args.subcommand)
         lammps_processor(args)
+        log_sub_cmd_end(args.subcommand)                                        
+    if args.subcommand == "dftbplus":
+        log_sub_cmd_start(args.subcommand)
+        dftbplus_processor(args)
         log_sub_cmd_end(args.subcommand)                                        
 
 if __name__ == "__main__":
