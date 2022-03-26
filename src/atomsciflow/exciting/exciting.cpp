@@ -29,10 +29,59 @@ SOFTWARE.
 
 #include "atomsciflow/exciting/exciting.h"
 
+#include <boost/lexical_cast.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/format.hpp>
+#include <iostream>
+
+#include "atomsciflow/qmcpack/utils.h"
+#include "atomsciflow/server/submit_script.h"
+#include "atomsciflow/remote/server.h"
+
 namespace atomsciflow {
 
+namespace fs = boost::filesystem;
+
 Exciting::Exciting() {
+    input.root.put("input.title", "Exciting Calculation");
+
+    input.root.put("input.groundstate.<xmlattr>.CoreRelativity", "dirac");
+    input.root.put("input.groundstate.<xmlattr>.autokpt", "true");
     
+    input.root.put("input.groundstate.solver.<xmlattr>.type", "Lapack");
+
+    job.set_run("cmd", "$EXCITING_BIN");
+    job.set_run("input", "exciting.in");
+    job.set_run("output", "exciting.out");
+
+    job.set_run("script_name_head", "exciting-run");
+}
+
+void Exciting::get_xyz(const std::string &xyzfile) {
+    this->xyz.read_xyz_file(xyzfile);
+    job.set_run("xyz_file", fs::absolute(xyzfile).string());
+    this->set_job_steps_default();
+}
+
+std::string Exciting::to_string() {
+    return this->input.to_string();
+}
+
+void Exciting::set_job_steps_default() {
+    job.steps.clear();
+    std::ostringstream step;
+    step << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
+    step << boost::format("cat > %1%<<EOF\n") % job.run_params["input"];
+    step << this->input.to_string();
+    step << "EOF\n";
+
+    step << boost::format("${CMD_HEAD} %1% %2%\n") % job.run_params["cmd"] % job.run_params["input"];
+    job.steps.push_back(step.str());
+    step.clear();
+}
+
+void Exciting::run(const std::string& directory) {
+    job.run(directory);
 }
 
 } // namespace atomsciflow

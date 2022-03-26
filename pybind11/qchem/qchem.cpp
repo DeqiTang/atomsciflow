@@ -16,6 +16,11 @@ namespace py = pybind11;
 void add_class_qchem(py::module& m) {
     py::class_<atomsciflow::QChem>(m, "QChem")
         .def(py::init<>())
+        .def("to_string", &atomsciflow::QChem::to_string)
+        .def("new_section", &atomsciflow::QChem::new_section)
+        .def("get_xyz", &atomsciflow::QChem::get_xyz)
+        .def("run", &atomsciflow::QChem::run)
+        .def_readwrite("job", &atomsciflow::QChem::job)        
         ;
 }
 

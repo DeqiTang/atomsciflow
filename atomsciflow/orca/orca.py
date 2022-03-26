@@ -23,7 +23,16 @@ SOFTWARE.
 """
 
 from atomsciflow.cpp import orca
+from atomsciflow.cpp.server import JobScheduler
 
 class Orca(orca.Orca):
+    def __init__(self):
+        super().__init__()
+
+class Static(Orca):
+    def __init__(self):
+        super().__init__()
+
+class Opt(Orca):
     def __init__(self):
         super().__init__()

@@ -30,12 +30,35 @@ SOFTWARE.
 #ifndef ATOMSCIFLOW_ORCA_ORCA_H_
 #define ATOMSCIFLOW_ORCA_ORCA_H_
 
+#include <memory>
+#include <map>
+
+#include "atomsciflow/variable/group.h"
+#include "atomsciflow/orca/block.h"
+#include "atomsciflow/base/xyz.h"
+#include "atomsciflow/server/job_scheduler.h"
+
 namespace atomsciflow {
 
 class Orca {
 public:
 
     Orca();
+    ~Orca();
+
+    std::string to_string();
+    
+    void new_block(const std::string& name);
+
+    void get_xyz(const std::string& xyzfile);
+
+    virtual void set_job_steps_default();
+    virtual void run(const std::string& directory);
+
+    std::vector<std::string> keywords;
+    std::map<std::string, std::shared_ptr<orca::Block>> blocks;
+    Xyz xyz;
+    JobScheduler job;
 
 };
 

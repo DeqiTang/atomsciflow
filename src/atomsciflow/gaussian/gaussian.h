@@ -30,13 +30,30 @@ SOFTWARE.
 #ifndef ATOMSCIFLOW_GAUSSIAN_H_
 #define ATOMSCIFLOW_GAUSSIAN_H_
 
+#include <memory>
+#include <map>
+
+#include "atomsciflow/base/xyz.h"
+#include "atomsciflow/server/job_scheduler.h"
+
 namespace atomsciflow {
 
 class Gaussian {
 public:
 
     Gaussian();
+    ~Gaussian();
 
+    std::string to_string();
+    
+    void get_xyz(const std::string& xyzfile);
+
+    virtual void set_job_steps_default();
+    virtual void run(const std::string& directory);
+
+    std::vector<std::string> keywords;
+    Xyz xyz;
+    JobScheduler job;
 };
 
 } // namespace atomsciflow

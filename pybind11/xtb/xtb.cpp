@@ -16,6 +16,10 @@ namespace py = pybind11;
 void add_class_xtb(py::module& m) {
     py::class_<atomsciflow::Xtb>(m, "Xtb")
         .def(py::init<>())
+        .def("to_string", &atomsciflow::Xtb::to_string)
+        .def("get_xyz", &atomsciflow::Xtb::get_xyz)
+        .def("run", &atomsciflow::Xtb::run)
+        .def_readwrite("job", &atomsciflow::Xtb::job)
         ;
 }
 

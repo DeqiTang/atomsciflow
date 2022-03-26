@@ -23,3 +23,5 @@ SOFTWARE.
 """
 
 from atomsciflow.qchem.qchem import QChem
+from atomsciflow.qchem.qchem import Static, Opt
+from atomsciflow.cpp.server import JobScheduler

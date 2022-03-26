@@ -27,3 +27,11 @@ from atomsciflow.cpp import xtb
 class Xtb(xtb.Xtb):
     def __init__(self):
         super().__init__()
+
+class Static(Xtb):
+    def __init__(self):
+        super().__init__()
+
+class Opt(Xtb):
+    def __init__(self):
+        super().__init__()

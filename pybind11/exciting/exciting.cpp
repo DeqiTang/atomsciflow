@@ -16,6 +16,10 @@ namespace py = pybind11;
 void add_class_exciting(py::module& m) {
     py::class_<atomsciflow::Exciting>(m, "Exciting")
         .def(py::init<>())
+        .def("get_xyz", &atomsciflow::Exciting::get_xyz)
+        .def("to_string", &atomsciflow::Exciting::to_string)
+        .def("run", &atomsciflow::Exciting::run)
+        .def_readwrite("input", &atomsciflow::Exciting::input)
         ;
 }
 

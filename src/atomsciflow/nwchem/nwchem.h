@@ -30,7 +30,11 @@ SOFTWARE.
 #ifndef ATOMSCIFLOW_NWCHEM_NWCHEM_H_
 #define ATOMSCIFLOW_NWCHEM_NWCHEM_H_
 
+#include <memory>
+#include <map>
+
 #include "atomsciflow/variable/group.h"
+#include "atomsciflow/nwchem/directive.h"
 #include "atomsciflow/base/xyz.h"
 #include "atomsciflow/server/job_scheduler.h"
 
@@ -43,9 +47,26 @@ public:
     void get_xyz(const std::string& filepath);
     std::string to_string();
     
-    void set_job_steps_default();
-    void run(const std::string& directory);
+    void new_directive(const std::string& name);
 
+    template <typename T>
+    void set_param(const std::string& key, T value);
+
+    void py_set_param(const std::string& key, int value);
+    void py_set_param(const std::string& key, double value);
+    void py_set_param(const std::string& key, std::string value);
+    void py_set_param(const std::string& key, std::vector<int> value);
+    void py_set_param(const std::string& key, std::vector<double> value);
+    void py_set_param(const std::string& key, std::vector<std::string> value);
+    void py_set_param(const std::string& key, std::vector<std::vector<int>> value);
+    void py_set_param(const std::string& key, std::vector<std::vector<double>> value);
+    void py_set_param(const std::string& key, std::vector<std::vector<std::string>> value);
+
+    virtual void set_job_steps_default();
+    virtual void run(const std::string& directory);
+
+    std::shared_ptr<VariableGroup> non_directive;
+    std::map<std::string, std::shared_ptr<nwchem::Directive>> directives;
     Xyz xyz;
     JobScheduler job;
 };

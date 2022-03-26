@@ -23,7 +23,16 @@ SOFTWARE.
 """
 
 from atomsciflow.cpp import nwchem
+from atomsciflow.cpp.server import JobScheduler
 
 class NWChem(nwchem.NWChem):
+    def __init__(self):
+        super().__init__()
+
+class Static(NWChem):
+    def __init__(self):
+        super().__init__()
+
+class Opt(NWChem):
     def __init__(self):
         super().__init__()

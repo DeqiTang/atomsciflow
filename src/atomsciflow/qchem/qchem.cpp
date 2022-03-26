@@ -29,11 +29,99 @@ SOFTWARE.
 
 #include "atomsciflow/qchem/qchem.h"
 
+#include <fstream>
+#include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/format.hpp>
+#include <iomanip>
+
+#include "atomsciflow/server/submit_script.h"
+#include "atomsciflow/remote/server.h"
+#include "atomsciflow/base/element.h"
+
 namespace atomsciflow {
+
+namespace fs = boost::filesystem;
 
 QChem::QChem() {
 
+    new_section("rem");
+    sections["rem"]->data.push_back("METHOD HF");
+    sections["rem"]->data.push_back("BASIS 6-31g**");
+    sections["rem"]->data.push_back("SOLVENT_METHOD Onsager");
+
+    job.set_run_default("llhpc");
+    job.set_run_default("pbs");
+    job.set_run_default("bash");
+    job.set_run_default("lsf_sz");
+    job.set_run_default("lsf_sustc");
+    job.set_run_default("cdcloud");
+
+    job.set_run("cmd", "$QCHEM_BIN");
+    job.set_run("script_name_head", "qchem-run");
+}
+
+QChem::~QChem() {
+
+}
+
+
+void QChem::new_section(const std::string& name) {
+    this->sections[name] = std::make_shared<qchem::KeywordSection>(name);
+}
+
+std::string QChem::to_string() {
+    std::string out = "";
+
+    for (auto& item : this->sections) {
+        out += item.second->to_string();
+        out += "\n";
+    }
+
+    return out;
+}
+
+void QChem::get_xyz(const std::string& xyzfile) {
+    this->xyz.read_xyz_file(xyzfile);
+    job.set_run("xyz_file", fs::absolute(xyzfile).string());
+
+    auto element_map = get_element_number_map();
+
+    this->new_section("molecule");
+    std::ostringstream tmp;
+    tmp.setf(std::ios::fixed);
+    tmp << "0 1";
+    for (const auto& item : xyz.atoms) {
+        tmp << std::setw(5)
+            << item.name
+            << std::setprecision(9) << std::setw(15)
+            << item.x
+            << std::setprecision(9) << std::setw(15)
+            << item.y
+            << std::setprecision(9) << std::setw(15)
+            << item.z;
+        this->sections["molecule"]->data.push_back(
+            tmp.str()
+        );
+    }
+
+    this->set_job_steps_default();
+}
+
+void QChem::set_job_steps_default() {
+    job.steps.clear();
+    std::ostringstream step;
+    step << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
+    step << "cat > qchem.inp<<EOF\n";
+    step << this->to_string();
+    step << "EOF\n";
+    step << "$CMD_HEAD " << job.run_params["cmd"] << "\n";
+    job.steps.push_back(step.str());
+    step.clear();
+}
+
+void QChem::run(const std::string& directory) {
+    job.run(directory);
 }
 
 } // namespace atomsciflow
-

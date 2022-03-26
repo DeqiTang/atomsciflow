@@ -30,13 +30,35 @@ SOFTWARE.
 #ifndef ATOMSCIFLOW_QCHEM_QCHEM_H_
 #define ATOMSCIFLOW_QCHEM_QCHEM_H_
 
+#include <memory>
+#include <map>
+
+#include "atomsciflow/variable/group.h"
+#include "atomsciflow/qchem/keyword_section.h"
+#include "atomsciflow/base/xyz.h"
+#include "atomsciflow/server/job_scheduler.h"
+
 namespace atomsciflow {
 
 class QChem {
 public:
 
     QChem();
+    ~QChem();
 
+    std::string to_string();
+    
+    void new_section(const std::string& name);
+
+    void get_xyz(const std::string& xyzfile);
+
+    virtual void set_job_steps_default();
+    virtual void run(const std::string& directory);
+
+    std::shared_ptr<VariableGroup> non_block;
+    std::map<std::string, std::shared_ptr<qchem::KeywordSection>> sections;
+    Xyz xyz;
+    JobScheduler job;
 };
 
 } //namespace atomsciflow

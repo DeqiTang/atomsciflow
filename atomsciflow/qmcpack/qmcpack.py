@@ -24,7 +24,7 @@ SOFTWARE.
 
 from atomsciflow.cpp import qmcpack
 from atomsciflow.cpp.server import JobScheduler
-
+from atomsciflow.cpp.qmcpack import Input
 
 class Qmcpack(qmcpack.Qmcpack):
     def __init__(self):

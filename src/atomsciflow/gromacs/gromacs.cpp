@@ -29,10 +29,53 @@ SOFTWARE.
 
 #include "atomsciflow/gromacs/gromacs.h" 
 
+#include <boost/lexical_cast.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/format.hpp>
+#include <iostream>
+
+#include "atomsciflow/server/submit_script.h"
+#include "atomsciflow/remote/server.h"
+
 namespace atomsciflow {
+
+namespace fs = boost::filesystem;
 
 Gromacs::Gromacs() {
     
+    job.set_run("cmd", "$GROMACS_BIN");
+    job.set_run("input", "gromacs.in");
+    job.set_run("output", "gromacs.out");
+
+    job.set_run("script_name_head", "gromacs-run");
+}
+
+void Gromacs::get_xyz(const std::string &xyzfile) {
+    this->xyz.read_xyz_file(xyzfile);
+    job.set_run("xyz_file", fs::absolute(xyzfile).string());
+    this->set_job_steps_default();
+}
+
+std::string Gromacs::to_string() {
+    std::string out = "";
+    return out;
+}
+
+void Gromacs::set_job_steps_default() {
+    job.steps.clear();
+    std::ostringstream step;
+    step << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
+    step << boost::format("cat > %1%<<EOF\n") % job.run_params["input"];
+    step << this->to_string();
+    step << "EOF\n";
+
+    step << boost::format("${CMD_HEAD} %1% %2%\n") % job.run_params["cmd"] % job.run_params["input"];
+    job.steps.push_back(step.str());
+    step.clear();
+}
+
+void Gromacs::run(const std::string& directory) {
+    job.run(directory);
 }
 
 } // namespace atomsciflow

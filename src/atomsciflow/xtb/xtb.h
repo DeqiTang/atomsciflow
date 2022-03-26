@@ -30,11 +30,27 @@ SOFTWARE.
 #ifndef ATOMSCIFLOW_XTB_XTB_H_
 #define ATOMSCIFLOW_XTB_XTB_H_
 
+#include <memory>
+#include <map>
+
+#include "atomsciflow/base/xyz.h"
+#include "atomsciflow/server/job_scheduler.h"
+
 namespace atomsciflow {
 
 class Xtb {
 public:
     Xtb();
+
+    std::string to_string();
+
+    void get_xyz(const std::string& xyzfile);
+
+    void set_job_steps_default();
+    virtual void run(const std::string& directory);
+
+    Xyz xyz;
+    JobScheduler job;
 };
 
 } // namespace atomsciflow

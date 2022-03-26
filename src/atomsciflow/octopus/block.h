@@ -1,4 +1,4 @@
-"""
+/************************************************************************
 MIT License
 
 Copyright (c) 2021 Deqi Tang
@@ -20,20 +20,34 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-"""
+************************************************************************/
 
-from atomsciflow.cpp import octopus
-from atomsciflow.cpp.server import JobScheduler
+/// @file src/atomsciflow/octopus/block.h
+/// @author DeqiTang
+/// Mail: deqitang@gmail.com 
+/// Created Time: Sat 26 Mar 2022 11:58:12 AM CST
 
-class Octopus(octopus.Octopus):
-    def __init__(self):
-        super().__init__()
+#ifndef ATOMSCIFLOW_OCTOPUS_BLOCK_H_
+#define ATOMSCIFLOW_OCTOPUS_BLOCK_H_
 
-class Static(Octopus):
-    def __init__(self):
-        super().__init__()
+#include <vector>
+#include <string>
 
-class Opt(Octopus):
-    def __init__(self):
-        super().__init__()
-        self.set_param("CalculationMode", "go")
+namespace atomsciflow::octopus {
+
+class Block {
+public:
+
+    Block();
+    explicit Block(const std::string& name);
+
+    std::string to_string();
+
+    std::string name;
+    std::vector<std::string> data;
+
+};
+
+} // namespace atomsciflow::octopus
+
+#endif // ATOMSCIFLOW_OCTOPUS_BLOCK_H_

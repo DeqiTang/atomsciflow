@@ -23,3 +23,6 @@ SOFTWARE.
 """
 
 from atomsciflow.exciting.exciting import Exciting
+from atomsciflow.exciting.exciting import Static, Opt
+from atomsciflow.cpp.qmcpack import Input
+from atomsciflow.cpp.server import JobScheduler

@@ -23,6 +23,7 @@ SOFTWARE.
 """
 
 from atomsciflow.cpp import dftbplus as dp
+from atomsciflow.cpp.server import JobScheduler
 
 class DftbPlus(dp.DftbPlus):
     def __init__(self):

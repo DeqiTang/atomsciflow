@@ -16,6 +16,9 @@ namespace py = pybind11;
 void add_class_gromacs(py::module& m) {
     py::class_<atomsciflow::Gromacs>(m, "Gromacs")
         .def(py::init<>())
+        .def("get_xyz", &atomsciflow::Gromacs::get_xyz)
+        .def("to_string", &atomsciflow::Gromacs::to_string)
+        .def("run", &atomsciflow::Gromacs::run)
         ;
 }
 

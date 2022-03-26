@@ -30,12 +30,25 @@ SOFTWARE.
 #ifndef ATOMSCIFLOW_LAMMPS_LAMMPS_H_
 #define ATOMSCIFLOW_LAMMPS_LAMMPS_H_
 
+#include "atomsciflow/base/xyz.h"
+#include "atomsciflow/server/job_scheduler.h"
+
 namespace atomsciflow {
 
 class Lammps {
 public:
 
     Lammps();
+
+    void get_xyz(const std::string& xyzfile);
+    std::string to_string();
+
+    void set_job_steps_default();
+
+    virtual void run(const std::string& directory);
+
+    Xyz xyz;
+    JobScheduler job;
 
 };
 

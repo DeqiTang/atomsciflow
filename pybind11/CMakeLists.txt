@@ -58,14 +58,12 @@ if (NOT DEFINED LIBSSH2_FOUND_LIBS)
     message(FATAL_ERROR "Stop cmake due to failure in finding libssh2") # FATAL_ERROR will stop cmake
 endif()
 
-
 include_directories("../src")
 
 # scikit-build
 if(SKBUILD)
   message(STATUS "The project is built using scikit-build")
 endif()
-
 
 # pybind11
 find_package(pybind11 REQUIRED)
@@ -87,57 +85,97 @@ link_libraries(${ARMADILLO_LIBRARIES})
 #find_package(LAPACK REQUIRED)
 #find_package(BLAS REQUIRED)
 
+# ------------------------------------------------------------------------
+# Build commonly used sources under atomsicflow into individual static lib
+# ------------------------------------------------------------------------
+# There are many module binding to be built in atomsciflow via pybind 11.
+# And some of the modules may share the same atomsciflow c++ codes, 
+# We build these shared codes into static libs and link to the pybind11 
+# output modules that need them, so that we don't need to compile them 
+# repetively when building each module later.
+file(GLOB ATOMSCIFLOW_BASE_SOURCES
+    "../src/atomsciflow/base/*.cpp"
+)
+add_library(atomsciflow-base STATIC
+    ${ATOMSCIFLOW_BASE_SOURCES}
+)
+file(GLOB ATOMSCIFLOW_VARIABLE_SOURCES
+    "../src/atomsciflow/variable/*.cpp"
+)
+add_library(atomsciflow-variable STATIC
+    ${ATOMSCIFLOW_VARIABLE_SOURCES}
+)
+file(GLOB ATOMSCIFLOW_SERVER_SOURCES
+    "../src/atomsciflow/server/*.cpp"
+)
+add_library(atomsciflow-server STATIC
+    ${ATOMSCIFLOW_SERVER_SOURCES}
+)
+file(GLOB ATOMSCIFLOW_REMOTE_SOURCES
+    "../src/atomsciflow/remote/*.cpp"
+)
+add_library(atomsciflow-remote STATIC
+    ${ATOMSCIFLOW_REMOTE_SOURCES}
+)
+file(GLOB ATOMSCIFLOW_CONFIG_SOURCES 
+    "../src/atomsciflow/config/*.cpp"
+)
+add_library(atomsciflow-config STATIC
+    ${ATOMSCIFLOW_CONFIG_SOURCES}
+)
+file(GLOB ATOMSCIFLOW_UTILS_SOURCES
+    "../src/atomsciflow/utils/*.cpp"
+)
+add_library(atomsciflow-utils STATIC
+    ${ATOMSCIFLOW_UTILS_SOURCES}
+)
+
 # -----------------------------------------------------
 # for pybind11 and scikit-build
 # -----------------------------------------------------
-file(GLOB UTILS_SOURCES
+file(GLOB BINDING_UTILS_SOURCES
     "utils.cpp"
     "../src/atomsciflow/utils.cpp"
 )
-pybind11_add_module(utils MODULE ${UTILS_SOURCES})
-#add_library(utils MODULE ${UTILS_SOURCES})
+pybind11_add_module(utils MODULE ${BINDING_UTILS_SOURCES})
+#add_library(utils MODULE ${BINDING_UTILS_SOURCES})
 #target_link_libraries(utils PRIVATE pybind11::module)
 #set_target_properties(utils PROPERTIES 
 #    PREFIX "${PYTHON_MODULE_PREFIX}"
 #    SUFFIX "${PYTHON_MODULE_EXTENSION}"
 #)
-#pybind11_add_module(utils MODULE ${UTILS_SOURCES})
+#pybind11_add_module(utils MODULE ${BINDING_UTILS_SOURCES})
 
-file(GLOB CUBE_HANDLE_SOURCES
+file(GLOB BINDING_CUBE_HANDLE_SOURCES
     "./cube_handle/*.cpp"
     "../src/atomsciflow/cube_handle/*.cpp"
     "../src/atomsciflow/parser/*.cpp"
     "../src/atomsciflow/base/*.cpp"
 )
-pybind11_add_module(cube_handle MODULE ${CUBE_HANDLE_SOURCES})
+pybind11_add_module(cube_handle MODULE ${BINDING_CUBE_HANDLE_SOURCES})
 
-file(GLOB ATOMSCIFLOW_BASE_SOURCES
+file(GLOB BINDING_BASE_SOURCES
     "./base/*.cpp"
-    "../src/atomsciflow/base/*.cpp"
+    #"../src/atomsciflow/base/*.cpp"
 )
-#pybind11_add_module(base MODULE ${ATOMSCIFLOW_BASE_SOURCES})
-add_library(base MODULE ${ATOMSCIFLOW_BASE_SOURCES})
+#pybind11_add_module(base MODULE ${BINDING_BASE_SOURCES})
+add_library(base MODULE ${BINDING_BASE_SOURCES})
 target_link_libraries(base
     PRIVATE pybind11::module
     ${Boost_LIBRARIES}
+    atomsciflow-base
 )
 set_target_properties(base PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
 )
-#pybind11_add_module(base MODULE ${ATOMSCIFLOW_BASE_SOURCES})
+#pybind11_add_module(base MODULE ${BINDING_BASE_SOURCES})
 
-file(GLOB ATOMSCIFLOW_CP2K_SOURCES
+file(GLOB BINDING_CP2K_SOURCES
     "./cp2k/*.cpp"
-    "../src/atomsciflow/variable/*.cpp"
-    "../src/atomsciflow/base/*.cpp"
-    "../src/atomsciflow/cp2k/*.cpp" 
-    "../src/atomsciflow/server/*.cpp"
-    "../src/atomsciflow/remote/*.cpp"
-    "../src/atomsciflow/config/*.cpp"
-    "../src/atomsciflow/utils/*.cpp"
+    "../src/atomsciflow/cp2k/*.cpp"
 )
-add_library(cp2k MODULE ${ATOMSCIFLOW_CP2K_SOURCES})
+add_library(cp2k MODULE ${BINDING_CP2K_SOURCES})
 target_link_libraries(cp2k
     PRIVATE pybind11::module
     ${Boost_LIBRARIES}
@@ -145,24 +183,24 @@ target_link_libraries(cp2k
     OpenSSL::SSL
     OpenSSL::Crypto
     ${LIBSSH2_FOUND_LIBS}
+    atomsciflow-base
+    atomsciflow-variable 
+    atomsciflow-server
+    atomsciflow-remote
+    atomsciflow-config
+    atomsciflow-utils
 )
 set_target_properties(cp2k PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
 )
-#pybind11_add_module(cp2k MODULE ${ATOMSCIFLOW_CP2K_SOURCES})
+#pybind11_add_module(cp2k MODULE ${BINDING_CP2K_SOURCES})
 
-file(GLOB ATOMSCIFLOW_QE_SOURCES
+file(GLOB BINDING_QE_SOURCES
     "./qe/*.cpp"
-    "../src/atomsciflow/variable/*.cpp"
-    "../src/atomsciflow/base/*.cpp"
-    "../src/atomsciflow/qe/*.cpp" 
-    "../src/atomsciflow/server/*.cpp"
-    "../src/atomsciflow/remote/*.cpp"
-    "../src/atomsciflow/config/*.cpp"
-    "../src/atomsciflow/utils/*.cpp"
+    "../src/atomsciflow/qe/*.cpp"
 )
-add_library(qe MODULE ${ATOMSCIFLOW_QE_SOURCES})
+add_library(qe MODULE ${BINDING_QE_SOURCES})
 target_link_libraries(qe
     PRIVATE pybind11::module
     ${Boost_LIBRARIES}
@@ -170,24 +208,24 @@ target_link_libraries(qe
     OpenSSL::SSL
     OpenSSL::Crypto
     ${LIBSSH2_FOUND_LIBS}
+    atomsciflow-base
+    atomsciflow-variable 
+    atomsciflow-server
+    atomsciflow-remote
+    atomsciflow-config
+    atomsciflow-utils
 )
 set_target_properties(qe PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
 )
-#pybind11_add_module(qe MODULE ${ATOMSCIFLOW_QE_SOURCES})
+#pybind11_add_module(qe MODULE ${BINDING_QE_SOURCES})
 
-file(GLOB ATOMSCIFLOW_ABINIT_SOURCES
+file(GLOB BINDING_ABINIT_SOURCES
     "./abinit/abinit.cpp"
-    "../src/atomsciflow/variable/*.cpp"
-    "../src/atomsciflow/base/*.cpp"
     "../src/atomsciflow/abinit/*.cpp"
-    "../src/atomsciflow/server/*.cpp"
-    "../src/atomsciflow/remote/*.cpp"
-    "../src/atomsciflow/config/*.cpp"
-    "../src/atomsciflow/utils/*.cpp"
 )
-add_library(abinit MODULE ${ATOMSCIFLOW_ABINIT_SOURCES})
+add_library(abinit MODULE ${BINDING_ABINIT_SOURCES})
 target_link_libraries(abinit
     PRIVATE pybind11::module
     ${Boost_LIBRARIES}
@@ -195,49 +233,50 @@ target_link_libraries(abinit
     OpenSSL::SSL
     OpenSSL::Crypto
     ${LIBSSH2_FOUND_LIBS}
+    atomsciflow-base
+    atomsciflow-variable 
+    atomsciflow-server
+    atomsciflow-remote
+    atomsciflow-config
+    atomsciflow-utils
 )
 set_target_properties(abinit PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
 )
-#pybind11_add_module(abinit MODULE ${ATOMSCIFLOW_ABINIT_SOURCES})
+#pybind11_add_module(abinit MODULE ${BINDING_ABINIT_SOURCES})
 
-file(GLOB PARSER_SOURCES
+file(GLOB BINDING_PARSER_SOURCES
     "./parser/parser.cpp"
     "../src/atomsciflow/parser/*.cpp"
-    "../src/atomsciflow/base/*.cpp"
+    #"../src/atomsciflow/base/*.cpp"
 )
-#pybind11_add_module(parser MODULE ${PARSER_SOURCES})
-add_library(parser MODULE ${PARSER_SOURCES})
+#pybind11_add_module(parser MODULE ${BINDING_PARSER_SOURCES})
+add_library(parser MODULE ${BINDING_PARSER_SOURCES})
 target_link_libraries(parser
     PRIVATE pybind11::module
     ${Boost_LIBRARIES}
+    atomsciflow-base
 )
 set_target_properties(parser PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
 )
-#pybind11_add_module(parser MODULE ${PARSER_SOURCES})
+#pybind11_add_module(parser MODULE ${BINDING_PARSER_SOURCES})
 
-file(GLOB ATOMSCIFLOW_VARIABLE_SOURCES
+file(GLOB BINDING_VARIABLE_SOURCES
     "./variable/variable.cpp"
     "../src/atomsciflow/variable/*.cpp"
 )
-pybind11_add_module(variable MODULE ${ATOMSCIFLOW_VARIABLE_SOURCES})
+pybind11_add_module(variable MODULE ${BINDING_VARIABLE_SOURCES})
 
-file(GLOB ATOMSCIFLOW_VASP_SOURCES
+file(GLOB BINDING_VASP_SOURCES
     "./vasp/vasp.cpp"
     "../src/atomsciflow/vasp/*.cpp"
     "../src/atomsciflow/vasp/post/*.cpp"
-    "../src/atomsciflow/base/*.cpp"
-    "../src/atomsciflow/variable/*.cpp"
-    "../src/atomsciflow/server/*.cpp"
-    "../src/atomsciflow/remote/*.cpp"
-    "../src/atomsciflow/config/*.cpp"
-    "../src/atomsciflow/utils/*.cpp"
 )
-#add_library(parser MODULE ${PARSER_SOURCES})
-add_library(vasp MODULE ${ATOMSCIFLOW_VASP_SOURCES})
+#add_library(parser MODULE ${BINDING_VASP_SOURCES})
+add_library(vasp MODULE ${BINDING_VASP_SOURCES})
 target_link_libraries(vasp
     PRIVATE pybind11::module
     ${Boost_LIBRARIES}
@@ -245,39 +284,37 @@ target_link_libraries(vasp
     OpenSSL::SSL
     OpenSSL::Crypto
     ${LIBSSH2_FOUND_LIBS}
+    atomsciflow-base
+    atomsciflow-variable 
+    atomsciflow-server
+    atomsciflow-remote
+    atomsciflow-config
+    atomsciflow-utils
 )
 set_target_properties(vasp PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
 )
-#pybind11_add_module(vasp MODULE ${ATOMSCIFLOW_VASP_SOURCES})
+#pybind11_add_module(vasp MODULE ${BINDING_VASP_SOURCES})
 
-file(GLOB ATOMSCIFLOW_CMD_SOURCES
+file(GLOB BINDING_CMD_SOURCES
     "./cmd/cmd.cpp"
     "../src/atomsciflow/cmd/*.cpp"
 )
-pybind11_add_module(cmd MODULE ${ATOMSCIFLOW_CMD_SOURCES})
+pybind11_add_module(cmd MODULE ${BINDING_CMD_SOURCES})
 
-
-file(GLOB ATOMSCIFLOW_CONFIG_SOURCES
+file(GLOB BINDING_CONFIG_SOURCES
     "./config/*.cpp"
     "../src/atomsciflow/config/*.cpp"
 )
-pybind11_add_module(config MODULE ${ATOMSCIFLOW_CONFIG_SOURCES})
+pybind11_add_module(config MODULE ${BINDING_CONFIG_SOURCES})
 
-
-file(GLOB ATOMSCIFLOW_GAMESSUS_SOURCES
+file(GLOB BINDING_GAMESSUS_SOURCES
     "./gamessus/gamessus.cpp"
     "../src/atomsciflow/gamessus/*.cpp"
-    "../src/atomsciflow/base/*.cpp"
-    "../src/atomsciflow/variable/*.cpp"
-    "../src/atomsciflow/server/*.cpp"
-    "../src/atomsciflow/remote/*.cpp"
-    "../src/atomsciflow/config/*.cpp"
-    "../src/atomsciflow/utils/*.cpp"
 )
-#add_library(gamessus MODULE ${ATOMSCIFLOW_GAMESSUS_SOURCES})
-add_library(gamessus MODULE ${ATOMSCIFLOW_GAMESSUS_SOURCES})
+#add_library(gamessus MODULE ${BINDING_GAMESSUS_SOURCES})
+add_library(gamessus MODULE ${BINDING_GAMESSUS_SOURCES})
 target_link_libraries(gamessus
     PRIVATE pybind11::module
     ${Boost_LIBRARIES}
@@ -285,25 +322,25 @@ target_link_libraries(gamessus
     OpenSSL::SSL
     OpenSSL::Crypto
     ${LIBSSH2_FOUND_LIBS}
+    atomsciflow-base
+    atomsciflow-variable 
+    atomsciflow-server
+    atomsciflow-remote
+    atomsciflow-config
+    atomsciflow-utils
 )
 set_target_properties(gamessus PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
 )
-#pybind11_add_module(gamessus MODULE ${ATOMSCIFLOW_GAMESSUS_SOURCES})
+#pybind11_add_module(gamessus MODULE ${BINDING_GAMESSUS_SOURCES})
 
-file(GLOB ATOMSCIFLOW_ELK_SOURCES
+file(GLOB BINDING_ELK_SOURCES
     "./elk/elk.cpp"
     "../src/atomsciflow/elk/*.cpp"
-    "../src/atomsciflow/base/*.cpp"
-    "../src/atomsciflow/variable/*.cpp"
-    "../src/atomsciflow/server/*.cpp"
-    "../src/atomsciflow/remote/*.cpp"
-    "../src/atomsciflow/config/*.cpp"
-    "../src/atomsciflow/utils/*.cpp"
 )
-#add_library(elk MODULE ${ATOMSCIFLOW_ELK_SOURCES})
-add_library(elk MODULE ${ATOMSCIFLOW_ELK_SOURCES})
+#add_library(elk MODULE ${BINDING_ELK_SOURCES})
+add_library(elk MODULE ${BINDING_ELK_SOURCES})
 target_link_libraries(elk
     PRIVATE pybind11::module
     ${Boost_LIBRARIES}
@@ -311,25 +348,25 @@ target_link_libraries(elk
     OpenSSL::SSL
     OpenSSL::Crypto
     ${LIBSSH2_FOUND_LIBS}
+    atomsciflow-base
+    atomsciflow-variable 
+    atomsciflow-server
+    atomsciflow-remote
+    atomsciflow-config
+    atomsciflow-utils
 )
 set_target_properties(elk PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
 )
-#pybind11_add_module(elk MODULE ${ATOMSCIFLOW_ELK_SOURCES})
+#pybind11_add_module(elk MODULE ${BINDING_ELK_SOURCES})
 
-file(GLOB ATOMSCIFLOW_QMCPACK_SOURCES
+file(GLOB BINDING_QMCPACK_SOURCES
     "./qmcpack/qmcpack.cpp"
     "../src/atomsciflow/qmcpack/*.cpp"
-    "../src/atomsciflow/base/*.cpp"
-    "../src/atomsciflow/variable/*.cpp"
-    "../src/atomsciflow/server/*.cpp"
-    "../src/atomsciflow/remote/*.cpp"
-    "../src/atomsciflow/config/*.cpp"
-    "../src/atomsciflow/utils/*.cpp"
 )
-#add_library(qmcpack MODULE ${ATOMSCIFLOW_QMCPACK_SOURCES})
-add_library(qmcpack MODULE ${ATOMSCIFLOW_QMCPACK_SOURCES})
+#add_library(qmcpack MODULE ${BINDING_QMCPACK_SOURCES})
+add_library(qmcpack MODULE ${BINDING_QMCPACK_SOURCES})
 target_link_libraries(qmcpack
     PRIVATE pybind11::module
     ${Boost_LIBRARIES}
@@ -337,25 +374,25 @@ target_link_libraries(qmcpack
     OpenSSL::SSL
     OpenSSL::Crypto
     ${LIBSSH2_FOUND_LIBS}
+    atomsciflow-base
+    atomsciflow-variable 
+    atomsciflow-server
+    atomsciflow-remote
+    atomsciflow-config
+    atomsciflow-utils
 )
 set_target_properties(qmcpack PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
 )
-#pybind11_add_module(qmcpack MODULE ${ATOMSCIFLOW_QMCPACK_SOURCES})
+#pybind11_add_module(qmcpack MODULE ${BINDING_QMCPACK_SOURCES})
 
-file(GLOB ATOMSCIFLOW_DALTON_SOURCES
+file(GLOB BINDING_DALTON_SOURCES
     "./dalton/dalton.cpp"
     "../src/atomsciflow/dalton/*.cpp"
-    "../src/atomsciflow/base/*.cpp"
-    "../src/atomsciflow/variable/*.cpp"
-    "../src/atomsciflow/server/*.cpp"
-    "../src/atomsciflow/remote/*.cpp"
-    "../src/atomsciflow/config/*.cpp"
-    "../src/atomsciflow/utils/*.cpp"
 )
-#add_library(dalton MODULE ${ATOMSCIFLOW_DALTON_SOURCES})
-add_library(dalton MODULE ${ATOMSCIFLOW_DALTON_SOURCES})
+#add_library(dalton MODULE ${BINDING_DALTON_SOURCES})
+add_library(dalton MODULE ${BINDING_DALTON_SOURCES})
 target_link_libraries(dalton
     PRIVATE pybind11::module
     ${Boost_LIBRARIES}
@@ -363,25 +400,25 @@ target_link_libraries(dalton
     OpenSSL::SSL
     OpenSSL::Crypto
     ${LIBSSH2_FOUND_LIBS}
+    atomsciflow-base
+    atomsciflow-variable 
+    atomsciflow-server
+    atomsciflow-remote
+    atomsciflow-config
+    atomsciflow-utils
 )
 set_target_properties(dalton PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
 )
-#pybind11_add_module(dalton MODULE ${ATOMSCIFLOW_DALTON_SOURCES})
+#pybind11_add_module(dalton MODULE ${BINDING_DALTON_SOURCES})
 
-file(GLOB ATOMSCIFLOW_SIESTA_SOURCES
+file(GLOB BINDING_SIESTA_SOURCES
     "./siesta/siesta.cpp"
     "../src/atomsciflow/siesta/*.cpp"
-    "../src/atomsciflow/base/*.cpp"
-    "../src/atomsciflow/variable/*.cpp"
-    "../src/atomsciflow/server/*.cpp"
-    "../src/atomsciflow/remote/*.cpp"
-    "../src/atomsciflow/config/*.cpp"
-    "../src/atomsciflow/utils/*.cpp"
 )
-#add_library(siesta MODULE ${ATOMSCIFLOW_SIESTA_SOURCES})
-add_library(siesta MODULE ${ATOMSCIFLOW_SIESTA_SOURCES})
+#add_library(siesta MODULE ${BINDING_SIESTA_SOURCES})
+add_library(siesta MODULE ${BINDING_SIESTA_SOURCES})
 target_link_libraries(siesta
     PRIVATE pybind11::module
     ${Boost_LIBRARIES}
@@ -389,25 +426,25 @@ target_link_libraries(siesta
     OpenSSL::SSL
     OpenSSL::Crypto
     ${LIBSSH2_FOUND_LIBS}
+    atomsciflow-base
+    atomsciflow-variable 
+    atomsciflow-server
+    atomsciflow-remote
+    atomsciflow-config
+    atomsciflow-utils
 )
 set_target_properties(siesta PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
 )
-#pybind11_add_module(siesta MODULE ${ATOMSCIFLOW_SIESTA_SOURCES})
+#pybind11_add_module(siesta MODULE ${BINDING_SIESTA_SOURCES})
 
-file(GLOB ATOMSCIFLOW_DFTBPLUS_SOURCES
+file(GLOB BINDING_DFTBPLUS_SOURCES
     "./dftbplus/dftbplus.cpp"
     "../src/atomsciflow/dftbplus/*.cpp"
-    "../src/atomsciflow/base/*.cpp"
-    "../src/atomsciflow/variable/*.cpp"
-    "../src/atomsciflow/server/*.cpp"
-    "../src/atomsciflow/remote/*.cpp"
-    "../src/atomsciflow/config/*.cpp"
-    "../src/atomsciflow/utils/*.cpp"
 )
-#add_library(dftbplus MODULE ${ATOMSCIFLOW_DFTBPLUS_SOURCES})
-add_library(dftbplus MODULE ${ATOMSCIFLOW_DFTBPLUS_SOURCES})
+#add_library(dftbplus MODULE ${BINDING_DFTBPLUS_SOURCES})
+add_library(dftbplus MODULE ${BINDING_DFTBPLUS_SOURCES})
 target_link_libraries(dftbplus
     PRIVATE pybind11::module
     ${Boost_LIBRARIES}
@@ -415,25 +452,25 @@ target_link_libraries(dftbplus
     OpenSSL::SSL
     OpenSSL::Crypto
     ${LIBSSH2_FOUND_LIBS}
+    atomsciflow-base
+    atomsciflow-variable 
+    atomsciflow-server
+    atomsciflow-remote
+    atomsciflow-config
+    atomsciflow-utils
 )
 set_target_properties(dftbplus PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
 )
-#pybind11_add_module(dftbplus MODULE ${ATOMSCIFLOW_DFTBPLUS_SOURCES})
+#pybind11_add_module(dftbplus MODULE ${BINDING_DFTBPLUS_SOURCES})
 
-file(GLOB ATOMSCIFLOW_NWCHEM_SOURCES
+file(GLOB BINDING_NWCHEM_SOURCES
     "./nwchem/nwchem.cpp"
     "../src/atomsciflow/nwchem/*.cpp"
-    "../src/atomsciflow/base/*.cpp"
-    "../src/atomsciflow/variable/*.cpp"
-    "../src/atomsciflow/server/*.cpp"
-    "../src/atomsciflow/remote/*.cpp"
-    "../src/atomsciflow/config/*.cpp"
-    "../src/atomsciflow/utils/*.cpp"
 )
-#add_library(nwchem MODULE ${ATOMSCIFLOW_NWCHEM_SOURCES})
-add_library(nwchem MODULE ${ATOMSCIFLOW_NWCHEM_SOURCES})
+#add_library(nwchem MODULE ${BINDING_NWCHEM_SOURCES})
+add_library(nwchem MODULE ${BINDING_NWCHEM_SOURCES})
 target_link_libraries(nwchem
     PRIVATE pybind11::module
     ${Boost_LIBRARIES}
@@ -441,25 +478,26 @@ target_link_libraries(nwchem
     OpenSSL::SSL
     OpenSSL::Crypto
     ${LIBSSH2_FOUND_LIBS}
+    atomsciflow-base
+    atomsciflow-variable 
+    atomsciflow-server
+    atomsciflow-remote
+    atomsciflow-config
+    atomsciflow-utils
 )
 set_target_properties(nwchem PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
 )
-#pybind11_add_module(nwchem MODULE ${ATOMSCIFLOW_NWCHEM_SOURCES})
+#pybind11_add_module(nwchem MODULE ${BINDING_NWCHEM_SOURCES})
 
-file(GLOB ATOMSCIFLOW_EXCITING_SOURCES
+file(GLOB BINDING_EXCITING_SOURCES
     "./exciting/exciting.cpp"
     "../src/atomsciflow/exciting/*.cpp"
-    "../src/atomsciflow/base/*.cpp"
-    "../src/atomsciflow/variable/*.cpp"
-    "../src/atomsciflow/server/*.cpp"
-    "../src/atomsciflow/remote/*.cpp"
-    "../src/atomsciflow/config/*.cpp"
-    "../src/atomsciflow/utils/*.cpp"
+    "../src/atomsciflow/qmcpack/input.cpp" # needed by exciting
 )
-#add_library(exciting MODULE ${ATOMSCIFLOW_EXCITING_SOURCES})
-add_library(exciting MODULE ${ATOMSCIFLOW_EXCITING_SOURCES})
+#add_library(exciting MODULE ${BINDING_EXCITING_SOURCES})
+add_library(exciting MODULE ${BINDING_EXCITING_SOURCES})
 target_link_libraries(exciting
     PRIVATE pybind11::module
     ${Boost_LIBRARIES}
@@ -467,25 +505,25 @@ target_link_libraries(exciting
     OpenSSL::SSL
     OpenSSL::Crypto
     ${LIBSSH2_FOUND_LIBS}
+    atomsciflow-base
+    atomsciflow-variable 
+    atomsciflow-server
+    atomsciflow-remote
+    atomsciflow-config
+    atomsciflow-utils
 )
 set_target_properties(exciting PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
 )
-#pybind11_add_module(exciting MODULE ${ATOMSCIFLOW_EXCITING_SOURCES})
+#pybind11_add_module(exciting MODULE ${BINDING_EXCITING_SOURCES})
 
-file(GLOB ATOMSCIFLOW_GAUSSIAN_SOURCES
+file(GLOB BINDING_GAUSSIAN_SOURCES
     "./gaussian/gaussian.cpp"
     "../src/atomsciflow/gaussian/*.cpp"
-    "../src/atomsciflow/base/*.cpp"
-    "../src/atomsciflow/variable/*.cpp"
-    "../src/atomsciflow/server/*.cpp"
-    "../src/atomsciflow/remote/*.cpp"
-    "../src/atomsciflow/config/*.cpp"
-    "../src/atomsciflow/utils/*.cpp"
 )
-#add_library(gaussian MODULE ${ATOMSCIFLOW_GAUSSIAN_SOURCES})
-add_library(gaussian MODULE ${ATOMSCIFLOW_GAUSSIAN_SOURCES})
+#add_library(gaussian MODULE ${BINDING_GAUSSIAN_SOURCES})
+add_library(gaussian MODULE ${BINDING_GAUSSIAN_SOURCES})
 target_link_libraries(gaussian
     PRIVATE pybind11::module
     ${Boost_LIBRARIES}
@@ -493,25 +531,25 @@ target_link_libraries(gaussian
     OpenSSL::SSL
     OpenSSL::Crypto
     ${LIBSSH2_FOUND_LIBS}
+    atomsciflow-base
+    atomsciflow-variable 
+    atomsciflow-server
+    atomsciflow-remote
+    atomsciflow-config
+    atomsciflow-utils
 )
 set_target_properties(gaussian PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
 )
-#pybind11_add_module(gaussian MODULE ${ATOMSCIFLOW_GAUSSIAN_SOURCES})
+#pybind11_add_module(gaussian MODULE ${BINDING_GAUSSIAN_SOURCES})
 
-file(GLOB ATOMSCIFLOW_GROMACS_SOURCES
+file(GLOB BINDING_GROMACS_SOURCES
     "./gromacs/gromacs.cpp"
     "../src/atomsciflow/gromacs/*.cpp"
-    "../src/atomsciflow/base/*.cpp"
-    "../src/atomsciflow/variable/*.cpp"
-    "../src/atomsciflow/server/*.cpp"
-    "../src/atomsciflow/remote/*.cpp"
-    "../src/atomsciflow/config/*.cpp"
-    "../src/atomsciflow/utils/*.cpp"
 )
-#add_library(gromacs MODULE ${ATOMSCIFLOW_GROMACS_SOURCES})
-add_library(gromacs MODULE ${ATOMSCIFLOW_GROMACS_SOURCES})
+#add_library(gromacs MODULE ${BINDING_GROMACS_SOURCES})
+add_library(gromacs MODULE ${BINDING_GROMACS_SOURCES})
 target_link_libraries(gromacs
     PRIVATE pybind11::module
     ${Boost_LIBRARIES}
@@ -519,25 +557,25 @@ target_link_libraries(gromacs
     OpenSSL::SSL
     OpenSSL::Crypto
     ${LIBSSH2_FOUND_LIBS}
+    atomsciflow-base
+    atomsciflow-variable 
+    atomsciflow-server
+    atomsciflow-remote
+    atomsciflow-config
+    atomsciflow-utils
 )
 set_target_properties(gromacs PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
 )
-#pybind11_add_module(gromacx MODULE ${ATOMSCIFLOW_GROMACS_SOURCES})
+#pybind11_add_module(gromacx MODULE ${BINDING_GROMACS_SOURCES})
 
-file(GLOB ATOMSCIFLOW_LAMMPS_SOURCES
+file(GLOB BINDING_LAMMPS_SOURCES
     "./lammps/lammps.cpp"
     "../src/atomsciflow/lammps/*.cpp"
-    "../src/atomsciflow/base/*.cpp"
-    "../src/atomsciflow/variable/*.cpp"
-    "../src/atomsciflow/server/*.cpp"
-    "../src/atomsciflow/remote/*.cpp"
-    "../src/atomsciflow/config/*.cpp"
-    "../src/atomsciflow/utils/*.cpp"
 )
-#add_library(lammps MODULE ${ATOMSCIFLOW_LAMMPS_SOURCES})
-add_library(lammps MODULE ${ATOMSCIFLOW_LAMMPS_SOURCES})
+#add_library(lammps MODULE ${BINDING_LAMMPS_SOURCES})
+add_library(lammps MODULE ${BINDING_LAMMPS_SOURCES})
 target_link_libraries(lammps
     PRIVATE pybind11::module
     ${Boost_LIBRARIES}
@@ -545,25 +583,25 @@ target_link_libraries(lammps
     OpenSSL::SSL
     OpenSSL::Crypto
     ${LIBSSH2_FOUND_LIBS}
+    atomsciflow-base
+    atomsciflow-variable 
+    atomsciflow-server
+    atomsciflow-remote
+    atomsciflow-config
+    atomsciflow-utils
 )
 set_target_properties(lammps PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
 )
-#pybind11_add_module(lammps MODULE ${ATOMSCIFLOW_LAMMPS_SOURCES})
+#pybind11_add_module(lammps MODULE ${BINDING_LAMMPS_SOURCES})
 
-file(GLOB ATOMSCIFLOW_OCTOPUS_SOURCES
+file(GLOB BINDING_OCTOPUS_SOURCES
     "./octopus/octopus.cpp"
     "../src/atomsciflow/octopus/*.cpp"
-    "../src/atomsciflow/base/*.cpp"
-    "../src/atomsciflow/variable/*.cpp"
-    "../src/atomsciflow/server/*.cpp"
-    "../src/atomsciflow/remote/*.cpp"
-    "../src/atomsciflow/config/*.cpp"
-    "../src/atomsciflow/utils/*.cpp"
 )
-#add_library(octopus MODULE ${ATOMSCIFLOW_OCTOPUS_SOURCES})
-add_library(octopus MODULE ${ATOMSCIFLOW_OCTOPUS_SOURCES})
+#add_library(octopus MODULE ${BINDING_OCTOPUS_SOURCES})
+add_library(octopus MODULE ${BINDING_OCTOPUS_SOURCES})
 target_link_libraries(octopus
     PRIVATE pybind11::module
     ${Boost_LIBRARIES}
@@ -571,25 +609,25 @@ target_link_libraries(octopus
     OpenSSL::SSL
     OpenSSL::Crypto
     ${LIBSSH2_FOUND_LIBS}
+    atomsciflow-base
+    atomsciflow-variable 
+    atomsciflow-server
+    atomsciflow-remote
+    atomsciflow-config
+    atomsciflow-utils
 )
 set_target_properties(octopus PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
 )
-#pybind11_add_module(octopus MODULE ${ATOMSCIFLOW_OCTOPUS_SOURCES})
+#pybind11_add_module(octopus MODULE ${BINDING_OCTOPUS_SOURCES})
 
-file(GLOB ATOMSCIFLOW_ORCA_SOURCES
+file(GLOB BINDING_ORCA_SOURCES
     "./orca/orca.cpp"
     "../src/atomsciflow/orca/*.cpp"
-    "../src/atomsciflow/base/*.cpp"
-    "../src/atomsciflow/variable/*.cpp"
-    "../src/atomsciflow/server/*.cpp"
-    "../src/atomsciflow/remote/*.cpp"
-    "../src/atomsciflow/config/*.cpp"
-    "../src/atomsciflow/utils/*.cpp"
 )
-#add_library(orca MODULE ${ATOMSCIFLOW_ORCA_SOURCES})
-add_library(orca MODULE ${ATOMSCIFLOW_ORCA_SOURCES})
+#add_library(orca MODULE ${BINDING_ORCA_SOURCES})
+add_library(orca MODULE ${BINDING_ORCA_SOURCES})
 target_link_libraries(orca
     PRIVATE pybind11::module
     ${Boost_LIBRARIES}
@@ -597,25 +635,25 @@ target_link_libraries(orca
     OpenSSL::SSL
     OpenSSL::Crypto
     ${LIBSSH2_FOUND_LIBS}
+    atomsciflow-base
+    atomsciflow-variable 
+    atomsciflow-server
+    atomsciflow-remote
+    atomsciflow-config
+    atomsciflow-utils
 )
 set_target_properties(orca PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
 )
-#pybind11_add_module(orca MODULE ${ATOMSCIFLOW_ORCA_SOURCES})
+#pybind11_add_module(orca MODULE ${BINDING_ORCA_SOURCES})
 
-file(GLOB ATOMSCIFLOW_QCHEM_SOURCES
+file(GLOB BINDING_QCHEM_SOURCES
     "./qchem/qchem.cpp"
     "../src/atomsciflow/qchem/*.cpp"
-    "../src/atomsciflow/base/*.cpp"
-    "../src/atomsciflow/variable/*.cpp"
-    "../src/atomsciflow/server/*.cpp"
-    "../src/atomsciflow/remote/*.cpp"
-    "../src/atomsciflow/config/*.cpp"
-    "../src/atomsciflow/utils/*.cpp"
 )
-#add_library(qchem MODULE ${ATOMSCIFLOW_QCHEM_SOURCES})
-add_library(qchem MODULE ${ATOMSCIFLOW_QCHEM_SOURCES})
+#add_library(qchem MODULE ${BINDING_QCHEM_SOURCES})
+add_library(qchem MODULE ${BINDING_QCHEM_SOURCES})
 target_link_libraries(qchem
     PRIVATE pybind11::module
     ${Boost_LIBRARIES}
@@ -623,25 +661,25 @@ target_link_libraries(qchem
     OpenSSL::SSL
     OpenSSL::Crypto
     ${LIBSSH2_FOUND_LIBS}
+    atomsciflow-base
+    atomsciflow-variable 
+    atomsciflow-server
+    atomsciflow-remote
+    atomsciflow-config
+    atomsciflow-utils
 )
 set_target_properties(qchem PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
 )
-#pybind11_add_module(qchem MODULE ${ATOMSCIFLOW_QCHEM_SOURCES})
+#pybind11_add_module(qchem MODULE ${BINDING_QCHEM_SOURCES})
 
-file(GLOB ATOMSCIFLOW_XTB_SOURCES
+file(GLOB BINDING_XTB_SOURCES
     "./xtb/xtb.cpp"
     "../src/atomsciflow/xtb/*.cpp"
-    "../src/atomsciflow/base/*.cpp"
-    "../src/atomsciflow/variable/*.cpp"
-    "../src/atomsciflow/server/*.cpp"
-    "../src/atomsciflow/remote/*.cpp"
-    "../src/atomsciflow/config/*.cpp"
-    "../src/atomsciflow/utils/*.cpp"
 )
-#add_library(xtb MODULE ${ATOMSCIFLOW_XTB_SOURCES})
-add_library(xtb MODULE ${ATOMSCIFLOW_XTB_SOURCES})
+#add_library(xtb MODULE ${BINDING_XTB_SOURCES})
+add_library(xtb MODULE ${BINDING_XTB_SOURCES})
 target_link_libraries(xtb
     PRIVATE pybind11::module
     ${Boost_LIBRARIES}
@@ -649,21 +687,27 @@ target_link_libraries(xtb
     OpenSSL::SSL
     OpenSSL::Crypto
     ${LIBSSH2_FOUND_LIBS}
+    atomsciflow-base
+    atomsciflow-variable 
+    atomsciflow-server
+    atomsciflow-remote
+    atomsciflow-config
+    atomsciflow-utils
 )
 set_target_properties(xtb PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
 )
-#pybind11_add_module(xtb MODULE ${ATOMSCIFLOW_XTB_SOURCES})
+#pybind11_add_module(xtb MODULE ${BINDING_XTB_SOURCES})
 
-file(GLOB ATOMSCIFLOW_SERVER_SOURCES
+file(GLOB BINDING_SERVER_SOURCES
     "./server/*.cpp"
     "../src/atomsciflow/server/*.cpp"
     "../src/atomsciflow/remote/*.cpp"
     "../src/atomsciflow/config/*.cpp"
 )
-#pybind11_add_module(server MODULE ${ATOMSCIFLOW_SERVER_SOURCES})
-add_library(server MODULE ${ATOMSCIFLOW_SERVER_SOURCES})
+#pybind11_add_module(server MODULE ${BINDING_SERVER_SOURCES})
+add_library(server MODULE ${BINDING_SERVER_SOURCES})
 target_link_libraries(server
     PRIVATE pybind11::module
     ${Boost_LIBRARIES}
@@ -676,7 +720,7 @@ set_target_properties(server PROPERTIES
     PREFIX "${PYTHON_MODULE_PREFIX}"
     SUFFIX "${PYTHON_MODULE_EXTENSION}"
 )
-#pybind11_add_module(server  MODULE ${ATOMSCIFLOW_SERVER_SOURCES})
+#pybind11_add_module(server  MODULE ${BINDING_SERVER_SOURCES})
 
 # scikit-build
 if(SKBUILD)

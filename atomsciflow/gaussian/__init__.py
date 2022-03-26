@@ -23,3 +23,5 @@ SOFTWARE.
 """
 
 from atomsciflow.gaussian.gaussian import Gaussian
+from atomsciflow.gaussian.gaussian import Static, Opt
+from atomsciflow.cpp.server import JobScheduler

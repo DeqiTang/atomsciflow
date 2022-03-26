@@ -23,7 +23,12 @@ SOFTWARE.
 """
 
 from atomsciflow.cpp import gromacs
+from atomsciflow.cpp.server import JobScheduler
 
 class Gromacs(gromacs.Gromacs):
+    def __init__(self):
+        super().__init__()
+
+class MolecularDynamics(Gromacs):
     def __init__(self):
         super().__init__()

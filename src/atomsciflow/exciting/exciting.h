@@ -30,13 +30,29 @@ SOFTWARE.
 #ifndef ATOMSCIFLOW_EXCITING_EXCITING_H_
 #define ATOMSCIFLOW_EXCITING_EXCITING_H_
 
+#include "atomsciflow/qmcpack/input.h"
+#include "atomsciflow/base/xyz.h"
+#include "atomsciflow/server/job_scheduler.h"
+
 namespace atomsciflow {
 
 class Exciting {
 public:
 
     Exciting();
+    ~Exciting() = default;
 
+    void get_xyz(const std::string& xyzfile);
+    std::string to_string();
+
+    void set_job_steps_default();
+
+    virtual void run(const std::string& directory);
+
+    qmcpack::Input input;
+    Xyz xyz;
+
+    JobScheduler job;
 };
 
 } // namespace atomsciflow

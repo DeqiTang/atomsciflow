@@ -23,7 +23,12 @@ SOFTWARE.
 """
 
 from atomsciflow.cpp import lammps
+from atomsciflow.cpp.server import JobScheduler
 
 class Lammps(lammps.Lammps):
+    def __init__(self):
+        super().__init__()
+
+class MolecularDynamics(Lammps):
     def __init__(self):
         super().__init__()

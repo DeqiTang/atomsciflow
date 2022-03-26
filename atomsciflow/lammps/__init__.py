@@ -23,3 +23,5 @@ SOFTWARE.
 """
 
 from atomsciflow.lammps.lammps import Lammps
+from atomsciflow.lammps.lammps import MolecularDynamics
+from atomsciflow.cpp.server import JobScheduler

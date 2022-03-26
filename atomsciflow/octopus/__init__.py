@@ -23,3 +23,5 @@ SOFTWARE.
 """
 
 from atomsciflow.octopus.octopus import Octopus
+from atomsciflow.octopus.octopus import Static, Opt
+from atomsciflow.cpp.server import JobScheduler

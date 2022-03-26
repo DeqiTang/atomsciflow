@@ -24,3 +24,5 @@ SOFTWARE.
 
 from atomsciflow.qmcpack.qmcpack import Qmcpack
 from atomsciflow.qmcpack.qmcpack import Static, Opt
+from atomsciflow.cpp.qmcpack import Input
+from atomsciflow.cpp.server import JobScheduler

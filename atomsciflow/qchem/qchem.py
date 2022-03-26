@@ -23,7 +23,16 @@ SOFTWARE.
 """
 
 from atomsciflow.cpp import qchem 
+from atomsciflow.cpp.server import JobScheduler
 
 class QChem(qchem.QChem):
+    def __init__(self):
+        super().__init__()
+
+class Static(QChem):
+    def __init__(self):
+        super().__init__()
+
+class Opt(QChem):
     def __init__(self):
         super().__init__()

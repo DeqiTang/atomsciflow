@@ -23,6 +23,7 @@ SOFTWARE.
 """
 
 from atomsciflow.cpp import dalton
+from atomsciflow.cpp.server import JobScheduler
 
 class Dalton(dalton.Dalton):
     def __init__(self):

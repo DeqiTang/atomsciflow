@@ -23,3 +23,4 @@ SOFTWARE.
 """
 
 from atomsciflow.dalton.dalton import Dalton
+from atomsciflow.cpp.server import JobScheduler

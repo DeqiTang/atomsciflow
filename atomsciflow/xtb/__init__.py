@@ -23,3 +23,4 @@ SOFTWARE.
 """
 
 from atomsciflow.xtb.xtb import Xtb
+from atomsciflow.xtb.xtb import Static, Opt

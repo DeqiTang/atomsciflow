@@ -23,7 +23,16 @@ SOFTWARE.
 """
 
 from atomsciflow.cpp import gaussian
+from atomsciflow.cpp.server import JobScheduler
 
 class Gaussian(gaussian.Gaussian):
+    def __init__(self):
+        super().__init__()
+
+class Static(Gaussian):
+    def __init__(self):
+        super().__init__()
+
+class Opt(Gaussian):
     def __init__(self):
         super().__init__()

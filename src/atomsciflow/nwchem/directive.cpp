@@ -1,4 +1,4 @@
-"""
+/************************************************************************
 MIT License
 
 Copyright (c) 2021 Deqi Tang
@@ -20,20 +20,36 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-"""
+************************************************************************/
 
-from atomsciflow.cpp import octopus
-from atomsciflow.cpp.server import JobScheduler
+/// @file src/atomsciflow/nwchem/directive.cpp
+/// @author DeqiTang
+/// Mail: deqitang@gmail.com 
+/// Created Time: Sat 26 Mar 2022 02:10:16 PM CST
 
-class Octopus(octopus.Octopus):
-    def __init__(self):
-        super().__init__()
+#include "atomsciflow/nwchem/directive.h"
 
-class Static(Octopus):
-    def __init__(self):
-        super().__init__()
+#include <sstream>
+#include <boost/format.hpp>
 
-class Opt(Octopus):
-    def __init__(self):
-        super().__init__()
-        self.set_param("CalculationMode", "go")
+namespace atomsciflow::nwchem {
+
+Directive::Directive() {
+
+}
+
+Directive::Directive(const std::string& name) {
+    this->name = name;
+}
+
+std::string Directive::to_string() {
+    std::ostringstream out;
+    out << this->name << " " << this->keywords << "\n";
+    for (const auto& item : this->data) {
+        out << item << "\n";
+    }
+    out << "end\n";
+    return out.str();
+}
+
+} // namespace atomsciflow::directive

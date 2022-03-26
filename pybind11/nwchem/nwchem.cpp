@@ -15,8 +15,21 @@ namespace py = pybind11;
 
 void add_class_nwchem(py::module& m) {
     py::class_<atomsciflow::NWChem>(m, "NWChem")
-        .def(py::init<>())
-        //.def("run", &atomsciflow::NWChem::run)
+        .def(py::init<>())        
+        .def("to_string", &atomsciflow::NWChem::to_string)
+        .def("set_param", py::overload_cast<const std::string&, int>(&atomsciflow::NWChem::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, double>(&atomsciflow::NWChem::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::string>(&atomsciflow::NWChem::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::vector<int>>(&atomsciflow::NWChem::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::vector<double>>(&atomsciflow::NWChem::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::vector<std::string>>(&atomsciflow::NWChem::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::vector<std::vector<int>>>(&atomsciflow::NWChem::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::vector<std::vector<double>>>(&atomsciflow::NWChem::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::vector<std::vector<std::string>>>(&atomsciflow::NWChem::py_set_param))        
+        .def("new_directive", &atomsciflow::NWChem::new_directive)
+        .def("get_xyz", &atomsciflow::NWChem::get_xyz)
+        .def("run", &atomsciflow::NWChem::run)
+        .def_readwrite("job", &atomsciflow::NWChem::job)
         ;
 }
 

@@ -16,6 +16,9 @@ namespace py = pybind11;
 void add_class_lammps(py::module& m) {
     py::class_<atomsciflow::Lammps>(m, "Lammps")
         .def(py::init<>())
+        .def("get_xyz", &atomsciflow::Lammps::get_xyz)
+        .def("to_string", &atomsciflow::Lammps::to_string)
+        .def("run", &atomsciflow::Lammps::run)
         ;
 }
 

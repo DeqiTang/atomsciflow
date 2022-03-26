@@ -23,7 +23,17 @@ SOFTWARE.
 """
 
 from atomsciflow.cpp import exciting
+from atomsciflow.cpp.qmcpack import Input
+from atomsciflow.cpp.server import JobScheduler
 
 class Exciting(exciting.Exciting):
+    def __init__(self):
+        super().__init__()
+
+class Static(Exciting):
+    def __init__(self):
+        super().__init__()
+
+class Opt(Exciting):
     def __init__(self):
         super().__init__()
