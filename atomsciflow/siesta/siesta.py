@@ -23,6 +23,8 @@ SOFTWARE.
 """
 
 from atomsciflow.cpp import siesta
+from atomsciflow.cpp.server import JobScheduler
+from atomsciflow.cpp.config import ConfigManager
 
 class Siesta(siesta.Siesta):
     def __init__(self):

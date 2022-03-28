@@ -31,6 +31,7 @@ void add_class_siestaopt(py::module& m) {
         .def("set_job_steps_default", &atomsciflow::Siesta::set_job_steps_default)
         .def("run", &atomsciflow::SiestaOpt::run)
         .def_readwrite("job", &atomsciflow::SiestaOpt::job)
+        .def_readwrite("config", &atomsciflow::SiestaOpt::config)
         ;
 }
 

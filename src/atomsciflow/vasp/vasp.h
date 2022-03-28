@@ -38,6 +38,7 @@ SOFTWARE.
 #include "atomsciflow/vasp/vasp_kpoints.h"
 #include "atomsciflow/vasp/limit.h"
 #include "atomsciflow/server/job_scheduler.h"
+#include "atomsciflow/config/config_manager.h"
 
 namespace atomsciflow {
 
@@ -60,6 +61,7 @@ public:
 
     VaspLimit limit;
     JobScheduler job;
+    ConfigManager config;
 };
 
 } // namespace atomsciflow

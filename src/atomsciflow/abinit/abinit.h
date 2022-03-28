@@ -33,6 +33,7 @@ SOFTWARE.
 #include "atomsciflow/abinit/abinit_input.h"
 #include "atomsciflow/abinit/abinit_files.h"
 #include "atomsciflow/server/job_scheduler.h"
+#include "atomsciflow/config/config_manager.h"
 
 namespace atomsciflow {
 
@@ -62,6 +63,7 @@ public:
     AbinitFiles files;
     std::string pseudo_input_str;
     JobScheduler job;
+    ConfigManager config;
 };
 
 } // namespace atomsciflow

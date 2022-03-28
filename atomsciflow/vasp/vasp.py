@@ -24,6 +24,7 @@ SOFTWARE.
 
 from atomsciflow.cpp import vasp
 from atomsciflow.cpp.server import JobScheduler
+from atomsciflow.cpp.config import ConfigManager
 
 class Vasp(vasp.Vasp):
     def __init__(self):

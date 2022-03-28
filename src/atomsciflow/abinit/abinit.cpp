@@ -177,6 +177,11 @@ void Abinit::set_job_steps_default() {
     step << "cat > " << this->files.name << "<<EOF\n";
     step << this->files.to_string(*this->datasets[0]->system);
     step << "EOF\n";
+    step << "cp";
+    for (const auto& item : this->datasets[0]->system->xyz.elements_set) {
+        step << " " << (fs::path(config.get_pseudo_pot_dir()["abinit"]) / "JTH-PBE-atomicdata-1.1/ATOMICDATA/" / (item + ".GGA_PBE-JTH.xml")).string();
+    }
+    step << " ./\n";
     step << "$CMD_HEAD " << this->job.run_params["cmd"] << " < " << this->files.name << "\n";
     job.steps.push_back(step.str());
     step.clear();

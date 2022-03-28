@@ -30,6 +30,7 @@ SOFTWARE.
 #ifndef ATOMSCIFLOW_CONFIG_CONFIG_MANAGERE_H_
 #define ATOMSCIFLOW_CONFIG_CONFIG_MANAGERE_H_
 
+#include <map>
 #include <string>
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -49,10 +50,12 @@ public:
     std::string get_home_dir();
     std::string get_config_dir();
     bool get_server_info();
+    std::map<std::string, std::string> get_pseudo_pot_dir();
 
     std::string home_dir;
     std::string config_dir;
     pt::ptree server_json;
+    pt::ptree pseudo_pot_json;
 };
 
 } // namespace atomsciflow

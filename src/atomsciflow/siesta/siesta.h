@@ -38,6 +38,7 @@ SOFTWARE.
 #include "atomsciflow/siesta/incharge.h"
 #include "atomsciflow/base/xyz.h"
 #include "atomsciflow/server/job_scheduler.h"
+#include "atomsciflow/config/config_manager.h"
 
 namespace atomsciflow {
 
@@ -64,6 +65,7 @@ public:
     std::map<std::string, int> elem_index_map;
     Xyz xyz;
     JobScheduler job;
+    ConfigManager config;
 };
 
 } // namespace atomsciflow

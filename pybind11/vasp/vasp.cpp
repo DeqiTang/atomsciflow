@@ -22,6 +22,7 @@ void add_class_vasp(py::module& m) {
         .def("set_job_steps_default", &atomsciflow::Vasp::set_job_steps_default)
         .def("run", &atomsciflow::Vasp::run)
         .def_readwrite("job", &atomsciflow::Vasp::job)
+        .def_readwrite("config", &atomsciflow::Vasp::config)
         .def_readwrite("incar", &atomsciflow::Vasp::incar)
         .def_readwrite("poscar", &atomsciflow::Vasp::poscar)
         .def_readwrite("kpoints", &atomsciflow::Vasp::kpoints)

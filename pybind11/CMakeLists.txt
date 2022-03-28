@@ -305,9 +305,20 @@ pybind11_add_module(cmd MODULE ${BINDING_CMD_SOURCES})
 
 file(GLOB BINDING_CONFIG_SOURCES
     "./config/*.cpp"
-    "../src/atomsciflow/config/*.cpp"
 )
-pybind11_add_module(config MODULE ${BINDING_CONFIG_SOURCES})
+#pybind11_add_module(config MODULE ${BINDING_CONFIG_SOURCES})
+add_library(config MODULE ${BINDING_CONFIG_SOURCES})
+target_link_libraries(config
+    PRIVATE pybind11::module
+    ${Boost_LIBRARIES}
+    ${YAML_CPP_LIBRARIES}
+    atomsciflow-config
+)
+set_target_properties(config PROPERTIES 
+    PREFIX "${PYTHON_MODULE_PREFIX}"
+    SUFFIX "${PYTHON_MODULE_EXTENSION}"
+)
+#pybind11_add_module(config MODULE ${BINDING_CONFIG_SOURCES})
 
 file(GLOB BINDING_GAMESSUS_SOURCES
     "./gamessus/gamessus.cpp"

@@ -36,6 +36,7 @@ SOFTWARE.
 #include "atomsciflow/base/xyz.h"
 #include "atomsciflow/qe/misc.h"
 #include "atomsciflow/server/job_scheduler.h"
+#include "atomsciflow/config/config_manager.h"
 
 namespace atomsciflow::qe {
 
@@ -72,6 +73,7 @@ public:
     std::map<std::string, Namelist> namelists;
     PwScfMisc misc;
     JobScheduler job;
+    ConfigManager config;
 };
 
 } // namespace atomsciflow::qe

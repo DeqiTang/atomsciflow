@@ -140,6 +140,11 @@ void Vasp::set_job_steps_default() {
     step << "cat >POSCAR<<EOF\n";
     step << this->poscar->to_string("cartesian");
     step << "EOF\n";
+    step << "cat";
+    for (const auto& item : this->poscar->elem_natom_in_number_order) {
+        step << " " << (fs::path(this->config.get_pseudo_pot_dir()["vasp"]) / "PAW_PBE" / item.first / "POTCAR").string();
+    }
+    step << " >POTCAR\n";
     step << "$CMD_HEAD " << job.run_params["cmd"] << "\n";
     job.steps.push_back(step.str());
     step.clear();

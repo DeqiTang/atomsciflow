@@ -237,6 +237,11 @@ void PwScf::set_job_steps_default() {
     step << boost::format("cat > %1%<<EOF\n") % job.run_params["input"];
     step << this->to_string();
     step << "EOF\n";
+    step << "cat";
+    for (const auto& item : this->misc.xyz.elements_set) {
+        step << " " << (fs::path(config.get_pseudo_pot_dir()["qe"]) / "SSSP_efficiency_pseudos" / (item + "*.upf")).string();
+    }
+    step << " ./\n";
     step << boost::format("$CMD_HEAD %1% < %2% > %3%\n") % job.run_params["cmd"] % job.run_params["input"] % job.run_params["output"];
     job.steps.push_back(step.str());
     step.clear();

@@ -46,7 +46,7 @@ ConfigManager::ConfigManager() {
     if (false == fs::exists(fs::path(this->home_dir) / "atomsciflow")) {
         fs::create_directory(fs::path(this->home_dir) / "atomsciflow");
     }    
-#endif 
+#endif
 
 }
 
@@ -82,11 +82,33 @@ std::string ConfigManager::get_config_dir() {
 
 bool ConfigManager::get_server_info() {
     if (fs::exists(fs::path(this->config_dir) / "server.json")) {
-        pt::read_json((fs::path(this->home_dir) / "server.json").string(), this->server_json);
+        pt::read_json((fs::path(this->config_dir) / "server.json").string(), this->server_json);
         return true;
     } else {
         return false;
     }
+}
+
+std::map<std::string, std::string> ConfigManager::get_pseudo_pot_dir() {
+    std::map<std::string, std::string> out;
+    if (fs::exists(fs::path(config_dir) / "pseudo-pot.json")) {
+        pt::read_json((fs::path(config_dir) / "pseudo-pot.json").string(), this->pseudo_pot_json);
+    } else {
+        this->pseudo_pot_json.put("abinit.pseudodir", 
+            (fs::path(this->get_home_dir()) / ".pseudo-pot-abinit").string());
+        this->pseudo_pot_json.put("qe.pseudodir", 
+            (fs::path(this->get_home_dir()) / ".pseudo-pot-qe").string());
+        this->pseudo_pot_json.put("siesta.pseudodir", 
+            (fs::path(this->get_home_dir()) / ".pseudo-pot-siesta").string());
+        this->pseudo_pot_json.put("vasp.pseudodir",
+            (fs::path(this->get_home_dir()) / ".pseudo-pot-vasp").string());
+        pt::write_json((fs::path(config_dir) / "pseudo-pot.json").string(), this->pseudo_pot_json);
+    }
+    out["abinit"] = this->pseudo_pot_json.get<std::string>("abinit.pseudodir");
+    out["qe"] = this->pseudo_pot_json.get<std::string>("qe.pseudodir");
+    out["siesta"] = this->pseudo_pot_json.get<std::string>("siesta.pseudodir");
+    out["vasp"] = this->pseudo_pot_json.get<std::string>("vasp.pseudodir");
+    return out;
 }
 
 } // namespace atomsciflow

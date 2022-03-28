@@ -1,7 +1,5 @@
-// @file pybind11/config/config.cpp
-// @author: DeqiTang
-// Mail: deqitang@gmail.com 
-// Created Time: Sat 05 Mar 2022 08:33:55 PM CST
+// @author DeqiTang
+// Email: deqitang@gmail.com 
 
 #include <string>
 #include <iostream>
@@ -14,12 +12,13 @@ namespace py = pybind11;
 
 void add_class_config_manager(py::module& m) {
 
-    py::class_<atomsciflow::ConfigManager>(m, "ConfigManager")
+    py::class_<atomsciflow::ConfigManager, std::shared_ptr<atomsciflow::ConfigManager>>(m, "ConfigManager")
         .def(py::init<>())
+        .def("get_home_dir", &atomsciflow::ConfigManager::get_home_dir)
+        .def("get_config_dir", &atomsciflow::ConfigManager::get_config_dir)
+        .def("get_pseudo_pot_dir", &atomsciflow::ConfigManager::get_pseudo_pot_dir)
         ;
-
 }
-
 
 PYBIND11_MODULE(config, m) {
     m.doc() = "config module";
