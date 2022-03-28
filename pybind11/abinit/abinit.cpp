@@ -16,6 +16,7 @@ void add_class_abinit(py::module& m) {
         .def(py::init<>())
         .def("get_xyz", &atomsciflow::Abinit::get_xyz)
         .def("to_string", &atomsciflow::Abinit::to_string)
+        .def("set_job_steps_default", &atomsciflow::Abinit::set_job_steps_default)
         .def("run", &atomsciflow::Abinit::run)
         .def_readwrite("job", &atomsciflow::Abinit::job)
         ;

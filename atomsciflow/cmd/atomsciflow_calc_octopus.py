@@ -45,6 +45,12 @@ def add_octopus_subparser(subparsers):
     subparser.add_argument("-a", "--auto-level", type=int, default=0,
         choices=[0, 1, 2, 3],
         help="The automation level of the task")
+
+    ag = subparser.add_argument_group(title="Octopus setting", 
+        description="Specify Octopus parameters")
+
+    ag.add_argument("--spacing", type=float, default=0.2,
+        help="The spacing between the points in the mesh.")
         
 def octopus_processor(args):
     print("working directory: %s" % args.directory)
@@ -52,11 +58,15 @@ def octopus_processor(args):
         from atomsciflow.octopus import Static
         job = Static()
         job.get_xyz(args.xyz)
+        job.set_param("Spacing", args.spacing)
+        job.set_job_steps_default()
         job.run(args.directory)
     elif args.calc.lower() == "opt":
         from atomsciflow.octopus import Opt
         job = Opt()
         job.get_xyz(args.xyz)
+        job.set_param("Spacing", args.spacing)
+        job.set_job_steps_default()
         job.run(args.directory)
     else:
         print("The specified calculation type is unfound!")

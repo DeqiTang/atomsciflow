@@ -53,6 +53,7 @@ def cp2k_processor(args):
         job = Static()
         job.get_xyz(args.xyz)
         job.job.set_run("runopt", args.runopt)
+        job.set_job_steps_default()
         job.run(args.directory)
     elif args.calc.lower() == "opt":
         from atomsciflow.cp2k import Opt
@@ -62,6 +63,7 @@ def cp2k_processor(args):
         job.get_xyz(args.xyz)
         print("calculator cp2k.opt set_run")
         job.job.set_run("runopt", args.runopt)
+        job.set_job_steps_default()
         job.run(args.directory)
     else:
         print("The specified calculation type is unfound!")

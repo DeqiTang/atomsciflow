@@ -18,6 +18,7 @@ void add_class_lammps(py::module& m) {
         .def(py::init<>())
         .def("get_xyz", &atomsciflow::Lammps::get_xyz)
         .def("to_string", &atomsciflow::Lammps::to_string)
+        .def("set_job_steps_default", &atomsciflow::Lammps::set_job_steps_default)
         .def("run", &atomsciflow::Lammps::run)
         ;
 }

@@ -46,7 +46,6 @@ public:
 
     void basic_setting();
     void set_runtype(const std::string& runtype);
-    void set_md();
 
     std::string to_string();
 

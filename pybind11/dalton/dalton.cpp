@@ -16,6 +16,7 @@ void add_class_dalton(py::module& m) {
         .def(py::init<>())
         .def("to_string", &atomsciflow::Dalton::to_string)
         .def("get_xyz", &atomsciflow::Dalton::get_xyz)
+        .def("set_job_steps_default", &atomsciflow::Dalton::set_job_steps_default)
         .def("run", &atomsciflow::Dalton::run)
         .def_readwrite("job", &atomsciflow::Dalton::job)
         ;

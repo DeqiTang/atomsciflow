@@ -29,10 +29,12 @@ class Vasp(vasp.Vasp):
     def __init__(self):
         super().__init__()
 
-class Static(vasp.VaspStatic):
+class Static(Vasp):
     def __init__(self):
         super().__init__()
+        self.incar.set_runtype("static")
 
 class Opt(Vasp):
     def __init__(self):
         super().__init__()
+        self.incar.set_runtype("opt")

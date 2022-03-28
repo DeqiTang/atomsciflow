@@ -48,11 +48,13 @@ def elk_processor(args):
         from atomsciflow.elk import Static
         job = Static()
         job.get_xyz(args.xyz)
+        job.set_job_steps_default()
         job.run(args.directory)
     elif args.calc.lower() == "opt":
         from atomsciflow.elk import Opt
         job = Opt()
         job.get_xyz(args.xyz)
+        job.set_job_steps_default()
         job.run(args.directory)
     else:
         print("The specified calculation type is unfound!")

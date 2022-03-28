@@ -28,6 +28,7 @@ void add_class_nwchem(py::module& m) {
         .def("set_param", py::overload_cast<const std::string&, std::vector<std::vector<std::string>>>(&atomsciflow::NWChem::py_set_param))        
         .def("new_directive", &atomsciflow::NWChem::new_directive)
         .def("get_xyz", &atomsciflow::NWChem::get_xyz)
+        .def("set_job_steps_default", &atomsciflow::NWChem::set_job_steps_default)
         .def("run", &atomsciflow::NWChem::run)
         .def_readwrite("job", &atomsciflow::NWChem::job)
         ;

@@ -17,6 +17,7 @@ void add_class_siesta(py::module& m) {
         .def(py::init<>())
         .def("to_string", &atomsciflow::Siesta::to_string)
         .def("get_xyz", &atomsciflow::Siesta::get_xyz)
+        .def("set_job_steps_default", &atomsciflow::Siesta::set_job_steps_default)
         .def("run", &atomsciflow::Siesta::run)
         .def_readwrite("job", &atomsciflow::Siesta::job)
         ;
@@ -27,6 +28,7 @@ void add_class_siestaopt(py::module& m) {
         .def(py::init<>())
         .def("to_string", &atomsciflow::SiestaOpt::to_string)
         .def("get_xyz", &atomsciflow::SiestaOpt::get_xyz)
+        .def("set_job_steps_default", &atomsciflow::Siesta::set_job_steps_default)
         .def("run", &atomsciflow::SiestaOpt::run)
         .def_readwrite("job", &atomsciflow::SiestaOpt::job)
         ;

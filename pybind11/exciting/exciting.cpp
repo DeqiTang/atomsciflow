@@ -18,6 +18,7 @@ void add_class_exciting(py::module& m) {
         .def(py::init<>())
         .def("get_xyz", &atomsciflow::Exciting::get_xyz)
         .def("to_string", &atomsciflow::Exciting::to_string)
+        .def("set_job_steps_default", &atomsciflow::Exciting::set_job_steps_default)
         .def("run", &atomsciflow::Exciting::run)
         .def_readwrite("input", &atomsciflow::Exciting::input)
         ;

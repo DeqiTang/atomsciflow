@@ -19,6 +19,7 @@ void add_class_qchem(py::module& m) {
         .def("to_string", &atomsciflow::QChem::to_string)
         .def("new_section", &atomsciflow::QChem::new_section)
         .def("get_xyz", &atomsciflow::QChem::get_xyz)
+        .def("set_job_steps_default", &atomsciflow::QChem::set_job_steps_default)
         .def("run", &atomsciflow::QChem::run)
         .def_readwrite("job", &atomsciflow::QChem::job)        
         ;

@@ -35,7 +35,7 @@ SOFTWARE.
 namespace atomsciflow {
 
 VaspIncar::VaspIncar() {
-    this->runtype = "";
+    this->runtype = "static";
 }
 
 void VaspIncar::set_runtype(const std::string& runtype) {
@@ -117,10 +117,10 @@ std::string VaspIncar::to_string() {
 }   
 
 void VaspIncar::basic_setting() {
-    this->set_param("ENCUT",300);
-    this->set_param("EDIFF", 1.0E-6);
-    this->set_param("ISMEAR", 0);
-    this->set_param("NWRITE", 2);
+    set_param("ENCUT",300);
+    set_param("EDIFF", 1.0E-6);
+    set_param("ISMEAR", 0);
+    set_param("NWRITE", 2);
 
     if ("static" == this->runtype) {
         this->set_param("IBRION", -1);

@@ -18,6 +18,7 @@ void add_class_gromacs(py::module& m) {
         .def(py::init<>())
         .def("get_xyz", &atomsciflow::Gromacs::get_xyz)
         .def("to_string", &atomsciflow::Gromacs::to_string)
+        .def("set_job_steps_default", &atomsciflow::Gromacs::set_job_steps_default)
         .def("run", &atomsciflow::Gromacs::run)
         ;
 }

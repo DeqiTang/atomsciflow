@@ -41,7 +41,7 @@ SiestaOpt::SiestaOpt() {
     set_param("MD.MaxDispl", "0.2 Bohr");
     set_param("MD.PreconditionVariableCell", "5 Ang");
 
-    job.set_run("cmd", "$SIESTA_BIN");
+    job.set_run("cmd", "$ASF_CMD_SIESTA");
     job.set_run("script_name_head", "siesta-run");
 }
 

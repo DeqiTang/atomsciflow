@@ -28,6 +28,7 @@ namespace atomsciflow {
 
 VaspKpoints::VaspKpoints() {
     this->kpoints_mp = std::vector<int>{1, 1, 1, 0, 0, 0};
+    this->kpoints_option = "automatic";
     this->line_mode = false;
 }
 

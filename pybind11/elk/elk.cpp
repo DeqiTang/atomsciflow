@@ -20,6 +20,7 @@ void add_class_elk(py::module& m) {
         .def(py::init<>())
         .def("get_xyz", &atomsciflow::Elk::get_xyz)
         .def("to_string", &atomsciflow::Elk::to_string)
+        .def("set_job_steps_default", &atomsciflow::Elk::set_job_steps_default)
         .def("run", &atomsciflow::Elk::run)
         ;
 }

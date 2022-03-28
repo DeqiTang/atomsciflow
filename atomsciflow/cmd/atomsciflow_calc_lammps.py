@@ -52,6 +52,7 @@ def lammps_processor(args):
         from atomsciflow.lammps import MolecularDynamics
         job = MolecularDynamics()
         job.get_xyz(args.xyz)
+        job.set_job_steps_default()
         job.run(args.directory)
     else:
         print("The specified calculation type is unfound!")

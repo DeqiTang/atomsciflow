@@ -30,6 +30,7 @@ SOFTWARE.
 #ifndef ATOMSCIFLOW_VASP_VASP_H_
 #define ATOMSCIFLOW_VASP_VASP_H_
 
+#include <memory>
 #include <map>
 
 #include "atomsciflow/vasp/vasp_incar.h"
@@ -53,9 +54,9 @@ public:
 
     virtual void run(const std::string& directory);
 
-    VaspIncar* incar;
-    VaspPoscar* poscar;
-    VaspKpoints* kpoints;
+    std::shared_ptr<VaspIncar> incar;
+    std::shared_ptr<VaspPoscar> poscar;
+    std::shared_ptr<VaspKpoints> kpoints;
 
     VaspLimit limit;
     JobScheduler job;

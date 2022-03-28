@@ -59,6 +59,7 @@ void add_class_cp2k(py::module& m) {
         //.def("set_subsys", py::overload_cast<atomsciflow::Xyz&>(&atomsciflow::Cp2k::set_subsys), py::return_value_policy::reference)
         .def("set_subsys", py::overload_cast<atomsciflow::Xyz&>(&atomsciflow::Cp2k::set_subsys))
         .def("get_xyz", &atomsciflow::Cp2k::get_xyz)
+        .def("set_job_steps_default", &atomsciflow::Cp2k::set_job_steps_default)
         .def("run", &atomsciflow::Cp2k::run)
         .def_readwrite("sections", &atomsciflow::Cp2k::sections)
         .def_readwrite("job", &atomsciflow::Cp2k::job)

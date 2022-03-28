@@ -52,6 +52,7 @@ void add_class_octopus(py::module& m) {
         .def("set_param", py::overload_cast<const std::string&, std::vector<std::vector<std::string>>>(&atomsciflow::Octopus::py_set_param))        
         .def("new_block", &atomsciflow::Octopus::new_block)
         .def("get_xyz", &atomsciflow::Octopus::get_xyz)
+        .def("set_job_steps_default", &atomsciflow::Octopus::set_job_steps_default)
         .def("run", &atomsciflow::Octopus::run)
         .def_readwrite("job", &atomsciflow::Octopus::job)
         ;

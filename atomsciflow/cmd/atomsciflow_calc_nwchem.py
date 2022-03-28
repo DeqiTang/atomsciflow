@@ -52,11 +52,13 @@ def nwchem_processor(args):
         from atomsciflow.nwchem import Static
         job = Octopus()
         job.get_xyz(args.xyz)
+        job.set_job_steps_default()
         job.run(args.directory)
     elif args.calc.lower() == "opt":
         from atomsciflow.nwchem import Opt
         job = Opt()
         job.get_xyz(args.xyz)
+        job.set_job_steps_default()
         job.run(args.directory)
     else:
         print("The specified calculation type is unfound!")

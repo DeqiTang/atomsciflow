@@ -138,6 +138,20 @@ void Octopus::get_xyz(const std::string& xyzfile) {
 
     auto element_map = get_element_number_map();
 
+    new_block("Species");
+    for (const auto& item : xyz.elements_set) {
+        std::ostringstream tmp;
+        tmp << "\'" << item << "\'" << " | "
+            << "species_pseudo" << " | "
+            << "set" << " | "
+            << "standard" << " | "
+            << "mass" << " | "
+            << element_map[item].mass;
+        this->blocks["Species"]->data.push_back(
+            tmp.str()
+        );
+    }
+
     new_block("LatticeVectors");
     for (const auto& item : xyz.cell) {
         std::ostringstream tmp;

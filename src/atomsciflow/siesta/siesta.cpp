@@ -64,6 +64,8 @@ Siesta::Siesta() {
     job.set_run_default("lsf_sustc");
     job.set_run_default("cdcloud");
 
+    job.set_run("input", "siesta.fdf");
+    job.set_run("output", "siesta.out");
     job.set_run("cmd", "$ASF_CMD_SIESTA");
     job.set_run("script_name_head", "siesta-run");
 }
@@ -206,10 +208,10 @@ void Siesta::set_job_steps_default() {
     job.steps.clear();
     std::ostringstream step;
     step << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
-    step << "cat > siesta.fdf<<EOF\n";
+    step << "cat >" << job.run_params["input"] << "<<EOF\n";
     step << this->to_string();
     step << "EOF\n";
-    step << "$CMD_HEAD " << job.run_params["cmd"] << "\n";
+    step << "$CMD_HEAD " << job.run_params["cmd"] << " < " << job.run_params["input"] << " > " << job.run_params["output"] << "\n";
     job.steps.push_back(step.str());
     step.clear();
 }

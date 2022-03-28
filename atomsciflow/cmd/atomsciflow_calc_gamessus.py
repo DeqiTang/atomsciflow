@@ -53,12 +53,14 @@ def gamessus_processor(args):
         job = Static()
         job.get_xyz(args.xyz)
         job.job.set_run("runopt", args.runopt)
+        job.set_job_steps_default()
         job.run(args.directory)
     elif args.calc.lower() == "opt":
         from atomsciflow.gamessus import Opt
         job = Opt()
         job.get_xyz(args.xyz)
         job.job.set_run("runopt", args.runopt)
+        job.set_job_steps_default()
         job.run(args.directory)
     else:
         print("The specified calculation type is unfound!")

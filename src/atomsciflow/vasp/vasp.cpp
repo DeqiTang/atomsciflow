@@ -42,27 +42,26 @@ namespace atomsciflow {
 namespace fs = boost::filesystem;
 
 Vasp::Vasp() {
-    this->incar = new VaspIncar();
-    this->poscar = new VaspPoscar();
-    this->kpoints = new VaspKpoints();
+    incar = std::make_shared<VaspIncar>();
+    poscar = std::make_shared<VaspPoscar>();
+    kpoints = std::make_shared<VaspKpoints>();
 
-    this->job.set_run_default("bash");
-    this->job.set_run_default("yh");
-    this->job.set_run_default("llhpc");
-    this->job.set_run_default("pbs");
-    this->job.set_run_default("lsf_sz");
-    this->job.set_run_default("lsf_sustc");
-    this->job.set_run_default("cdcloud");
-    this->job.set_run("cmd", "$ASF_CMD_VASP_STD");
+    incar->set_runtype("static");
+    incar->basic_setting();
 
-    this->incar->basic_setting();
+    job.set_run_default("bash");
+    job.set_run_default("yh");
+    job.set_run_default("llhpc");
+    job.set_run_default("pbs");
+    job.set_run_default("lsf_sz");
+    job.set_run_default("lsf_sustc");
+    job.set_run_default("cdcloud");
+    job.set_run("cmd", "$ASF_CMD_VASP_STD");
+
     job.set_run("script_name_head", "vasp-run");
 }
 
 Vasp::~Vasp() {
-    delete this->incar;
-    delete this->poscar;
-    delete this->kpoints;
 }
 
 void Vasp::get_xyz(const std::string& xyzfile) {
@@ -71,7 +70,6 @@ void Vasp::get_xyz(const std::string& xyzfile) {
     this->set_job_steps_default();
 }
 
-///
 /// \brief Vasp::set_params
 /// \param params
 /// \param runtype the type of calculation
