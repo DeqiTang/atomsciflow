@@ -30,6 +30,7 @@ SOFTWARE.
 #include "atomsciflow/server/job_scheduler.h"
 
 #include <iostream>
+#include <fstream>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>

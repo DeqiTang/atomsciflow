@@ -26,6 +26,7 @@ find_package(Boost COMPONENTS program_options filesystem system  REQUIRED)
 include_directories( 
     ${Boost_INCLUDE_DIR}  
 )
+link_directories(${Boost_LIBRARY_DIRS})
 link_libraries(${Boost_LIBRARIES})
 
 find_package(PkgConfig)
@@ -59,6 +60,8 @@ endif()
 find_package(Libssh2 CONFIG)
 if (Libssh2_FOUND)
     set(LIBSSH2_FOUND_LIBS Libssh2::libssh2)
+    message("Found Libssh2_INCLUDE_DIRS: ${Libssh2_INCLUDE_DIRS}")
+    include_directories(${Libssh2_INCLUDE_DIRS})
 else ()
     find_package(PkgConfig)
     pkg_check_modules(LIBSSH2 libssh2)

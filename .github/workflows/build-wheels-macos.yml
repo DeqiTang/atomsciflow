@@ -1,0 +1,62 @@
+name: Build wheels for MacOS
+on:
+  push:
+    branches: [ master ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ master ]
+jobs:
+  build-wheels-for-macos:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-10.15, macos-11]
+        python_version: ["3.7", "3.8", "3.9", "3.10"]
+    steps:
+      - name: Install dependencies using brew
+        id: install-using-brew
+        run: |
+          brew install llvm 
+          brew install openssl@3
+          echo "::set-output name=openssl_3_prefix::$(brew --prefix openssl@3)"        
+          brew install yaml-cpp
+          brew install gcc@11 #need the gfortran in gcc
+          # in github action macos, the gfortran is available by alias, like
+          # gfortran-9, gfortran-10, gfortran-11
+          brew install libomp # for openmp support
+          brew install boost
+          brew install armadillo
+      - name: Install libssh2
+        # brew installed libssh2 can't be found by cmake configuration of atomsciflow
+        run: |
+          wget -c https://github.com/libssh2/libssh2/releases/download/libssh2-1.10.0/libssh2-1.10.0.tar.gz
+          tar -xvf libssh2-1.10.0.tar.gz
+          cmake libssh2-1.10.0 -B build_libssh2
+          cmake --build build_libssh2
+          cmake --install build_libssh2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python_version }}
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - name: build atomsciflow
+        run: |
+          export LDFLAGS=-L/usr/local/Cellar/gcc/11.2.0_3/lib/gcc/11
+          python -m pip install scikit-build cython pybind11[global]
+          python setup.py build bdist_wheel -j 4
+        env:
+          # passing cmake arguments to scikit-build when dealing with cmake, using either SKBUILD_CONFIGURE_OPTIONS or CMAKE_ARGS env
+          SKBUILD_CONFIGURE_OPTIONS: "-DOPENSSL_ROOT_DIR=${{steps.install-using-brew.outputs.openssl_3_prefix}}"
+          #CMAKE_ARGS: "-DOPENSSL_ROOT_DIR=/usr/local/opt/openssl@3"
+          FC: gfortran-11 # in github action macos gfortran is available by alias
+          # the default clang/clang++ in macos doen't support -fopenmp
+          # we installed llvm using brew before, and set to use them here
+          # to support openmp 
+          CC: "/usr/local/opt/llvm/bin/clang" 
+          CXX: "/usr/local/opt/llvm/bin/clang++"
+      - uses: actions/upload-artifact@v2
+        with:
+          name: macos-wheels
+          path: dist/*.whl

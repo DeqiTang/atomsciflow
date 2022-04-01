@@ -4,6 +4,7 @@
 import os
 import sys
 import re
+import shutil
 import subprocess
 from glob import glob
 
@@ -24,6 +25,12 @@ class CleanCommand(Command):
     def run(self):
         os.system('rm -vrf ./build ./dist ./*.pyc ./*.tgz ./*.egg-info')
         os.system("rm -rf _skbuild")
+
+# There is an example of using pybind11 in cmake based system, providing
+# full control over the cmake run. see https://github.com/pybind/cmake_example
+# for more information, which is under the BSD-style license.
+# Here we improved it so that it can support the building of pybind11 and cython
+# based extenstion at the same time.
 
 # Convert distutils Windows platform specifiers to CMake -A arguments
 PLAT_TO_CMAKE = {
@@ -120,8 +127,6 @@ def pybind11_build_ext(builder, ext):
         ["cmake", "--build", "."] + build_args, cwd=builder.build_temp
     )
     #
-    #if ext.name in ["pyaskit"]:
-    #    os.system("mv _skbuild/linux-x86_64-*/setuptools/lib.linux-x86_64-*/%s.*.so _skbuild/linux-x86_64-*/setuptools/lib.linux-x86_64-*/atomsciflow/cpp/" % ext.name)
 
 # -----------------------------
 # make sure pybind11 is working
@@ -134,21 +139,11 @@ try:
     if os.path.exists("pybind11"):
         # see if the truly pybind11 package is installed
         os.environ["PATH"] = os.environ["PATH"] + ":%s" % os.path.join(os.path.expanduser("~"), ".local/bin")
-        subprocess.run(["pybind11-config", "-h"], stdout=subprocess.PIPE)
+        pybind11.get_include()
     print("using pybind11 version: ", pybind11.version_info)
 except:
-    subprocess.run(["pip3", "install", "--user", "pybind11[global]==2.7.1"])
-os.environ["PATH"] = os.environ["PATH"] + ":%s" % os.path.join(os.path.expanduser("~"), ".local/bin")
-sub = subprocess.run(["pybind11-config", "--includes"], stdout=subprocess.PIPE)
-pybind11_include_paths = sub.stdout.decode().replace("\n", "")
-# there might be more than one dir in output of pybind11-config --includes
-list_paths = pybind11_include_paths.replace(" ", "").split("-I")
-while "" in list_paths:
-    list_paths.remove("")
-if "CPLUS_INCLUDE_PATH" not in os.environ:
-    os.environ["CPLUS_INCLUDE_PATH"] = ":".join(list_paths)
-else:
-    os.environ["CPLUS_INCLUDE_PATH"] = os.environ["CPLUS_INCLUDE_PATH"] + ":%s" % ":".join(list_paths)
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "pybind11[global]"])
+    print("using newly installed pybind11 version: ", pybind11.version_info)
 
 # --------------------------------
 # fortran support
@@ -157,34 +152,40 @@ from Cython.Build import cythonize
 ext_modules_fortran = cythonize(
     [
         Extension(
-            'cube_handle',
+            'fortran.cube_handle',
             sources=[
                 "fortran/pyx/cube_handle.pyx"
             ],
             # other compile args for gcc
-            extra_compile_args=['-fPIC', '-O3'],
+            extra_compile_args=[
+                '-fPIC', 
+                '-O3', 
+                "-fopenmp" # important for OpenMP dependency
+            ],
             # other files to link to
             extra_link_args=[
                 'fortran/atomsciflowf/build/lib/libatomsciflowf-c-binding.a',
                 'fortran/atomsciflowf/build/lib/libatomsciflowf.a',
                 "-lgfortran",
-                "-fopenmp" # important for OpenMP dependency
             ],
             language="c"
         ),
         Extension(
-            'cmd_utils',
+            'fortran.cmd_utils',
             sources=[
                 "fortran/pyx/cmd_utils.pyx"
             ],
             # other compile args for gcc
-            extra_compile_args=['-fPIC', '-O3'],
+            extra_compile_args=[
+                '-fPIC', 
+                '-O3',
+                "-fopenmp" # important for OpenMP dependency
+            ],
             # other files to link to
             extra_link_args=[
                 'fortran/atomsciflowf/build/lib/libatomsciflowf-c-binding.a',
                 'fortran/atomsciflowf/build/lib/libatomsciflowf.a',
                 "-lgfortran",
-                "-fopenmp" # important for OpenMP dependency
             ],
             language="c"
         ),
@@ -201,21 +202,25 @@ for ext in ext_modules_fortran:
 
 def fortran_build_ext(builder, ext):
     builder.build_extension(ext)
-    # TODO: more strong code here
-    os.system("mv _skbuild/linux-x86_64-*/setuptools/lib.linux-x86_64-*/%s.*.so _skbuild/linux-x86_64-*/setuptools/lib.linux-x86_64-*/atomsciflow/fortran/" % ext.name)
+    # we no longer need to copy the built extension.so to desired position
+    # combine with ext_package of setup() and extension name specification in Extension
+    # this is automatically handled.
+    #os.system("mv _skbuild/linux-x86_64-*/setuptools/lib.linux-x86_64-*/%s.*.so _skbuild/linux-x86_64-*/setuptools/lib.linux-x86_64-*/atomsciflow/fortran/" % ext.name)
 
 class CustomBuildExt(build_ext):
     """
     """
     def run(self):
-        #os.system("make -C ./fortran/src")
-        #os.system("make -C ./fortran/cmd")
-        #os.system("make -C ./fortran/c_binding")
-        os.system("mkdir -p ./fortran/atomsciflowf/build")
-        os.system("rm -rf ./fortran/atomsciflowf/build/*") # in case there is previous build in a defferent environment
-        os.chdir("./fortran/atomsciflowf/build")
-        os.system("cmake ..; make")
-        os.chdir("../../../")
+        atomsciflowf_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fortran/atomsciflowf")
+        shutil.rmtree(
+            os.path.join(atomsciflowf_dir, "build"),
+            ignore_errors=True
+        ) # in case there is previous build in a different environment
+        os.system("cmake %s -B %s" % (
+            atomsciflowf_dir,
+            os.path.join(atomsciflowf_dir, "build")
+        ))
+        os.system("cmake --build %s" % os.path.join(atomsciflowf_dir, "build"))
         super().run()
 
     def build_extension(self, ext):
@@ -228,7 +233,6 @@ setup(
     name = "atomsciflow",
     version = '0.0.1a3',
     ## python3 setup.py build sdist bdist_wheel
-    ## twine upload dist/*
     keywords = ("Atom Science, Workflow"),
     description = "A workflow manger for scientific research involving atoms",
     license = "MIT",
@@ -243,7 +247,12 @@ setup(
     cmdclass = {
         'clean': CleanCommand,
         'build_ext': CustomBuildExt
-    },    
+    },
+    # ext_package is used as the base package import path for Extention
+    # in ext_modules. i.e. if the Extension.name is set to fortran.cmd_utils
+    # while ext_package is set to atomsciflow, the import path for cmd_utils
+    # would be import atomsciflow.fortran.cmd_utils
+    ext_package="atomsciflow",
     ext_modules=[
         # --------------------------------------------
         # cpp extension using CustomBuildExt (working)
@@ -256,7 +265,7 @@ setup(
     # ------------------------------------------
     cmake_source_dir="pybind11", # where CMakeLists.txt exists
     cmake_install_dir="atomsciflow/cpp", # from atomsciflow.cpp import xxx 
-    cmake_args=["-DCMAKE_BUILD_TYPE=Debug"],
+    cmake_args=["-DCMAKE_BUILD_TYPE=Release"],
     # ------------------------------------------
     scripts = [
     ],

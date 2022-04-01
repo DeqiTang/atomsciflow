@@ -1,0 +1,23 @@
+name: Build wheels for Linux
+on:
+  push:
+    branches: [master]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [master]
+jobs:
+  build-wheels-for-linux:
+    strategy:
+      matrix:
+        manylinux_platform: ["centos", "debian"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: build wheels using manylinux docker images
+        run: |
+          bash build_wheels.sh -r ${{matrix.manylinux_platform}} -p 4 -t false -m false
+      - uses: actions/upload-artifact@v2
+        with:
+          name: linux-wheels
+          path: dist/*manylinux*.whl
