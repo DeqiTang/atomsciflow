@@ -15,7 +15,6 @@ link_directories(${Boost_LIBRARY_DIRS})
 include_directories(
     ${Boost_INCLUDE_DIR}
 )
-link_libraries(${Boost_LIBRARIES})
 
 find_package(PkgConfig)
 set(YAML_CPP_PKGCONFIG_DIR "UNSET" CACHE STRING "Specify the dir path which contains the yaml-cpp.pc file")
@@ -164,9 +163,19 @@ file(GLOB BINDING_CUBE_HANDLE_SOURCES
     "./cube_handle/*.cpp"
     "../src/atomsciflow/cube_handle/*.cpp"
     "../src/atomsciflow/parser/*.cpp"
-    "../src/atomsciflow/base/*.cpp"
 )
-pybind11_add_module(cube_handle MODULE ${BINDING_CUBE_HANDLE_SOURCES})
+#pybind11_add_module(cube_handle MODULE ${BINDING_CUBE_HANDLE_SOURCES})
+add_library(cube_handle MODULE ${BINDING_CUBE_HANDLE_SOURCES})
+target_link_libraries(cube_handle
+    PRIVATE pybind11::module
+    atomsciflow-base
+    ${Boost_LIBRARIES}
+)
+set_target_properties(cube_handle PROPERTIES
+    PREFIX "${PYTHON_MODULE_PREFIX}"
+    SUFFIX "${PYTHON_MODULE_EXTENSION}"
+)
+#pybind11_add_module(cube_handle MODULE ${BINDING_CUBE_HANDLE_SOURCES})
 
 file(GLOB BINDING_BASE_SOURCES
     "./base/*.cpp"

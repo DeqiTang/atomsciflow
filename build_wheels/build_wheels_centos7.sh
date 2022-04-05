@@ -11,10 +11,10 @@ yum install -y yaml-cpp-devel openssl-devel libssh2-devel
 # the boost-devel in centos 7 is too old
 yum install -y wget xz
 wget -c https://boostorg.jfrog.io/artifactory/main/release/1.78.0/source/boost_1_78_0.tar.gz
-tar -xvf boost_1_78_0.tar.gz
+tar -xf boost_1_78_0.tar.gz
 cd boost_1_78_0
 ./bootstrap.sh
-./b2 install -j ${PARALLEL_NUM}
+./b2 install -j ${PARALLEL_NUM} --with-program_options --with-filesystem --with-system
 }
 
 function start_build() {
