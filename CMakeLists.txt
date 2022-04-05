@@ -18,7 +18,8 @@ include_directories("./src")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC ")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC ")
+set(CMAKE_POSITION_INDEPENDENT_CODE ON) # -fPIC needed for build in linux
 
 find_package(GTest REQUIRED)
 

@@ -17,7 +17,7 @@ jobs:
       - name: Install dependencies using brew
         id: install-using-brew
         run: |
-          brew install llvm 
+          brew install llvm
           brew install openssl@3
           echo "::set-output name=openssl_3_prefix::$(brew --prefix openssl@3)"        
           brew install yaml-cpp
@@ -43,6 +43,7 @@ jobs:
           fetch-depth: 1
       - name: build atomsciflow
         run: |
+          export PKG_CONFIG_PATH="/usr/local/opt/openssl@3/lib/pkgconfig"
           export LDFLAGS=-L/usr/local/Cellar/gcc/11.2.0_3/lib/gcc/11
           python -m pip install scikit-build cython pybind11[global]
           python setup.py build bdist_wheel -j 4

@@ -7,13 +7,15 @@ project(atomsciflow-pybind11 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC ")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC ")
+set(CMAKE_POSITION_INDEPENDENT_CODE ON) # -fPIC needed for build in linux
 
 find_package(Boost COMPONENTS program_options filesystem system REQUIRED)
 link_directories(${Boost_LIBRARY_DIRS})
 include_directories(
     ${Boost_INCLUDE_DIR}
 )
+link_libraries(${Boost_LIBRARIES})
 
 find_package(PkgConfig)
 set(YAML_CPP_PKGCONFIG_DIR "UNSET" CACHE STRING "Specify the dir path which contains the yaml-cpp.pc file")

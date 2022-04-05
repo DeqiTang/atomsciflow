@@ -158,7 +158,7 @@ ext_modules_fortran = cythonize(
             ],
             # other compile args for gcc
             extra_compile_args=[
-                '-fPIC', 
+                #'-fPIC', 
                 '-O3', 
                 "-fopenmp" # important for OpenMP dependency
             ],
@@ -177,7 +177,7 @@ ext_modules_fortran = cythonize(
             ],
             # other compile args for gcc
             extra_compile_args=[
-                '-fPIC', 
+                #'-fPIC', 
                 '-O3',
                 "-fopenmp" # important for OpenMP dependency
             ],
@@ -207,20 +207,34 @@ def fortran_build_ext(builder, ext):
     # this is automatically handled.
     #os.system("mv _skbuild/linux-x86_64-*/setuptools/lib.linux-x86_64-*/%s.*.so _skbuild/linux-x86_64-*/setuptools/lib.linux-x86_64-*/atomsciflow/fortran/" % ext.name)
 
+def build_atomsciflowf():
+    atomsciflowf_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fortran/atomsciflowf")
+    shutil.rmtree(
+        os.path.join(atomsciflowf_dir, "build"),
+        ignore_errors=True
+    ) # in case there is previous build in a different environment
+    os.system("cmake %s -B %s" % (
+        atomsciflowf_dir,
+        os.path.join(atomsciflowf_dir, "build")
+    ))
+    os.system("cmake --build %s" % os.path.join(atomsciflowf_dir, "build"))
+
+# deciding whether to build fortran extensions
+if "ATOMSCIFLOW_BUILD_PY_EXT_NO_FORTRAN" in os.environ:
+    if os.environ["ATOMSCIFLOW_BUILD_PY_EXT_NO_FORTRAN"].lower() == "true":
+        build_py_ext_no_fortran = True
+    else:
+        build_py_ext_no_fortran = False
+else:
+    # default is to build fortran extensions
+    build_py_ext_no_fortran = False
+
 class CustomBuildExt(build_ext):
     """
     """
     def run(self):
-        atomsciflowf_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fortran/atomsciflowf")
-        shutil.rmtree(
-            os.path.join(atomsciflowf_dir, "build"),
-            ignore_errors=True
-        ) # in case there is previous build in a different environment
-        os.system("cmake %s -B %s" % (
-            atomsciflowf_dir,
-            os.path.join(atomsciflowf_dir, "build")
-        ))
-        os.system("cmake --build %s" % os.path.join(atomsciflowf_dir, "build"))
+        if False == build_py_ext_no_fortran:
+            build_atomsciflowf()
         super().run()
 
     def build_extension(self, ext):
@@ -259,7 +273,7 @@ setup(
         # --------------------------------------------
         #CMakeExtension(name="cpptest", sourcedir="cpp/pybind11")
         # --------------------------------------------
-    ]+ext_modules_fortran,
+    ] + (ext_modules_fortran if build_py_ext_no_fortran == False else []),#+ext_modules_fortran,
     # ------------------------------------------
     # cpp extension using scikit-build (working)
     # ------------------------------------------
