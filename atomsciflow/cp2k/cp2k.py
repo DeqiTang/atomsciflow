@@ -45,3 +45,23 @@ class Opt(cp2k.Cp2kOpt):
         #self.new_section("motion")
         #self.sections["motion"].add_section("geo_opt")
         
+class MetaMD(Cp2k):
+    def __init__(self):
+        super().__init__()
+        self.new_section("motion/md")
+        self.new_section("motion/md/thermostat")
+        self.new_section("motion/md/thermostat/nose")
+        self.new_section("motion/free_energy")
+        self.new_section("motion/free_energy/metadyn")
+        self.set_param("global/run_type", "MD")
+        self.set_param("motion/md/ensemble", "NVT")
+        self.set_param("motion/md/timestep", 0.5)
+        self.set_param("motion/md/steps", 1000)
+        self.set_param("motion/md/thermostat/type", "NOSE")
+        self.set_param("motion/md/thermostat/region", "MASSIVE")
+        self.set_param("motion/md/thermostat/nose/timecon", 10.0)
+        self.set_param("motion/md/temperature", 300)
+        self.set_param("motion/free_energy/metadyn/delta_t", 0.0)
+        self.set_param("motion/free_energy/metadyn/do_hills", ".TRUE.")
+        self.set_param("motion/free_energy/metadyn/nt_hills", 30)
+        

@@ -80,11 +80,16 @@ endif()
 
 # OpenMP
 find_package(OpenMP)
-if(OPENMP_FOUND)
-    message("OPENMP FOUND")
+if(OpenMP_FOUND)
+    message("OpenMP FOUND")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}${OpenMP_EXE_LINKER_FLAGS}")
+    set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${OpenMP_MODULE_LINKER_FLAGS}")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${OpenMP_SHARED_LINKER_FLAGS}")
+    link_libraries(OpenMP::OpenMP_CXX)
+    include_directories(${OpenMP_CXX_INCLUDE_DIRS})
+    link_libraries(${OpenMP_CXX_LIBRARIES})    
 endif()
 
 find_package(Armadillo REQUIRED)

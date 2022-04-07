@@ -8,7 +8,24 @@ add_compile_options(-fPIC)
 
 #set(BUILD_SHARED_LIBS ON)
 
-set(CMAKE_Fortran_FLAGS "-g ${CMAKE_Fortran_FLAGS}")
+#set(CMAKE_Fortran_FLAGS "-g ${CMAKE_Fortran_FLAGS}")
+
+# OpenMP
+find_package(OpenMP)
+if(OpenMP_FOUND)
+    message("OpenMP FOUND")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${OpenMP_Fortran_FLAGS}")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+    set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${OpenMP_MODULE_LINKER_FLAGS}")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${OpenMP_SHARED_LINKER_FLAGS}")
+    include_directories(${OpenMP_C_INCLUDE_DIRS})
+    include_directories(${OpenMP_CXX_INCLUDE_DIRS})
+    include_directories(${OpenMP_Fortran_INCLUDE_DIRS})
+    link_libraries(OpenMP::OpenMP_Fortran)
+    link_libraries(${OpenMP_Fortran_LIBRARIES})
+endif()
 
 file(GLOB_RECURSE LIBATOMSCIFLOWF_SRC RELATIVE ${PROJECT_SOURCE_DIR} 
     src/*.f90

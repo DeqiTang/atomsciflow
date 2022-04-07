@@ -35,7 +35,7 @@ def add_cp2k_subparser(subparsers):
         help="Specify the xyz structure file")
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "md"],
+        choices=["static", "opt", "md", "metamd"],
         help="The calculation to do. The specified value is case insensitive")
 
     subparser.add_argument("--runopt", type=str, default="gen",
@@ -57,14 +57,18 @@ def cp2k_processor(args):
         job.run(args.directory)
     elif args.calc.lower() == "opt":
         from atomsciflow.cp2k import Opt
-        print("calculator cp2k.opt start")
         job = Opt()
-        print("calculator cp2k.opt get_xyz")
         job.get_xyz(args.xyz)
-        print("calculator cp2k.opt set_run")
         job.job.set_run("runopt", args.runopt)
         job.set_job_steps_default()
         job.run(args.directory)
+    elif args.calc.lower() == "metamd":
+        from atomsciflow.cp2k import MetaMD
+        job = MetaMD()
+        job.get_xyz(args.xyz)
+        job.job.set_run("runopt", args.runopt)
+        job.set_job_steps_default()
+        job.run(args.directory)        
     else:
         print("The specified calculation type is unfound!")
         sys.exit(1)
