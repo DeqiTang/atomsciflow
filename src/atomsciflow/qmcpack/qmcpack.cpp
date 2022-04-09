@@ -79,6 +79,10 @@ Qmcpack::Qmcpack() {
     job.set_run("script_name_head", "qmcpack-run");
 };
 
+Qmcpack::~Qmcpack() {
+
+}
+
 void Qmcpack::get_xyz(const std::string &xyzfile) {
     this->xyz.read_xyz_file(xyzfile);
     job.set_run("xyz_file", fs::absolute(xyzfile).string());

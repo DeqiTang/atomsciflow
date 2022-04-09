@@ -200,6 +200,10 @@ if (BUILD_CMD)
     add_subdirectory(./cmd)
 endif()
 
+option(BUILD_TEST "Whether to build test" OFF)
+if (BUILD_TEST)
+    add_subdirectory(./test/gtest)
+endif()
 
 # ------------------------------------------------
 #                   set install

@@ -41,7 +41,7 @@ class Abinit {
 public:
     
     explicit Abinit();
-    ~Abinit();
+   virtual  ~Abinit();
 
     void get_xyz(const std::string& xyzfile);
     void set_params(std::map<std::string, std::string>& params, int ndtset);

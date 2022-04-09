@@ -47,7 +47,7 @@ public:
 
     Qmcpack();
     
-    ~Qmcpack() = default;
+    virtual ~Qmcpack();
 
     void get_xyz(const std::string& xyzfile);
     std::string to_string();

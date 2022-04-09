@@ -40,7 +40,7 @@ class Exciting {
 public:
 
     Exciting();
-    ~Exciting() = default;
+    virtual ~Exciting() = default;
 
     void get_xyz(const std::string& xyzfile);
     std::string to_string();

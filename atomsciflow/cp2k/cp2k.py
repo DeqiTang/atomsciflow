@@ -33,7 +33,7 @@ class Static(cp2k.Cp2kStatic):
     def __init__(self):
         super().__init__()
 
-class Opt(cp2k.Cp2kOpt):
+class Opt(cp2k.Cp2k):
     def __init__(self):
         super().__init__()
         print("cp2k.Opt -> __init__ start")
@@ -42,6 +42,7 @@ class Opt(cp2k.Cp2kOpt):
         self.set_param("global/project", "optimization")
         print("cp2k.Opt -> new_section -> motion/geo_opt")
         self.new_section("motion/geo_opt")
+        self.new_section("motion/print")
         #self.new_section("motion")
         #self.sections["motion"].add_section("geo_opt")
         

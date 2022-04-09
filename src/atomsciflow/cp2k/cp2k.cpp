@@ -110,33 +110,22 @@ Cp2k::~Cp2k() {
  * @param path The path to the section, like "force_eval/dft/scf"
  */
 void Cp2k::new_section(const std::string& path) {
-    std::cout << "Cp2k::new_section -> starting\n";
-    std::cout << "Cp2k::new_section -> processing path: " << path << "\n";
-    //this->sections[path] = Cp2kSection{path};
     if (this->exists_section(path)) {
         return;
     }
-
-    std::cout << "Cp2k::new_section -> splitting path: " << path << "\n";
 
     std::vector<std::string> vec_str;
     ba::split(vec_str, path, boost::is_any_of("/"));
     int length =vec_str.size();
 
-    std::cout << "Cp2k::new_section -> new_recursive starting\n";
-    auto new_recursive = [&] (auto&& new_recursive, std::map<std::string, std::shared_ptr<Cp2kSection>>& sections, int i) {
-        std::cout << "new_recursive: vec_str[i] -> " << vec_str[i] << "\n";
-        if (sections.find(vec_str[i]) == sections.end()) {
-            sections[vec_str[i]] = std::make_shared<Cp2kSection>(vec_str[i]);
-            std::cout << "Cp2k::new_section -> sections[vec_str[i]].name -> " << sections[vec_str[i]]->name << "\n";
-        } else {
-            return;
+    auto new_recursive = [&] (auto&& _new_recursive, std::map<std::string, std::shared_ptr<Cp2kSection>>& _sections, int i) {
+        if (_sections.find(vec_str[i]) == _sections.end()) {
+            _sections[vec_str[i]] = std::make_shared<Cp2kSection>(vec_str[i]);
         }
         if (i + 1 >= length) {
             return;
         }
-        //std::cout << "Cp2k::new_section -> new_recursive entering recursion\n";
-        new_recursive(new_recursive, sections[vec_str[i]]->sections, i + 1);
+        _new_recursive(_new_recursive, _sections[vec_str[i]]->sections, i + 1);
     };
     new_recursive(new_recursive, this->sections, 0);
 
@@ -175,7 +164,7 @@ bool Cp2k::exists_section(const std::string& path) {
         i++;
     }
 
-    std::cout << path << " exists ? -> " << exists << "\n";
+    //std::cout << path << " exists ? -> " << exists << "\n";
 
     // switch (vec_str.size()) {
     //     case 0:

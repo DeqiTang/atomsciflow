@@ -73,18 +73,6 @@ target_link_libraries(atomsciflow-yaml.x
     ${Boost_LIBRARIES}
 )
 
-
-# main c++ test
-add_executable(atomsciflow-main-test.x
-    "../test/gtest/main.cpp"
-    ${PROJECT_TEST_SOURCES}
-)
-target_link_libraries(atomsciflow-main-test.x
-    atomsciflow
-    GTest::gtest
-    GTest::gtest_main
-)
-
 install(
     TARGETS 
     atomsciflow-version.x 
@@ -94,7 +82,6 @@ install(
     atomsciflow-calc.x 
     atomsciflow-post.x 
     atomsciflow-ssh.x
-    atomsciflow-main-test.x
     atomsciflow-yaml.x
     EXPORT atomsciflow
     LIBRARY DESTINATION lib
