@@ -1,0 +1,118 @@
+# =======================================================================================
+# Visual Studio Community version is friendly to open source projects.
+# The eula indicates it can be used for the development of open source softwares.
+# Even the Official CPython package for Windows is built using Visual Studio.
+# So here, Visual Studio Community version is used to build and test atomsciflow wheels.
+# =======================================================================================
+name: Build and test wheels for Windows using MSVC community version
+on:
+  push:
+    branches: [ master ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ master ]
+jobs:
+  build-for-windows:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-2019]
+        python_version: ["3.8", "3.9", "3.10"]
+    steps:
+      - name: Set up Visual Studio 2019 community version
+        run: |
+          choco install visualstudio2019community --package-parameters "--allWorkloads --includeRecommended --passive"
+          & "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Auxiliary/Build/vcvars64.bat"
+        shell: powershell
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python_version }}
+      - name: Install ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
+        with:
+          destination: "C:/Softwares/ninja"          
+      - name: Install Boost
+        id: install-boost
+        uses: MarkusJx/install-boost@v2.2.0
+        with:
+          boost_version: 1.78.0
+          platform_version: 2019
+          boost_install_dir: "C:/Softwares"
+          toolset: msvc
+      - name: Download yaml-cpp
+        shell: powershell
+        run: |
+          Invoke-WebRequest -Uri https://github.com/jbeder/yaml-cpp/archive/refs/tags/yaml-cpp-0.7.0.tar.gz -OutFile yaml-cpp-0.7.0.tar.gz
+          tar -xf yaml-cpp-0.7.0.tar.gz
+      - name: Install yaml-cpp
+        id: install-yaml-cpp
+        run: |
+          & "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Auxiliary/Build/vcvars64.bat"
+          $prefix_ = "C:/Softwares/yaml-cpp"
+          cmake yaml-cpp-yaml-cpp-0.7.0 -B build_yaml_cpp -G "Visual Studio 16 2019" -A x64 -DCMAKE_INSTALL_PREFIX="${prefix_}" -DCMAKE_BUILD_TYPE=Release
+          cmake --build build_yaml_cpp --config Release --parallel 4 
+          cmake --install build_yaml_cpp
+          echo "::set-output name=prefix::${prefix_}"
+        shell: powershell
+      - name: Install OpenSSL
+        shell: powershell
+        run: |
+          choco install openssl
+          choco upgrade openssl.light
+      - name: Download libssh2
+        shell: powershell 
+        run: |
+          Invoke-WebRequest -Uri https://github.com/libssh2/libssh2/releases/download/libssh2-1.10.0/libssh2-1.10.0.tar.gz -OutFile libssh2-1.10.0.tar.gz
+          tar -xf libssh2-1.10.0.tar.gz
+      - name: Install libssh2
+        id: install-libssh2
+        shell: powershell 
+        run: |
+          & "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Auxiliary/Build/vcvars64.bat"
+          $prefix_ = "C:/Softwares/libssh2"
+          cmake libssh2-1.10.0 -B build_libssh2 -G "Visual Studio 16 2019" -A x64 -DCMAKE_INSTALL_PREFIX="${prefix_}" -DCMAKE_BUILD_TYPE=Release 
+          cmake --build build_libssh2 --config Release --parallel 4
+          cmake --install build_libssh2
+          echo "::set-output name=prefix::${prefix_}"
+      - name: Download armadillo
+        shell: powershell
+        run: |
+          Invoke-WebRequest -Uri https://jztkft.dl.sourceforge.net/project/arma/armadillo-10.8.2.tar.xz -OutFile armadillo-10.8.2.tar.xz
+      - name: Extract armadillo
+        shell: bash
+        run: |
+          tar -xf armadillo-10.8.2.tar.xz
+      - name: Install armadillo
+        id: install-armadillo
+        run: |
+          & "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Auxiliary/Build/vcvars64.bat"
+          $prefix_ = "C:/Softwares/armadillo"
+          cmake armadillo-10.8.2 -B build_armadillo -G "Visual Studio 16 2019" -A x64 -DCMAKE_INSTALL_PREFIX="${prefix_}" -DCMAKE_BUILD_TYPE=Release
+          cmake --build build_armadillo --config Release
+          cmake --install build_armadillo
+          echo "::set-output name=prefix::${prefix_}"
+        shell: powershell
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - name: Build atomsciflow
+        run: |
+          & "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Auxiliary/Build/vcvars64.bat"
+          $env:ATOMSCIFLOW_BUILD_PY_EXT_NO_FORTRAN = "true"
+          python -m pip install scikit-build cython pybind11[global]
+          python setup.py build bdist_wheel -G "Visual Studio 16 2019" -DLibssh2_DIR="${{ steps.install-libssh2.outputs.prefix }}"
+          cd dist
+          $atomsciflow_whl = $(Get-ChildItem ./)
+          pip install ${atomsciflow_whl}
+          python -c "from atomsciflow.cpp.utils import version; print(version())"
+          python -c "from atomsciflow.cpp.cmd import log_cmd_start; print(log_cmd_start('atomsciflow'))"
+        env:
+          BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
+          # passing cmake arguments to scikit-build when dealing with cmake, use SKBUILD_CONFIGURE_OPTIONS or CMAKE_ARGS env
+          SKBUILD_CONFIGURE_OPTIONS: "-DCMAKE_PREFIX_PATH=\"${{ steps.install-armadillo.outputs.prefix }};${{ steps.install-libssh2.outputs.prefix }}\" -DYAML_CPP_PKGCONFIG_DIR=\"${{ steps.install-yaml-cpp.outputs.prefix }}/share/pkgconfig\""
+        shell: powershell
+      - uses: actions/upload-artifact@v2
+        with:
+          name: windows-wheels
+          path: dist/*.whl
