@@ -45,19 +45,26 @@ def add_nwchem_subparser(subparsers):
     subparser.add_argument("-a", "--auto-level", type=int, default=0,
         choices=[0, 1, 2, 3],
         help="The automation level of the task")
-        
+
+    subparser.add_argument("--server", type=str, default="pbs",
+        choices=["pbs", "llhpc", "yhbatch", "lsf_sz", "lsf_sustc", "cdcloud"])
+
 def nwchem_processor(args):
     print("working directory: %s" % args.directory)
     if args.calc.lower() == "static":
         from atomsciflow.nwchem import Static
         job = Octopus()
         job.get_xyz(args.xyz)
+        job.job.set_run("runopt", args.runopt)
+        job.job.set_run("server", args.server)        
         job.set_job_steps_default()
         job.run(args.directory)
     elif args.calc.lower() == "opt":
         from atomsciflow.nwchem import Opt
         job = Opt()
         job.get_xyz(args.xyz)
+        job.job.set_run("runopt", args.runopt)
+        job.job.set_run("server", args.server)        
         job.set_job_steps_default()
         job.run(args.directory)
     else:

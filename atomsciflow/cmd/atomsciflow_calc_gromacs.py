@@ -45,13 +45,18 @@ def add_gromacs_subparser(subparsers):
     subparser.add_argument("-a", "--auto-level", type=int, default=0,
         choices=[0, 1, 2, 3],
         help="The automation level of the task")
-        
+
+    subparser.add_argument("--server", type=str, default="pbs",
+        choices=["pbs", "llhpc", "yhbatch", "lsf_sz", "lsf_sustc", "cdcloud"])
+
 def gromacs_processor(args):
     print("working directory: %s" % args.directory)
     if args.calc.lower() == "md":
         from atomsciflow.gromacs import MolecularDynamics
         job = MolecularDynamics()
         job.get_xyz(args.xyz)
+        job.job.set_run("runopt", args.runopt)
+        job.job.set_run("server", args.server)        
         job.set_job_steps_default()
         job.run(args.directory)
     else:

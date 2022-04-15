@@ -51,7 +51,10 @@ def add_octopus_subparser(subparsers):
 
     ag.add_argument("--spacing", type=float, default=0.2,
         help="The spacing between the points in the mesh.")
-        
+
+    subparser.add_argument("--server", type=str, default="pbs",
+        choices=["pbs", "llhpc", "yhbatch", "lsf_sz", "lsf_sustc", "cdcloud"])
+
 def octopus_processor(args):
     print("working directory: %s" % args.directory)
     if args.calc.lower() == "static":
@@ -59,6 +62,8 @@ def octopus_processor(args):
         job = Static()
         job.get_xyz(args.xyz)
         job.set_param("Spacing", args.spacing)
+        job.job.set_run("runopt", args.runopt)
+        job.job.set_run("server", args.server)        
         job.set_job_steps_default()
         job.run(args.directory)
     elif args.calc.lower() == "opt":
@@ -66,6 +71,8 @@ def octopus_processor(args):
         job = Opt()
         job.get_xyz(args.xyz)
         job.set_param("Spacing", args.spacing)
+        job.job.set_run("runopt", args.runopt)
+        job.job.set_run("server", args.server)        
         job.set_job_steps_default()
         job.run(args.directory)
     else:

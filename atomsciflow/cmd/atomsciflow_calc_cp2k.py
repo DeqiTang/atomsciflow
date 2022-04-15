@@ -35,7 +35,7 @@ def add_cp2k_subparser(subparsers):
         help="Specify the xyz structure file")
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "vc-opt", "vib", "md", "metamd"],
+        choices=["static", "opt", "vcopt", "vib", "md", "metamd"],
         help="The calculation to do. The specified value is case insensitive")
 
     subparser.add_argument("--runopt", type=str, default="gen",
@@ -45,7 +45,10 @@ def add_cp2k_subparser(subparsers):
     subparser.add_argument("-a", "--auto-level", type=int, default=0,
         choices=[0, 1, 2, 3],
         help="The automation level of the task")
-        
+
+    subparser.add_argument("--server", type=str, default="pbs",
+        choices=["pbs", "llhpc", "yhbatch", "lsf_sz", "lsf_sustc", "cdcloud"])
+
 def cp2k_processor(args):
     print("working directory: %s" % args.directory)
     if args.calc.lower() == "static":
@@ -53,6 +56,7 @@ def cp2k_processor(args):
         job = Static()
         job.get_xyz(args.xyz)
         job.job.set_run("runopt", args.runopt)
+        job.job.set_run("server", args.server)
         job.set_job_steps_default()
         job.run(args.directory)
     elif args.calc.lower() == "opt":
@@ -60,13 +64,15 @@ def cp2k_processor(args):
         job = Opt()
         job.get_xyz(args.xyz)
         job.job.set_run("runopt", args.runopt)
+        job.job.set_run("server", args.server)
         job.set_job_steps_default()
         job.run(args.directory)
-    elif args.calc.lower() == "vc-opt":
+    elif args.calc.lower() == "vcopt":
         from atomsciflow.cp2k import VcOpt
         job = VcOpt()
         job.get_xyz(args.xyz)
         job.job.set_run("runopt", args.runopt)
+        job.job.set_run("server", args.server)        
         job.set_job_steps.default()
         job.run(args.directory)
     elif args.calc.lower() == "vib":
@@ -74,6 +80,7 @@ def cp2k_processor(args):
         job = Vib()
         job.get_xyz(args.xyz)
         job.job.set_run("runopt", args.runopt)
+        job.job.set_run("server", args.server)
         job.set_job_steps.default()
         job.run(args.directory)        
     elif args.calc.lower() == "md":
@@ -81,6 +88,7 @@ def cp2k_processor(args):
         job = MD()
         job.get_xyz(args.xyz)
         job.job.set_run("runopt", args.runopt)
+        job.job.set_run("server", args.server)
         job.set_job_steps.default()
         job.run(args.directory)
     elif args.calc.lower() == "metamd":
@@ -88,6 +96,7 @@ def cp2k_processor(args):
         job = MetaMD()
         job.get_xyz(args.xyz)
         job.job.set_run("runopt", args.runopt)
+        job.job.set_run("server", args.server)
         job.set_job_steps_default()
         job.run(args.directory)        
     else:

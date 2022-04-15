@@ -155,7 +155,7 @@ std::string submit_header_cdcloud(std::map<std::string, std::string>& params) {
     out += (boost::format("#SBATCH -n %1%\n") % params["ntask"]).str();
     out += (boost::format("#SBATCH -J %1%\n") % params["jobname"]).str();
     out += (boost::format("#SBATCH -o %1%\n") % params["stdout"]).str();
-    out += (boost::format("#SBATCH -e %1%\n") % params["stdderr"]).str();
+    out += (boost::format("#SBATCH -e %1%\n") % params["stderr"]).str();
     out += "#\n";
     out += "export I_MPI_PMI_LIBRARY=/opt/gridview/slurm/lib/libpmi.so\n";
     out += "export FORT_BUFFERED=1\n";
