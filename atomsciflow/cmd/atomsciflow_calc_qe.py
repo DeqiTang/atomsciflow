@@ -22,12 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from atomsciflow.cmd.calc_tools import (
+    add_calc_parser_common,
+    set_calc_processor_common
+)
+
 def add_qe_subparser(subparsers):
     subparser = subparsers.add_parser("qe", 
         help="The Quantum Espresso calculator")
-
-    subparser.add_argument("-d", "--directory", type=str, default="atomsciflow-calc-running-dir",
-        help="The working directory where calculation is happening")
 
     ag = subparser.add_argument_group(title="Structure", description="Specification of structure files")
 
@@ -38,12 +40,7 @@ def add_qe_subparser(subparsers):
         choices=["static", "opt", "md"],
         help="The calculation to do. The specified value is case insensitive")
 
-    subparser.add_argument("-a", "--auto-level", type=int, default=0,
-        choices=[0, 1, 2, 3],
-        help="The automation level of the task")
-
-    subparser.add_argument("--server", type=str, default="pbs",
-        choices=["pbs", "llhpc", "yhbatch", "lsf_sz", "lsf_sustc", "cdcloud"])
+    add_calc_parser_common(subparser)
 
 def qe_processor(args):
     print("working directory: %s" % args.directory)
@@ -51,8 +48,7 @@ def qe_processor(args):
         from atomsciflow.qe import Static
         job = Static()
         job.get_xyz(args.xyz)
-        job.job.set_run("runopt", args.runopt)
-        job.job.set_run("server", args.server)        
+        set_calc_processor_common(job, args)      
         job.set_job_steps_default()
         job.run(args.directory)
     elif args.calc.lower() == "opt":
