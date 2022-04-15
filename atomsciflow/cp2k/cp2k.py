@@ -32,28 +32,33 @@ class Cp2k(cp2k.Cp2k):
 class Static(cp2k.Cp2kStatic):
     def __init__(self):
         super().__init__()
+        self.set_param("global/run_type", "ENERGY_FORCE")
 
 class Opt(cp2k.Cp2k):
     def __init__(self):
         super().__init__()
-        print("cp2k.Opt -> __init__ start")
-        #self.sections["global"].set_param("run_type", "geo_opt")
         self.set_param("global/run_type", "geo_opt")
         self.set_param("global/project", "optimization")
-        print("cp2k.Opt -> new_section -> motion/geo_opt")
-        self.new_section("motion/geo_opt")
-        self.new_section("motion/print")
-        #self.new_section("motion")
-        #self.sections["motion"].add_section("geo_opt")
-        
+
+class VcOpt(cp2k.Cp2k):
+    def __init__(self):
+        super().__init__()
+        self.set_param("global/run_type", "CELL_OPT")
+        self.set_param("global/project", "cell-optimization")
+        self.set_param("global/print_level", "MEDIUM")
+
+class Vib(Cp2k):
+    def __init__(self):
+        super().__init__()
+        self.set_param("global/run_type", "VIBRATIONAL_ANALYSIS")
+
+class MD(Cp2k):
+    def __init__(self):
+        super().__init__()
+
 class MetaMD(Cp2k):
     def __init__(self):
         super().__init__()
-        self.new_section("motion/md")
-        self.new_section("motion/md/thermostat")
-        self.new_section("motion/md/thermostat/nose")
-        self.new_section("motion/free_energy")
-        self.new_section("motion/free_energy/metadyn")
         self.set_param("global/run_type", "MD")
         self.set_param("motion/md/ensemble", "NVT")
         self.set_param("motion/md/timestep", 0.5)
@@ -65,4 +70,8 @@ class MetaMD(Cp2k):
         self.set_param("motion/free_energy/metadyn/delta_t", 0.0)
         self.set_param("motion/free_energy/metadyn/do_hills", ".TRUE.")
         self.set_param("motion/free_energy/metadyn/nt_hills", 30)
-        
+
+class Neb(Cp2k):
+    def __init__(self):
+        super().__init__()
+        self.set_param("global/run_type", "BAND")

@@ -57,7 +57,7 @@ Cp2k::Cp2k() {
 
     //Cp2kSection dft{"dft"};
     auto dft = std::make_shared<Cp2kSection>("dft");
-    dft->set_param("basis_set_file_name", "BASIS_SET");
+    dft->set_param("basis_set_file_name", "BASIS_MOLOPT");
     dft->set_param("potential_file_name", "GTH_POTENTIALS");
 
     std::cout << "Cp2k::Cp2k -> adding qs\n";
@@ -110,9 +110,9 @@ Cp2k::~Cp2k() {
  * @param path The path to the section, like "force_eval/dft/scf"
  */
 void Cp2k::new_section(const std::string& path) {
-    if (this->exists_section(path)) {
-        return;
-    }
+    // if (this->exists_section(path)) {
+    //     return;
+    // }
 
     std::vector<std::string> vec_str;
     ba::split(vec_str, path, boost::is_any_of("/"));
@@ -164,121 +164,19 @@ bool Cp2k::exists_section(const std::string& path) {
         i++;
     }
 
-    //std::cout << path << " exists ? -> " << exists << "\n";
-
-    // switch (vec_str.size()) {
-    //     case 0:
-    //         exists = false;
-    //         break;
-    //     case 1:
-    //         if (this->sections.find(vec_str[0]) != this->sections.end()) {
-    //             exists = true;
-    //         }
-    //         break;
-    //     case 2:
-    //         std::cout << "Cp2k::exists_section -> case 2 start\n";
-    //         try {
-    //             std::cout << "Cp2k::exists_section -> case 2 start try 1\n";
-    //             std::cout << "Cp2k::exists_section -> case 2 vec_str[0]: " << vec_str[0] << "\n";
-    //             std::cout << "Cp2k::exists_section -> case 2 this->sections.count(motion): " << this->sections.count(vec_str[0]) << "\n";                
-    //             auto& sec = this->sections[vec_str[0]]->sections;
-    //             std::cout << "Cp2k::exists_section -> sec[motion]->name: " << sec["motion"]->name << "\n";
-    //             std::cout << "Cp2k::exists_section -> case 2 start try 2\n";
-    //             if (sec.find(vec_str[1]) != sec.end()) {
-    //                 std::cout << "Cp2k::exists_section -> case 2 if found\n";
-    //                 exists = true;
-    //             }
-    //             std::cout << "Cp2k::exists_section -> case 2 end try\n";
-    //         } catch (const std::exception& e) {
-    //             std::cout << "Cp2k::exists_section -> case 2 caught exception\n";
-    //             exists = false;
-    //         }
-    //         break;
-    //     case 3:
-    //         try {
-    //             auto& sec = this->sections[vec_str[0]]->sections[vec_str[1]]->sections;
-    //             if (sec.find(vec_str[1]) != sec.end()) {
-    //                 exists = true;
-    //             }
-    //         } catch (const std::exception& e) {
-    //             exists = false;
-    //         }        
-    //         break;
-    //     case 4:
-    //         try {
-    //             auto& sec = this->sections[vec_str[0]]->sections[vec_str[1]]->sections[vec_str[2]]->sections;
-    //             if (sec.find(vec_str[1]) != sec.end()) {
-    //                 exists = true;
-    //             }
-    //         } catch (const std::exception& e) {
-    //             exists = false;
-    //         }        
-    //         break;
-    //     case 5:
-    //         try {
-    //             auto& sec = this->sections[vec_str[0]]->sections[vec_str[1]]->sections[vec_str[2]]->sections[vec_str[3]]->sections;
-    //             if (sec.find(vec_str[1]) != sec.end()) {
-    //                 exists = true;
-    //             }
-    //         } catch (const std::exception& e) {
-    //             exists = false;
-    //         }        
-    //         break;
-    //     case 6:
-    //         try {
-    //             auto& sec = this->sections[vec_str[0]]->sections[vec_str[1]]->sections[vec_str[2]]->sections[vec_str[3]]->sections[vec_str[4]]->sections;
-    //             if (sec.find(vec_str[1]) != sec.end()) {
-    //                 exists = true;
-    //             }
-    //         } catch (const std::exception& e) {
-    //             exists = false;
-    //         }        
-    //         break; 
-    //     case 7:
-    //         try {
-    //             auto& sec = this->sections[vec_str[0]]->sections[vec_str[1]]->sections[vec_str[2]]->sections[vec_str[3]]->sections[vec_str[4]]->sections[vec_str[5]]->sections;
-    //             if (sec.find(vec_str[1]) != sec.end()) {
-    //                 exists = true;
-    //             }
-    //         } catch (const std::exception& e) {
-    //             exists = false;
-    //         }        
-    //         break;  
-    //     case 8:
-    //         try {
-    //             auto& sec = this->sections[vec_str[0]]->sections[vec_str[1]]->sections[vec_str[2]]->sections[vec_str[3]]->sections[vec_str[4]]->sections[vec_str[5]]->sections[vec_str[6]]->sections;
-    //             if (sec.find(vec_str[1]) != sec.end()) {
-    //                 exists = true;
-    //             }
-    //         } catch (const std::exception& e) {
-    //             exists = false;
-    //         }        
-    //         break;  
-    //     case 9:
-    //         try {
-    //             auto& sec = this->sections[vec_str[0]]->sections[vec_str[1]]->sections[vec_str[2]]->sections[vec_str[3]]->sections[vec_str[4]]->sections[vec_str[5]]->sections[vec_str[6]]->sections[vec_str[7]]->sections;
-    //             if (sec.find(vec_str[1]) != sec.end()) {
-    //                 exists = true;
-    //             }
-    //         } catch (const std::exception& e) {
-    //             exists = false;
-    //         }        
-    //         break;                                        
-    //     default:
-    //         break;
-    // }
-
     return exists;
 }
 
 template <typename T>
 void Cp2k::set_param(const std::string& path, T value) {
-    if (false == this->exists_section(path)) {
-        //this->new_section(path);
-    }
-
     std::vector<std::string> vec_str;
     ba::split(vec_str, path, boost::is_any_of("/"));
+
+    std::vector<std::string> vec_sections = vec_str;
+    vec_sections.pop_back();
+    if (false == this->exists_section(ba::join(vec_sections, "/"))) {
+        this->new_section(ba::join(vec_sections, "/"));
+    }
 
     switch (vec_str.size()) {
         case 0:

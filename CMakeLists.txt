@@ -113,6 +113,7 @@ file(GLOB PROJECT_LIB_SOURCES
     "./src/atomsciflow/utils/*.cpp"
     "./src/atomsciflow/abinit/*.cpp"
     "./src/atomsciflow/cp2k/*.cpp"
+    "./src/atomsciflow/cp2k/post/*.cpp"
     "./src/atomsciflow/qe/*.cpp"
     "./src/atomsciflow/qmcpack/*.cpp"
     "./src/atomsciflow/elk/*.cpp"
@@ -135,6 +136,7 @@ file(GLOB PROJECT_LIB_SOURCES
     "./src/atomsciflow/server/*.cpp"
     "./src/atomsciflow/cmd/*.cpp"
     "./src/atomsciflow/config/*.cpp"
+    "./src/atomsciflow/plumed/*.cpp"
 )
 
 file(GLOB PROJECT_HEADER_FILES
@@ -145,6 +147,7 @@ file(GLOB PROJECT_HEADER_FILES
     "./src/atomsciflow/utils/*.h"
     "./src/atomsciflow/abinit/*.h"
     "./src/atomsciflow/cp2k/*.h"
+    "./src/atomsciflow/cp2k/post/*.h"
     "./src/atomsciflow/qe/*.h"
     "./src/atomsciflow/qmcpack/*.h"
     "./src/atomsciflow/elk/*.h"
@@ -168,13 +171,7 @@ file(GLOB PROJECT_HEADER_FILES
     "./src/atomsciflow/server/*.h"
     "./src/atomsciflow/cmd/*.h"
     "./src/atomsciflow/config/*.h"
-)
-
-file(GLOB PROJECT_TEST_SOURCES
-    "./test/gtest/utils/*.cpp"
-    "./test/gtest/cp2k/*.cpp"
-    "./test/gtest/qmcpack/*.cpp"
-    "./test/gtest/config/*.cpp"
+    "./src/atomsciflow/plumed/*.h"
 )
 
 # set output path 

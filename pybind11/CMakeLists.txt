@@ -210,6 +210,7 @@ set_target_properties(base PROPERTIES
 file(GLOB BINDING_CP2K_SOURCES
     "./cp2k/*.cpp"
     "../src/atomsciflow/cp2k/*.cpp"
+    "../src/atomsciflow/cp2k/post/*.cpp"
 )
 add_library(cp2k MODULE ${BINDING_CP2K_SOURCES})
 target_link_libraries(cp2k
@@ -457,7 +458,6 @@ file(GLOB BINDING_SIESTA_SOURCES
     "./siesta/siesta.cpp"
     "../src/atomsciflow/siesta/*.cpp"
 )
-#add_library(siesta MODULE ${BINDING_SIESTA_SOURCES})
 add_library(siesta MODULE ${BINDING_SIESTA_SOURCES})
 target_link_libraries(siesta
     PRIVATE pybind11::module
@@ -483,7 +483,6 @@ file(GLOB BINDING_DFTBPLUS_SOURCES
     "./dftbplus/dftbplus.cpp"
     "../src/atomsciflow/dftbplus/*.cpp"
 )
-#add_library(dftbplus MODULE ${BINDING_DFTBPLUS_SOURCES})
 add_library(dftbplus MODULE ${BINDING_DFTBPLUS_SOURCES})
 target_link_libraries(dftbplus
     PRIVATE pybind11::module
@@ -509,7 +508,6 @@ file(GLOB BINDING_NWCHEM_SOURCES
     "./nwchem/nwchem.cpp"
     "../src/atomsciflow/nwchem/*.cpp"
 )
-#add_library(nwchem MODULE ${BINDING_NWCHEM_SOURCES})
 add_library(nwchem MODULE ${BINDING_NWCHEM_SOURCES})
 target_link_libraries(nwchem
     PRIVATE pybind11::module
@@ -536,7 +534,6 @@ file(GLOB BINDING_EXCITING_SOURCES
     "../src/atomsciflow/exciting/*.cpp"
     "../src/atomsciflow/qmcpack/input.cpp" # needed by exciting
 )
-#add_library(exciting MODULE ${BINDING_EXCITING_SOURCES})
 add_library(exciting MODULE ${BINDING_EXCITING_SOURCES})
 target_link_libraries(exciting
     PRIVATE pybind11::module
@@ -562,7 +559,6 @@ file(GLOB BINDING_GAUSSIAN_SOURCES
     "./gaussian/gaussian.cpp"
     "../src/atomsciflow/gaussian/*.cpp"
 )
-#add_library(gaussian MODULE ${BINDING_GAUSSIAN_SOURCES})
 add_library(gaussian MODULE ${BINDING_GAUSSIAN_SOURCES})
 target_link_libraries(gaussian
     PRIVATE pybind11::module
@@ -588,7 +584,6 @@ file(GLOB BINDING_GROMACS_SOURCES
     "./gromacs/gromacs.cpp"
     "../src/atomsciflow/gromacs/*.cpp"
 )
-#add_library(gromacs MODULE ${BINDING_GROMACS_SOURCES})
 add_library(gromacs MODULE ${BINDING_GROMACS_SOURCES})
 target_link_libraries(gromacs
     PRIVATE pybind11::module
@@ -614,7 +609,6 @@ file(GLOB BINDING_LAMMPS_SOURCES
     "./lammps/lammps.cpp"
     "../src/atomsciflow/lammps/*.cpp"
 )
-#add_library(lammps MODULE ${BINDING_LAMMPS_SOURCES})
 add_library(lammps MODULE ${BINDING_LAMMPS_SOURCES})
 target_link_libraries(lammps
     PRIVATE pybind11::module
@@ -760,6 +754,17 @@ set_target_properties(server PROPERTIES
 )
 #pybind11_add_module(server  MODULE ${BINDING_SERVER_SOURCES})
 
+file(GLOB BINDING_PLUMED_SOURCES
+    "./plumed/*.cpp"
+    "../src/atomsciflow/plumed/*.cpp"
+)
+add_library(plumed MODULE ${BINDING_PLUMED_SOURCES})
+target_link_libraries(plumed
+    PRIVATE pybind11::module
+    ${YAML_CPP_LIBRARIES}
+    ${Boost_LIBRARIES}
+)
+
 # scikit-build
 if(SKBUILD)
     install(TARGETS utils DESTINATION .)
@@ -789,6 +794,7 @@ if(SKBUILD)
     install(TARGETS qchem DESTINATION .)
     install(TARGETS xtb DESTINATION .)
     install(TARGETS server DESTINATION .)
+    install(TARGETS plumed DESTINATION .)
 endif()
 
 
