@@ -23,6 +23,7 @@ SOFTWARE.
 """
 
 from atomsciflow.cpp import abinit
+from atomsciflow.cpp.server import JobScheduler
 
 class Abinit(abinit.Abinit):
     def __init__(self):

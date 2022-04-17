@@ -53,8 +53,25 @@ JobScheduler::JobScheduler() {
     this->set_run_default("cdcloud");
 }
 
-void JobScheduler::set_run(std::string key, std::string value) {
-    this->run_params[key] = value;
+template <typename T>
+void JobScheduler::set_run(std::string key, T value) {
+    this->run_params[key] = boost::lexical_cast<std::string>(value);
+}
+
+void JobScheduler::py_set_run(std::string key, std::string value) {
+    this->set_run(key, value);
+}
+
+void JobScheduler::py_set_run(std::string key, int value) {
+    this->set_run(key, value);
+}
+
+void JobScheduler::py_set_run(std::string key, float value) {
+    this->set_run(key, value);
+}
+
+void JobScheduler::py_set_run(std::string key, double value) {
+    this->set_run(key, value);
 }
 
 /// @param runopt the running options
@@ -305,5 +322,11 @@ void JobScheduler::run(const std::string& directory) {
         boost::lexical_cast<int>(run_params["auto_level"])
     );
 }
+
+// explicit template instantiation
+template void JobScheduler::set_run<std::string>(std::string key, std::string value);
+template void JobScheduler::set_run<int>(std::string key, int value);
+template void JobScheduler::set_run<float>(std::string key, float value);
+template void JobScheduler::set_run<double>(std::string key, double value);
 
 } // namespace atomsciflow

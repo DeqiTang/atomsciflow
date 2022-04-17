@@ -61,9 +61,6 @@ public:
     ///     1 -> output namelist without & and /, like
     ///         name
     int type = 0;
-
-    private:
-    std::map<std::string, Variable> params;
 }; 
 
 } // namespace atomsciflow::qe

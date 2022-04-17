@@ -30,6 +30,7 @@ SOFTWARE.
 #include "atomsciflow/variable/variable.h"
 
 #include <string>
+#include <boost/lexical_cast.hpp>
 
 namespace atomsciflow {
 
@@ -109,13 +110,13 @@ inline std::string to_string_second_line(const Variable& var, std::string indent
 void Variable::set(std::string key, int value) {
     this->key = key;
     this->value.clear();
-    this->value.push_back(std::vector<std::string>{std::to_string(value)});
+    this->value.push_back(std::vector<std::string>{boost::lexical_cast<std::string>(value)});
 }
 
 void Variable::set(std::string key, double value) {
     this->key = key;
     this->value.clear();
-    this->value.push_back(std::vector<std::string>{std::to_string(value)});
+    this->value.push_back(std::vector<std::string>{boost::lexical_cast<std::string>(value)});
 }
 
 void Variable::set(std::string key, std::string value) {
@@ -129,7 +130,7 @@ void Variable::set(std::string key, std::vector<int> value) {
     this->value.clear();
     std::vector<std::string> vec_str;
     for (const auto& i : value) {
-        vec_str.push_back(std::to_string(i));
+        vec_str.push_back(boost::lexical_cast<std::string>(i));
     }
     this->value.push_back(vec_str);
 }
@@ -139,7 +140,7 @@ void Variable::set(std::string key, std::vector<double> value) {
     this->value.clear();
     std::vector<std::string> vec_str;
     for (const auto& i : value) {
-        vec_str.push_back(std::to_string(i));
+        vec_str.push_back(boost::lexical_cast<std::string>(i));
     }
     this->value.push_back(vec_str);
 }
@@ -161,7 +162,7 @@ void Variable::set(std::string key, std::vector<std::vector<int> > value) {
     for (const auto& row : value) {
         vec_str.clear();
         for (const auto& val : row) {
-            vec_str.push_back(std::to_string(val));
+            vec_str.push_back(boost::lexical_cast<std::string>(val));
         }
         this->value.push_back(vec_str);
     }
@@ -174,7 +175,7 @@ void Variable::set(std::string key, std::vector<std::vector<double> > value) {
     for (const auto& row : value) {
         vec_str.clear();
         for (const auto& val : row) {
-            vec_str.push_back(std::to_string(val));
+            vec_str.push_back(boost::lexical_cast<std::string>(val));
         }
         this->value.push_back(vec_str);
     }
@@ -276,7 +277,7 @@ std::string Variable::to_string(int n) {
         return "";
     }
     std::string out = "";
-    if (9 == this->value.size()) {
+    if (0 == this->value.size()) {
         return out + this->key;
     }
     if (this->value.size() == 1) {

@@ -15,8 +15,10 @@ void add_class_job_scheduler(py::module& m) {
     
     py::class_<atomsciflow::JobScheduler>(m, "JobScheduler")
         .def(py::init<>())
-        .def("set_run", &atomsciflow::JobScheduler::set_run)
-        .def("set_run", &atomsciflow::JobScheduler::set_run)
+        .def("set_run", py::overload_cast<std::string, std::string>(&atomsciflow::JobScheduler::py_set_run))
+        .def("set_run", py::overload_cast<std::string, int>(&atomsciflow::JobScheduler::py_set_run))
+        .def("set_run", py::overload_cast<std::string, float>(&atomsciflow::JobScheduler::py_set_run))
+        .def("set_run", py::overload_cast<std::string, double>(&atomsciflow::JobScheduler::py_set_run))
         .def("set_run_default", &atomsciflow::JobScheduler::set_run_default)
         .def("gen_llhpc", &atomsciflow::JobScheduler::gen_llhpc)
         .def("gen_yh", &atomsciflow::JobScheduler::gen_yh)

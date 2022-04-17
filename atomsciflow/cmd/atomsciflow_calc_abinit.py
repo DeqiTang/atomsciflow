@@ -27,16 +27,10 @@ from atomsciflow.cmd.calc_tools import (
     set_calc_processor_common
 )
 
-
 def add_abinit_subparser(subparsers):
     subparser = subparsers.add_parser("abinit", 
         help="The Abinit calculator")
 
-    ag = subparser.add_argument_group(title="Structure", description="Specification of structure files")
-
-    ag.add_argument("--xyz", type=str, default=None, required=True,
-        help="Specify the xyz structure file")
-    
     subparser.add_argument("-c", "--calc", type=str, default="static",
         choices=["static", "opt", "md"],
         help="The calculation to do. The specified value is case insensitive")

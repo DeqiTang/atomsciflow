@@ -764,6 +764,11 @@ target_link_libraries(plumed
     ${YAML_CPP_LIBRARIES}
     ${Boost_LIBRARIES}
 )
+set_target_properties(plumed PROPERTIES
+    PREFIX "${PYTHON_MODULE_PREFIX}"
+    SUFFIX "${PYTHON_MODULE_EXTENSION}"
+)
+#pybind11_add_module(plumed MODULE ${BINDING_PLUMED_SOURCES})
 
 # scikit-build
 if(SKBUILD)

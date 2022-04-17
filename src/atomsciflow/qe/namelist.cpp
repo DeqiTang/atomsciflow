@@ -29,6 +29,8 @@ SOFTWARE.
 
 #include "atomsciflow/qe/namelist.h"
 
+#include "atomsciflow/qe/utils.h"
+
 namespace atomsciflow::qe {
 
 Namelist::Namelist() {
@@ -46,18 +48,18 @@ std::string Namelist::to_string() {
 std::string Namelist::to_string(std::string indent) {
     std::string out = "";
     if (0 == this->type) {
-        out += "&" + this->name + "\n";
+        out += "&" + this->name + "\n\n";
     } else if (1 == this->type) {
         out += this->name + "\n";
     } else {
         out += "! Warning: unknow namelist type, take as 0 by default\n";
         out += "&" + this->name + "\n";
     }
-    for (const auto& item : this->params) {
+    for (auto& item : this->params) {
         if (false == this->params[item.first].status) {
             continue;
         }
-        out += indent + this->params[item.first].to_string() + "\n";
+        out += indent + qe_variable_to_string(item.second) + "\n";
     }
     if (0 == this->type) {
         out += "/\n";

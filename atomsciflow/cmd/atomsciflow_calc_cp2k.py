@@ -31,62 +31,80 @@ def add_cp2k_subparser(subparsers):
     subparser = subparsers.add_parser("cp2k", 
         help="The CP2K calculator")
 
-    ag = subparser.add_argument_group(title="Structure", description="Specification of structure files")
-
-    ag.add_argument("--xyz", type=str, default=None, required=True,
-        help="Specify the xyz structure file")
+    add_calc_parser_common(subparser)
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
         choices=["static", "opt", "vcopt", "vib", "md", "metamd"],
         help="The calculation to do. The specified value is case insensitive")
 
-    add_calc_parser_common(subparser)
+    ag = subparser.add_argument_group(title="global")
+
+    ag.add_argument("--print-level", type=str, default="LOW",
+        choices=["HIGH", "LOW", "MEDIUM", "high", "low", "medium"],
+        help="Decide how much output is written out"
+    )
+
+    # force_eval/dft
+    ag = subparser.add_argument_group(title="force_eval/dft")
+
+    ag.add_argument("--qs-method", type=str, default=None,
+        choices=["GAPW", "GPW", "GAPW_XC", "gapw", "gpw", "gapw_xc"],
+        help="Specify the electronic structure method"
+    )
+    
+    ag.add_argument("--eps-default", type=float, default=1.0e-14,
+        help="Specify the value of QS/EPS_DEFAULT")
+
+    # force_eval/dft/scf
+    ag = subparser.add_argument_group(title="force_eval/dft/scf")
+
+    # custom
+    ag = subparser.add_argument_group(title="custom")
+    
+    ag.add_argument("--custom", type=str, default=None,
+        help="Specify parameters that are not provided directly in the command line argument, e.g. --custom \"force_eval/dft/scf/max_diis=4;force_eval/dft/scf/eps_scf=1.0e-5\""
+    )
 
 def cp2k_processor(args):
+
+    params = {}
+    params["global/print_level"] = args.print_level
+    params["force_eval/dft/qs/method"] = args.qs_method
+    params["force_eval/dft/qs/eps_default"] = args.eps_default
+
+    if args.custom != None:
+        custom_str = args.custom.replace(" ", "") # remove all space
+        for item in custom_str.split(";"):
+            params[item.split("=")[0]] = item.split("=")[1]
+
     print("working directory: %s" % args.directory)
     if args.calc.lower() == "static":
         from atomsciflow.cp2k import Static
         job = Static()
-        job.get_xyz(args.xyz)
-        set_calc_processor_common(job, args)
-        job.set_job_steps_default()
-        job.run(args.directory)
     elif args.calc.lower() == "opt":
         from atomsciflow.cp2k import Opt
         job = Opt()
-        job.get_xyz(args.xyz)
-        set_calc_processor_common(job, args)
-        job.set_job_steps_default()
-        job.run(args.directory)
     elif args.calc.lower() == "vcopt":
         from atomsciflow.cp2k import VcOpt
         job = VcOpt()
-        job.get_xyz(args.xyz)
-        set_calc_processor_common(job, args)       
-        job.set_job_steps.default()
-        job.run(args.directory)
     elif args.calc.lower() == "vib":
         from atomsciflow.cp2k import Vib
-        job = Vib()
-        job.get_xyz(args.xyz)
-        set_calc_processor_common(job, args)
-        job.set_job_steps.default()
-        job.run(args.directory)        
+        job = Vib()      
     elif args.calc.lower() == "md":
         from atomsciflow.cp2k import MD
         job = MD()
-        job.get_xyz(args.xyz)
-        set_calc_processor_common(job, args)
-        job.set_job_steps.default()
-        job.run(args.directory)
     elif args.calc.lower() == "metamd":
         from atomsciflow.cp2k import MetaMD
-        job = MetaMD()
-        job.get_xyz(args.xyz)
-        set_calc_processor_common(job, args)
-        job.set_job_steps_default()
-        job.run(args.directory)        
+        job = MetaMD()   
     else:
         print("The specified calculation type is unfound!")
         sys.exit(1)
-    
+            
+    job.get_xyz(args.xyz)
+    set_calc_processor_common(job, args)
+    for item in params:
+        if params[item] == None:
+            continue
+        job.set_param(item, params[item])
+    job.set_job_steps_default()
+    job.run(args.directory)

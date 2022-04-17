@@ -42,6 +42,7 @@ class Static(PwScf):
 class Opt(PwScf):
     def __init__(self):
         super().__init__()
+        
         self.set_param("control", "calculation", "relax")
         self.set_param("control", "title", "structure relaxation")
         self.set_param("control", "nstep", 200)

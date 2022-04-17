@@ -31,33 +31,37 @@ def add_vasp_subparser(subparsers):
     subparser = subparsers.add_parser("vasp", 
         help="The Vasp calculator")
 
-    ag = subparser.add_argument_group(title="Structure", description="Specification of structure files")
-
-    ag.add_argument("--xyz", type=str, default=None, required=True,
-        help="Specify the xyz structure file")
+    add_calc_parser_common(subparser)
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
         choices=["static", "opt", "md"],
         help="The calculation to do. The specified value is case insensitive")
 
-    add_calc_parser_common(subparser)
+    subparser.add_argument("--custom", type=str, default=None,
+        help="Specify parameters that are not provided directly in the command line argument, e.g. --custom \"ALGO=Normal;EDIFF=1.0E-5;\""
+    )
 
 def vasp_processor(args):
+    params = {}
+    if args.custom != None:
+        custom_str = args.custom.replace(" ", "") # remove all space
+        for item in custom_str.split(";"):
+            params[item.split("=")[0]] = item.split("=")[1]
+
     print("working directory: %s" % args.directory)
     if args.calc.lower() == "static":
         from atomsciflow.vasp import Static
         job = Static()
-        job.get_xyz(args.xyz)
-        set_calc_processor_common(job, args)       
-        job.set_job_steps_default()
-        job.run(args.directory)
+        job.set_params(params, "static")
     elif args.calc.lower() == "opt":
         from atomsciflow.vasp import Opt
         job = Opt()
-        job.get_xyz(args.xyz)
-        set_calc_processor_common(job, args)     
-        job.set_job_steps_default()
-        job.run(args.directory)
+        job.set_params(params, "opt")
     else:
         print("The specified calculation type is unfound!")
         sys.exit(1)
+
+    job.get_xyz(args.xyz)
+    set_calc_processor_common(job, args)    
+    job.set_job_steps_default()
+    job.run(args.directory)

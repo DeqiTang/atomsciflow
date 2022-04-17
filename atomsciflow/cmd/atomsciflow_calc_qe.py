@@ -31,26 +31,30 @@ def add_qe_subparser(subparsers):
     subparser = subparsers.add_parser("qe", 
         help="The Quantum Espresso calculator")
 
-    ag = subparser.add_argument_group(title="Structure", description="Specification of structure files")
-
-    ag.add_argument("--xyz", type=str, default=None, required=True,
-        help="Specify the xyz structure file")
-
     subparser.add_argument("-c", "--calc", type=str, default="static",
         choices=["static", "opt", "md"],
         help="The calculation to do. The specified value is case insensitive")
 
     add_calc_parser_common(subparser)
 
+    # custom
+    ag = subparser.add_argument_group(title="custom")
+    
+    ag.add_argument("--custom", type=str, default=None,
+        help="Specify parameters that are not provided directly in the command line argument, e.g. --custom \"control/nstep=1;electrons/conv_thr=1.0e-7\""
+    )
+
 def qe_processor(args):
+    params = {}
+    if args.custom != None:
+        custom_str = args.custom.replace(" ", "") # remove all space
+        for item in custom_str.split(";"):
+            params[item.split("=")[0]] = item.split("=")[1]
+
     print("working directory: %s" % args.directory)
     if args.calc.lower() == "static":
         from atomsciflow.qe import Static
         job = Static()
-        job.get_xyz(args.xyz)
-        set_calc_processor_common(job, args)      
-        job.set_job_steps_default()
-        job.run(args.directory)
     elif args.calc.lower() == "opt":
         from atomsciflow.qe import Opt
         job = Opt()
@@ -62,5 +66,12 @@ def qe_processor(args):
     else:
         print("The specified calculation type is unfound!")
         sys.exit(1)
-
     
+    job.get_xyz(args.xyz)
+    set_calc_processor_common(job, args)      
+    for item in params:
+        if params[item] == None:
+            continue        
+        job.set_param(item.split("/")[0], item.split("/")[1], params[item])    
+    job.set_job_steps_default()
+    job.run(args.directory)

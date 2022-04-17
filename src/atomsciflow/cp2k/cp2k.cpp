@@ -60,8 +60,6 @@ Cp2k::Cp2k() {
     dft->set_param("basis_set_file_name", "BASIS_MOLOPT");
     dft->set_param("potential_file_name", "GTH_POTENTIALS");
 
-    std::cout << "Cp2k::Cp2k -> adding qs\n";
-
     auto& qs = dft->add_section("qs");
     qs->set_param("eps_default", "1.0e-14");
 
@@ -95,8 +93,6 @@ Cp2k::Cp2k() {
     job.set_run("output", "cp2k.out");
 
     job.set_run("script_name_head", "cp2k-run");
-
-    std::cout << "Cp2k::Cp2k -> finished!\n";
 
 }
 
@@ -254,7 +250,6 @@ std::string Cp2k::to_string() {
     std::string out = "";
     for (const auto& item : this->sections) {
         out += this->sections[item.first]->to_string("  ") + "\n";
-        std::cout << "Cp2k::to_string -> section -> " << this->sections[item.first]->name << "\n";
         out += "\n";
     }
     return out;

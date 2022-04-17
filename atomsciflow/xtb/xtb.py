@@ -23,6 +23,7 @@ SOFTWARE.
 """
 
 from atomsciflow.cpp import xtb
+from atomsciflow.cpp.server import JobScheduler
 
 class Xtb(xtb.Xtb):
     def __init__(self):

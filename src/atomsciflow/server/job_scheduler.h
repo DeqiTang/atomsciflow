@@ -41,7 +41,13 @@ public:
     JobScheduler();
     ~JobScheduler() = default;
 
-    void set_run(std::string key, std::string value);
+    template <typename T>
+    void set_run(std::string key, T value);
+    
+    void py_set_run(std::string key, std::string value);
+    void py_set_run(std::string key, int value);
+    void py_set_run(std::string key, float value);
+    void py_set_run(std::string key, double value);
     void set_run_default(std::string platform);
     void set_run_default_llhpc();
     void set_run_default_yh();
