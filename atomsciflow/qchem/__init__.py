@@ -22,6 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from atomsciflow.qchem.qchem import QChem
-from atomsciflow.qchem.qchem import Static, Opt
+from atomsciflow.qchem.qchem import (
+    QChem,
+    Static,
+    Opt
+)
 from atomsciflow.cpp.server import JobScheduler

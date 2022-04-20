@@ -51,6 +51,16 @@ public:
     template <typename T>
     void set_param(const std::string& group, std::string key, T value);
 
+    void py_set_param(const std::string& group, std::string key, int value);
+    void py_set_param(const std::string& group, std::string key, double value);
+    void py_set_param(const std::string& group, std::string key, std::string value);
+    void py_set_param(const std::string& group, std::string key, std::vector<int> value);
+    void py_set_param(const std::string& group, std::string key, std::vector<double> value);
+    void py_set_param(const std::string& group, std::string key, std::vector<std::string> value);
+    void py_set_param(const std::string& group, std::string key, std::vector<std::vector<int>> value);
+    void py_set_param(const std::string& group, std::string key, std::vector<std::vector<double>> value);
+    void py_set_param(const std::string& group, std::string key, std::vector<std::vector<std::string>> value);
+
     void set_job_steps_default();
 
     virtual void run(const std::string& directory);

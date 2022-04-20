@@ -24,10 +24,13 @@ SOFTWARE.
 
 def add_calc_parser_common_structure(subparser):
 
-    ag = subparser.add_argument_group(title="Structure", description="Specification of structure files")
+    ag = subparser.add_mutually_exclusive_group(required=True)
 
-    ag.add_argument("--xyz", type=str, default=None, required=True,
+    ag.add_argument("--xyz", type=str, default=None,
         help="Specify the xyz structure file")
+    
+    ag.add_argument("--cif", type=str, default=None,
+        help="Spedify the cif structure file")
     
 def add_calc_parser_common(subparser):
     

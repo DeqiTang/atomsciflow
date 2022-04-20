@@ -37,6 +37,7 @@ public:
     ~Opt();
 
     void read(const std::string& filepath);
+    void write(const std::string& directory);
     void set_run(std::string key, std::string value);
     void run(const std::string& directory);
 

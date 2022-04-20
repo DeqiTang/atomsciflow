@@ -108,6 +108,42 @@ void Elk::set_param(const std::string& group, std::string key, T value) {
     this->blocks[group]->set_param(key, value);
 }
 
+void Elk::py_set_param(const std::string& group, std::string key, int value) {
+    this->set_param(group, key, value);
+}
+
+void Elk::py_set_param(const std::string& group, std::string key, double value) {
+    this->set_param(group, key, value);
+}
+
+void Elk::py_set_param(const std::string& group, std::string key, std::string value) {
+    this->set_param(group, key, value);
+}
+
+void Elk::py_set_param(const std::string& group, std::string key, std::vector<int> value) {
+    this->set_param(group, key, value);
+}
+
+void Elk::py_set_param(const std::string& group, std::string key, std::vector<double> value) {
+    this->set_param(group, key, value);
+}
+
+void Elk::py_set_param(const std::string& group, std::string key, std::vector<std::string> value) {
+    this->set_param(group, key, value);
+}
+
+void Elk::py_set_param(const std::string& group, std::string key, std::vector<std::vector<int>> value) {
+    this->set_param(group, key, value);
+}
+
+void Elk::py_set_param(const std::string& group, std::string key, std::vector<std::vector<double>> value) {
+    this->set_param(group, key, value);
+}
+
+void Elk::py_set_param(const std::string& group, std::string key, std::vector<std::vector<std::string>> value) {
+    this->set_param(group, key, value);
+}
+
 void Elk::set_job_steps_default() {
     job.steps.clear();
     std::ostringstream step;

@@ -70,6 +70,47 @@ void Vasp::get_xyz(const std::string& xyzfile) {
     this->set_job_steps_default();
 }
 
+template <typename T>
+void Vasp::set_param(std::string key, T value) {
+    this->incar->set_param(key, value);
+}
+
+void Vasp::py_set_param(std::string key, int value) {
+    this->set_param(key, value);
+}
+
+void Vasp::py_set_param(std::string key, double value) {
+    this->set_param(key, value);
+}
+
+void Vasp::py_set_param(std::string key, std::string value) {
+    this->set_param(key, value);
+}
+
+void Vasp::py_set_param(std::string key, std::vector<int> value) {
+    this->set_param(key, value);
+}
+
+void Vasp::py_set_param(std::string key, std::vector<double> value) {
+    this->set_param(key, value);
+}
+
+void Vasp::py_set_param(std::string key, std::vector<std::string> value) {
+    this->set_param(key, value);
+}
+
+void Vasp::py_set_param(std::string key, std::vector<std::vector<int>> value) {
+    this->set_param(key, value);
+}
+
+void Vasp::py_set_param(std::string key, std::vector<std::vector<double>> value) {
+    this->set_param(key, value);
+}
+
+void Vasp::py_set_param(std::string key, std::vector<std::vector<std::string>> value) {
+    this->set_param(key, value);
+}
+
 /// \brief Vasp::set_params
 /// \param params
 /// \param runtype the type of calculation
@@ -153,5 +194,16 @@ void Vasp::set_job_steps_default() {
 void Vasp::run(const std::string& directory) {
     job.run(directory);
 }
+
+// explicit template instantiation
+template void Vasp::set_param<int>(std::string, int);
+template void Vasp::set_param<double>(std::string, double);
+template void Vasp::set_param<std::string>(std::string, std::string);
+template void Vasp::set_param<std::vector<int>>(std::string, std::vector<int>);
+template void Vasp::set_param<std::vector<double>>(std::string, std::vector<double>);
+template void Vasp::set_param<std::vector<std::string>>(std::string, std::vector<std::string>);
+template void Vasp::set_param<std::vector<std::vector<int>>>(std::string, std::vector<std::vector<int>>);
+template void Vasp::set_param<std::vector<std::vector<double>>>(std::string, std::vector<std::vector<double>>);
+template void Vasp::set_param<std::vector<std::vector<std::string>>>(std::string, std::vector<std::vector<std::string>>);
 
 } // namespace atomsciflow

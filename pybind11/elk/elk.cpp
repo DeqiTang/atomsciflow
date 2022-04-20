@@ -20,8 +20,18 @@ void add_class_elk(py::module& m) {
         .def(py::init<>())
         .def("get_xyz", &atomsciflow::Elk::get_xyz)
         .def("to_string", &atomsciflow::Elk::to_string)
+        .def("set_param", py::overload_cast<const std::string&, std::string, int>(&atomsciflow::Elk::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::string, double>(&atomsciflow::Elk::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::string, std::string>(&atomsciflow::Elk::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::string, std::vector<int>>(&atomsciflow::Elk::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::string, std::vector<double>>(&atomsciflow::Elk::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::string, std::vector<std::string>>(&atomsciflow::Elk::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::string, std::vector<std::vector<int>>>(&atomsciflow::Elk::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::string, std::vector<std::vector<double>>>(&atomsciflow::Elk::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::string, std::vector<std::vector<std::string>>>(&atomsciflow::Elk::py_set_param))        
         .def("set_job_steps_default", &atomsciflow::Elk::set_job_steps_default)
         .def("run", &atomsciflow::Elk::run)
+        .def_readwrite("job", &atomsciflow::Elk::job)
         ;
 }
 
@@ -29,6 +39,7 @@ void add_class_elkstatic(py::module& m) {
     py::class_<atomsciflow::ElkStatic>(m, "ElkStatic")
         .def(py::init<>())
         .def("to_string", &atomsciflow::ElkStatic::to_string)
+        .def_readwrite("job", &atomsciflow::ElkStatic::job)
         ;
 }
 
@@ -36,6 +47,7 @@ void add_class_elkopt(py::module& m) {
     py::class_<atomsciflow::ElkOpt>(m, "ElkOpt")
         .def(py::init<>())
         .def("to_string", &atomsciflow::ElkOpt::to_string)
+        .def_readwrite("job", &atomsciflow::ElkOpt::job)
         ;
 }
 

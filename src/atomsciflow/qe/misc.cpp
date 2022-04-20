@@ -31,6 +31,7 @@ SOFTWARE.
 
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
+#include <boost/lexical_cast.hpp>
 #include <armadillo>
 
 #include "atomsciflow/base/element.h"
@@ -49,16 +50,25 @@ std::string PwScfPseudo::to_string(Xyz& xyz) {
 
     std::string out = "";
     out += "ATOMIC_SPECIES\n";
-    std::vector<std::string> all_file;
-    for (const auto& p : fs::directory_iterator(this->directory)) {
-        all_file.emplace_back(p.path().string());
-    }
+    // std::vector<std::string> all_file;
+    // for (const auto& p : fs::directory_iterator(this->directory)) {
+    //     all_file.emplace_back(p.path().string());
+    // }
+    // for (const auto& element : xyz.elements_set) {
+    //     for (const auto& item : all_file) {
+    //         out += element;
+    //         out += " ";
+    //         out += boost::lexical_cast<std::string>(element_map[element].mass);
+    //         out += " ";
+    //         out+= item;
+    //     }
+    // }
     for (const auto& element : xyz.elements_set) {
-        for (const auto& item : all_file) {
-            out += element;
-            out += element_map[element].mass;
-            out+= item;
-        }
+        out += element;
+        out += " ";
+        out += boost::lexical_cast<std::string>(element_map[element].mass);
+        out += " ";
+        out += element + ".UPF";
     }
     return out;
 }

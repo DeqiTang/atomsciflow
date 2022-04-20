@@ -22,6 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from atomsciflow.nwchem.nwchem import NWChem
-from atomsciflow.nwchem.nwchem import Static, Opt
+from atomsciflow.nwchem.nwchem import (
+    NWChem,
+    Static,
+    Opt,
+    MD
+)
 from atomsciflow.cpp.server import JobScheduler

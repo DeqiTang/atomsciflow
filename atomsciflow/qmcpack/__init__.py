@@ -22,7 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from atomsciflow.qmcpack.qmcpack import Qmcpack
-from atomsciflow.qmcpack.qmcpack import Static, Opt
-from atomsciflow.cpp.qmcpack import Input
+from atomsciflow.qmcpack.qmcpack import (
+    Qmcpack,
+    Static,
+    Opt
+)
+from atomsciflow.cpp.qmcpack Input
 from atomsciflow.cpp.server import JobScheduler

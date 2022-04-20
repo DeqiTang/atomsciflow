@@ -75,17 +75,7 @@ void AbinitInput::get_xyz(std::string xyzfile) {
 
 void AbinitInput::set_params(std::map<std::string, std::string>& params) {
     for (const auto& item : params) {
-        if (this->electrons->incharge.find(item.first) != this->electrons->incharge.end()) {
-            this->electrons->set_param(item.first, item.second);
-            continue;
-        } else if (this->ions->incharge.find(item.first) != this->ions->incharge.end()) {
-            this->ions->set_param(item.first, item.second);
-            continue;
-        } else if (this->dfpt->incharge.find(item.first) != this->dfpt->incharge.end()) {
-            this->dfpt->set_param(item.first, item.second);
-        } else {
-            this->misc->set_param(item.first, item.second);
-        }
+        this->set_param(item.first, item.second);
     }
 }
 

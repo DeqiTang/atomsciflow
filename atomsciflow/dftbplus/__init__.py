@@ -22,6 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from atomsciflow.dftbplus.dftbplus import DftbPlus
-from atomsciflow.dftbplus.dftbplus import Static, Opt
+from atomsciflow.dftbplus.dftbplus import (
+    DftbPlus,
+    Static, 
+    Opt
+)
 from atomsciflow.cpp.server import JobScheduler

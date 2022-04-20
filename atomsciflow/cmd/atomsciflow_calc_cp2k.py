@@ -66,7 +66,6 @@ def add_cp2k_subparser(subparsers):
     )
 
 def cp2k_processor(args):
-
     params = {}
     params["global/print_level"] = args.print_level
     params["force_eval/dft/qs/method"] = args.qs_method

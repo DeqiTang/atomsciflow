@@ -22,6 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from atomsciflow.octopus.octopus import Octopus
-from atomsciflow.octopus.octopus import Static, Opt
+from atomsciflow.octopus.octopus import (
+    Octopus,
+    Static, 
+    Opt
+)
 from atomsciflow.cpp.server import JobScheduler

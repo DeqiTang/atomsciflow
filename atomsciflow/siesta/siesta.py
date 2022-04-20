@@ -30,6 +30,28 @@ class Siesta(siesta.Siesta):
     def __init__(self):
         super().__init__()
 
-class Opt(siesta.SiestaOpt):
+class Opt(Siesta):
     def __init__(self):
         super().__init__()
+        self.set_param("MD.TypeOfRun", "CG")
+        self.set_param("MD.VariableCell", "false")
+        self.set_param("MD.ConstantVolume", "true")
+        self.set_param("MD.MaxForceTol", "0.001 eV/Ang")
+        self.set_param("MD.MaxStressTol", "0.01 GPa")
+        self.set_param("MD.Steps", 60)
+        self.set_param("MD.MaxDispl", "0.2 Bohr")
+        self.set_param("MD.PreconditionVariableCell", "5 Ang")
+        self.set_param("WriteCoorXmol", "true")
+        self.set_param("WriteMDXmol", "true")
+
+class MD(Siesta):
+    def __init__(self):
+        super().__init__()
+        self.set_param("MD.TypeOfRun", "Nose")
+        self.set_param("MD.InitialTimeStep", 1)
+        self.set_param("MD.FinalTimeStep", 1000)
+        self.set_param("MD.LengthTimeStep", "1 fs")
+        self.set_param("MD.InitialTemperature", "300 K")
+        self.set_param("MD.TargetTemperature", "300 K")
+        self.set_param("WriteCoorXmol", "true")
+        self.set_param("WriteMDXmol", "true")

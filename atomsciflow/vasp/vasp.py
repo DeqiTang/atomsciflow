@@ -34,8 +34,20 @@ class Static(Vasp):
     def __init__(self):
         super().__init__()
         self.incar.set_runtype("static")
+        self.set_param("IBRION", -1)
 
 class Opt(Vasp):
     def __init__(self):
         super().__init__()
         self.incar.set_runtype("opt")
+        self.set_param("EDIFFG", 1.0E-3)
+        self.set_param("IBRION", 1)
+        self.set_param("NSW", 100)
+
+class MD(Vasp):
+    def __init__(self):
+        super().__init__()
+        self.incar.set_runtype("md")
+        self.set_param("IBRION", 0)
+        self.set_param("POTIM", 0.5)
+        self.set_param("NSW", 1000)

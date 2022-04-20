@@ -22,6 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from atomsciflow.gaussian.gaussian import Gaussian
-from atomsciflow.gaussian.gaussian import Static, Opt
+from atomsciflow.gaussian.gaussian import (
+    Gaussian,
+    Static, 
+    Opt
+) 
 from atomsciflow.cpp.server import JobScheduler

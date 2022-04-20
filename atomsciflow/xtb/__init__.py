@@ -22,5 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from atomsciflow.xtb.xtb import Xtb
-from atomsciflow.xtb.xtb import Static, Opt
+from atomsciflow.xtb.xtb import (
+    Xtb,
+    Static, 
+    Opt
+)

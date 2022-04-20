@@ -46,7 +46,8 @@ public:
     void get_kpath(const Kpath& kpath);
     void get_xyz(Xyz& xyz);
     void get_xyz(std::string& xyzfile);
-    void process(std::string directory, int tmax);
+    void process(const std::string& directory, int tmax);
+    void run(const std::string& directory);
 
     std::vector<int> supercell_n{3};
     std::vector<int> mp;

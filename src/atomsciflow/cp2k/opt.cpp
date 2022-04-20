@@ -46,16 +46,13 @@ Cp2kOpt::Cp2kOpt() {
     set_param("force_eval/dft/mgrid/rel_cutoff", 60);
 
     //this->new_section("motion");
-    std::cout << "Cp2kOpt::Cp2kOpt -> new_section: motion/print\n";
     this->new_section("motion/print");
-    std::cout << "Cp2kOpt::Cp2kOpt -> new_section: motion/print/forces\n";
     this->new_section("motion/print/forces");
 
     this->set_geo_opt();
 }
 
 void Cp2kOpt::set_geo_opt() {
-    //this->sections["global"].set_param("run_type", "GEO_OPT");
     this->set_param("global/run_type", "GEO_OPT");
     this->sections["motion"]->set_status("geo_opt", true);
 }

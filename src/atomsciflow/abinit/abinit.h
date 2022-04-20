@@ -30,6 +30,13 @@ SOFTWARE.
 #ifndef ATOMSCIFLOW_ABINIT_ABINIT_H_
 #define ATOMSCIFLOW_ABINIT_ABINIT_H_
 
+#include <fstream>
+#include <sstream>
+#include <boost/filesystem.hpp>
+#include <boost/format.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string.hpp>
+
 #include "atomsciflow/abinit/abinit_input.h"
 #include "atomsciflow/abinit/abinit_files.h"
 #include "atomsciflow/server/job_scheduler.h"
@@ -37,14 +44,43 @@ SOFTWARE.
 
 namespace atomsciflow {
 
+namespace fs = boost::filesystem;
+namespace ba = boost::algorithm;
+
 class Abinit {
 public:
     
     explicit Abinit();
-   virtual  ~Abinit();
+    virtual ~Abinit();
 
     void get_xyz(const std::string& xyzfile);
-    void set_params(std::map<std::string, std::string>& params, int ndtset);
+
+    template <typename T>
+    void set_param(std::string key, T value);
+    
+    void py_set_param(std::string key, int value);
+    void py_set_param(std::string key, double value);
+    void py_set_param(std::string key, std::string value);
+    void py_set_param(std::string key, std::vector<int> value);
+    void py_set_param(std::string key, std::vector<double> value);
+    void py_set_param(std::string key, std::vector<std::string> value);
+    void py_set_param(std::string key, std::vector<std::vector<int>> value);
+    void py_set_param(std::string key, std::vector<std::vector<double>> value);
+    void py_set_param(std::string key, std::vector<std::vector<std::string>> value);
+
+    template <typename T>
+    void set_params(std::map<std::string, T>& params);
+
+    void py_set_params(std::map<std::string, int>& params);
+    void py_set_params(std::map<std::string, double>& params);
+    void py_set_params(std::map<std::string, std::string>& params);
+    void py_set_params(std::map<std::string, std::vector<int>>& params);
+    void py_set_params(std::map<std::string, std::vector<double>>& params);
+    void py_set_params(std::map<std::string, std::vector<std::string>>& params);
+    void py_set_params(std::map<std::string, std::vector<std::vector<int>>>& params);
+    void py_set_params(std::map<std::string, std::vector<std::vector<double>>>& params);
+    void py_set_params(std::map<std::string, std::vector<std::vector<std::string>>>& params);
+
     void set_kpoints(std::map<std::string, std::string>& kpoints, int ndtset);
     void set_pseudos(const std::string& directory);
     std::string to_string();

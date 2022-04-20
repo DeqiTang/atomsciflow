@@ -22,5 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from atomsciflow.gamessus.gamessus import GamessUS
-from atomsciflow.gamessus.gamessus import Static, Opt
+from atomsciflow.gamessus.gamessus import (
+    GamessUS,
+    Static, 
+    Opt
+) 

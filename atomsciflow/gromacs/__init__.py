@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from atomsciflow.gromacs.gromacs import Gromacs
-from atomsciflow.gromacs.gromacs import MolecularDynamics
+from atomsciflow.gromacs.gromacs import (
+    Gromacs,
+    MolecularDynamics
+) 
 from atomsciflow.cpp.server import JobScheduler

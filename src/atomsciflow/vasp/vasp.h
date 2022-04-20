@@ -49,6 +49,20 @@ public:
     ~Vasp();
 
     void get_xyz(const std::string& xyzfile);
+    
+    template <typename T>
+    void set_param(std::string key, T value);    
+    
+    void py_set_param(std::string key, int value);
+    void py_set_param(std::string key, double value);
+    void py_set_param(std::string key, std::string value);
+    void py_set_param(std::string key, std::vector<int> value);
+    void py_set_param(std::string key, std::vector<double> value);
+    void py_set_param(std::string key, std::vector<std::string> value);
+    void py_set_param(std::string key, std::vector<std::vector<int>> value);
+    void py_set_param(std::string key, std::vector<std::vector<double>> value);
+    void py_set_param(std::string key, std::vector<std::vector<std::string>> value);
+
     void set_params(const std::map<std::string, std::string>& params, const std::string& runtype);
     void set_kpoints(const std::vector<int>& kpoints_mp, const std::string& option, Kpath* kpath);
     void set_job_steps_default();

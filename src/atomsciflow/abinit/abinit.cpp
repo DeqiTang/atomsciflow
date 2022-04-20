@@ -29,19 +29,11 @@ SOFTWARE.
 
 #include "atomsciflow/abinit/abinit.h"
 
-#include <fstream>
-#include <sstream>
-#include <boost/filesystem.hpp>
-#include <boost/format.hpp>
-#include <boost/lexical_cast.hpp>
-
 #include "atomsciflow/abinit/utils.h"
 #include "atomsciflow/server/submit_script.h"
 #include "atomsciflow/remote/server.h"
 
 namespace atomsciflow {
-
-namespace fs = boost::filesystem;
 
 /**
  * @brief Abinit::Abinit
@@ -87,21 +79,120 @@ void Abinit::get_xyz(const std::string& xyzfile) {
 }
 
 /**
- * @brief Abinit::set_params set the params of dataset_i-th AbinitInput
- * @param params the Abinit input params
- * @param dataset_i
+ * Usage: 
+ *      this->set_param("ecut[0]", 15)
+ *      this->set_param("ecut[1]", 15)
+ *  if no [x] specified, will set dataset 0 by default.
+ *  i.e. 
+ *      this->set_param("ecut", 15) equals to
+ *      this->set_param("ecut[0]", 15)
+ * dataset_i:
  * if the specified dataset_i is larger than this->ndtset, the program
  * will be stopped.
- */
-void Abinit::set_params(std::map<std::string, std::string>& params, int dataset_i = 0) {
-    if (dataset_i > this->ndtset) {
-        std::cout << "------------------------------------------------------------------------" << "\n";
-        std::cout << "Warning: atomsciflow::Abinit::set_params\n";
-        std::cout << "specified ndtset larger than this->ndtset\n";
-        std::cout << "------------------------------------------------------------------------" << "\n";
-        std::exit(1);
+ * 
+ */ 
+template <typename T>
+void Abinit::set_param(std::string key, T value) {
+    std::vector<std::string> str_vec_1;
+    std::vector<std::string> str_vec_2;
+    boost::split(str_vec_1, key, boost::is_any_of("["));
+    if (1 == str_vec_1.size()) {
+        this->datasets[0]->set_param(key, value);
+    } else {
+        boost::split(str_vec_2, str_vec_1[1], boost::is_any_of("]"));
+        int dataset_i = boost::lexical_cast<int>(str_vec_2[0]);
+        if (dataset_i > this->ndtset) {
+            std::cout << "------------------------------------------------------------------------" << "\n";
+            std::cout << "Warning: atomsciflow::Abinit::set_param\n";
+            std::cout << "specified ndtset larger than this->ndtset\n";
+            std::cout << "------------------------------------------------------------------------" << "\n";
+            std::exit(1);
+        }
+        this->datasets[dataset_i]->set_param(str_vec_1[0], value);
     }
-    this->datasets[dataset_i]->set_params(params);
+}
+
+void Abinit::py_set_param(std::string key, int value) {
+    this->set_param(key, value);
+}
+
+void Abinit::py_set_param(std::string key, double value) {
+    this->set_param(key, value);
+}
+
+void Abinit::py_set_param(std::string key, std::string value) {
+    this->set_param(key, value);
+}
+
+void Abinit::py_set_param(std::string key, std::vector<int> value) {
+    this->set_param(key, value);
+}
+
+void Abinit::py_set_param(std::string key, std::vector<double> value) {
+    this->set_param(key, value);
+}
+
+void Abinit::py_set_param(std::string key, std::vector<std::string> value) {
+    this->set_param(key, value);
+}
+
+void Abinit::py_set_param(std::string key, std::vector<std::vector<int>> value) {
+    this->set_param(key, value);
+}
+
+void Abinit::py_set_param(std::string key, std::vector<std::vector<double>> value) {
+    this->set_param(key, value);
+}
+
+void Abinit::py_set_param(std::string key, std::vector<std::vector<std::string>> value) {
+    this->set_param(key, value);
+}
+
+/**
+ * @brief Abinit::set_params set the params of dataset_i-th AbinitInput
+ * @param params the Abinit input params
+ */
+template <typename T>
+void Abinit::set_params(std::map<std::string, T>& params) {
+    for (auto& item : params) {
+        this->set_param(item.first, item.second);
+    }
+}
+
+void Abinit::py_set_params(std::map<std::string, int>& params) {
+    this->set_params(params);
+}
+
+void Abinit::py_set_params(std::map<std::string, double>& params) {
+    this->set_params(params);
+}
+
+void Abinit::py_set_params(std::map<std::string, std::string>& params) {
+    this->set_params(params);
+}
+
+void Abinit::py_set_params(std::map<std::string, std::vector<int>>& params) {
+    this->set_params(params);
+}
+
+void Abinit::py_set_params(std::map<std::string, std::vector<double>>& params) {
+    this->set_params(params);
+}
+
+void Abinit::py_set_params(std::map<std::string, std::vector<std::string>>& params) {
+    this->set_params(params);
+}
+
+void Abinit::py_set_params(std::map<std::string, std::vector<std::vector<int>>>& params) {
+    this->set_params(params);
+}
+
+void Abinit::py_set_params(std::map<std::string, std::vector<std::vector<double>>>& params) {
+    this->set_params(params);
+}
+
+void Abinit::py_set_params(std::map<std::string, std::vector<std::vector<std::string>>>& params) {
+    this->set_params(params);
 }
 
 void Abinit::set_kpoints(std::map<std::string, std::string>& kpoints, int ndtset=0) {
@@ -120,8 +211,8 @@ void Abinit::set_pseudos(const std::string& directory) {
     out << "pp_dirpath \"" << directory << "\"\n";
     out << "pseudos \"";
     for (const auto& element : this->datasets[0]->system->xyz.elements_set) {
-        out << " " << element << "," << element << ".psp8";
-        //out << " " << element << "," << element << ".GGA_PBE-JTH.xml";
+        //out << " " << element << "," << element << ".psp8";
+        out << " " << element << "," << element << ".GGA_PBE-JTH.xml";
     }
     // remove the last unwanted extra comma
     this->pseudo_input_str = out.str();
@@ -190,5 +281,26 @@ void Abinit::set_job_steps_default() {
 void Abinit::run(const std::string& directory) {
     job.run(directory);
 }
+
+// explicit template instantiation
+template void Abinit::set_param<int>(std::string, int);
+template void Abinit::set_param<double>(std::string, double);
+template void Abinit::set_param<std::string>(std::string, std::string);
+template void Abinit::set_param<std::vector<int>>(std::string, std::vector<int>);
+template void Abinit::set_param<std::vector<double>>(std::string, std::vector<double>);
+template void Abinit::set_param<std::vector<std::string>>(std::string, std::vector<std::string>);
+template void Abinit::set_param<std::vector<std::vector<int>>>(std::string, std::vector<std::vector<int>>);
+template void Abinit::set_param<std::vector<std::vector<double>>>(std::string, std::vector<std::vector<double>>);
+template void Abinit::set_param<std::vector<std::vector<std::string>>>(std::string, std::vector<std::vector<std::string>>);
+
+template void Abinit::set_params<int>(std::map<std::string, int>&);
+template void Abinit::set_params<double>(std::map<std::string, double>&);
+template void Abinit::set_params<std::string>(std::map<std::string, std::string>&);
+template void Abinit::set_params<std::vector<int>>(std::map<std::string, std::vector<int>>&);
+template void Abinit::set_params<std::vector<double>>(std::map<std::string, std::vector<double>>&);
+template void Abinit::set_params<std::vector<std::string>>(std::map<std::string, std::vector<std::string>>&);
+template void Abinit::set_params<std::vector<std::vector<int>>>(std::map<std::string, std::vector<std::vector<int>>>&);
+template void Abinit::set_params<std::vector<std::vector<double>>>(std::map<std::string, std::vector<std::vector<double>>>&);
+template void Abinit::set_params<std::vector<std::vector<std::string>>>(std::map<std::string, std::vector<std::vector<std::string>>>&);
 
 } // namespace atomsciflow

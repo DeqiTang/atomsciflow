@@ -48,7 +48,11 @@ Siesta::Siesta() {
 
     this->non_block = std::make_shared<VariableGroup>();
 
+    set_param("SystemName", "siesta-job");
+    set_param("SystemLabel", "siesta-run");
+
     set_param("XC.functional", "GGA");
+    set_param("XC.Authors", "PBE");
     set_param("DM.Tolerance", 1.0e-6);
     set_param("DM.MixingWeight", 0.1);
     set_param("DM.NumberPulay", 8);
@@ -113,6 +117,42 @@ void Siesta::set_param(std::string key, T value) {
     this->non_block->set_param(key, value);
 }
 
+void Siesta::py_set_param(std::string key, int value) {
+    this->set_param(key, value);
+}
+
+void Siesta::py_set_param(std::string key, double value) {
+    this->set_param(key, value);
+}
+
+void Siesta::py_set_param(std::string key, std::string value) {
+    this->set_param(key, value);
+}
+
+void Siesta::py_set_param(std::string key, std::vector<int> value) {
+    this->set_param(key, value);
+}
+
+void Siesta::py_set_param(std::string key, std::vector<double> value) {
+    this->set_param(key, value);
+}
+
+void Siesta::py_set_param(std::string key, std::vector<std::string> value) {
+    this->set_param(key, value);
+}
+
+void Siesta::py_set_param(std::string key, std::vector<std::vector<int>> value) {
+    this->set_param(key, value);
+}
+
+void Siesta::py_set_param(std::string key, std::vector<std::vector<double>> value) {
+    this->set_param(key, value);
+}
+
+void Siesta::py_set_param(std::string key, std::vector<std::vector<std::string>> value) {
+    this->set_param(key, value);
+}
+
 void Siesta::new_block(const std::string& name) {
     this->blocks[name] = std::make_shared<siesta::Block>(name);
 }
@@ -140,11 +180,14 @@ void Siesta::get_xyz(const std::string& xyzfile) {
         elem_index_map[item.first] = item.second;
     }
 
+    this->set_param("NumberOfSpecies", int(this->xyz.elements_set.size()));
+    this->set_param("NumberOfAtoms", this->xyz.natom());
+
     this->new_block("ChemicalSpeciesLabel");
     for (const auto& item : elem_index_in_number_order) {
         this->blocks["ChemicalSpeciesLabel"]->data.push_back(
             (boost::format("%1% %2% %3%")
-            % item.second % element_map[item.first].mass % item.first).str()
+            % item.second % element_map[item.first].number % item.first).str()
         );
     }
 
@@ -200,7 +243,7 @@ void Siesta::get_xyz(const std::string& xyzfile) {
             tmp.str()
         );         
     }
-
+    
     this->set_job_steps_default();
 }
 

@@ -55,6 +55,14 @@ class Vib(Cp2k):
 class MD(Cp2k):
     def __init__(self):
         super().__init__()
+        self.set_param("global/run_type", "MD")
+        self.set_param("motion/md/ensemble", "NVT")
+        self.set_param("motion/md/timestep", 0.5)
+        self.set_param("motion/md/steps", 1000)
+        self.set_param("motion/md/thermostat/type", "NOSE")
+        self.set_param("motion/md/thermostat/region", "MASSIVE")
+        self.set_param("motion/md/thermostat/nose/timecon", 10.0)
+        self.set_param("motion/md/temperature", 300)
 
 class MetaMD(Cp2k):
     def __init__(self):

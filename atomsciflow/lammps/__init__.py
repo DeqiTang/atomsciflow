@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from atomsciflow.lammps.lammps import Lammps
-from atomsciflow.lammps.lammps import MolecularDynamics
+from atomsciflow.lammps.lammps import (
+    Lammps,
+    MolecularDynamics
+) 
 from atomsciflow.cpp.server import JobScheduler

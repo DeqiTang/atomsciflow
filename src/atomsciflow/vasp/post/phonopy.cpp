@@ -62,7 +62,7 @@ void PhonopyPost::get_xyz(std::string& xyzfile) {
     this->xyz.read_xyz_file(xyzfile);
 }
 
-void PhonopyPost::process(std::string directory, int tmax = 1500) {
+void PhonopyPost::process(const std::string& directory, int tmax = 1500) {
  
     auto dir_path = fs::absolute(directory);  
     std::string cmd = "";
@@ -290,6 +290,10 @@ void PhonopyPost::process(std::string directory, int tmax = 1500) {
     band_gnuplot.close();
     cmd = "cd " + (dir_path / "post-processing").string() + "; gnuplot band.gnuplot";
     std::system(cmd.c_str());
+}
+
+void PhonopyPost::run(const std::string& directory) {
+    this->process(directory, 1200);
 }
 
 } // namespace atomsciflow

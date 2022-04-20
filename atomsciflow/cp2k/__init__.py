@@ -22,6 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from atomsciflow.cp2k.cp2k import Cp2k
-from atomsciflow.cp2k.cp2k import Static, Opt
-from atomsciflow.cp2k.cp2k import MetaMD
+from atomsciflow.cp2k.cp2k import (
+    Cp2k,
+    Static,
+    Opt,
+    VcOpt,
+    Vib,
+    MD,
+    MetaMD
+)

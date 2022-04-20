@@ -22,5 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from atomsciflow.qe.pwscf import PwScf
-from atomsciflow.qe.pwscf import Static, Opt
+from atomsciflow.qe.pwscf import (
+    PwScf,
+    Static, 
+    Opt
+)

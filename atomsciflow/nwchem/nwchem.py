@@ -36,3 +36,9 @@ class Static(NWChem):
 class Opt(NWChem):
     def __init__(self):
         super().__init__()
+        self.set_param("task", "dft optimize")
+
+class MD(NWChem):
+    def __init__(self):
+        super().__init__()
+        self.set_param("task", "dft qmd")

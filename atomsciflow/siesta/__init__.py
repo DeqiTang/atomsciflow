@@ -22,5 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from atomsciflow.siesta.siesta import Siesta
-from atomsciflow.siesta.siesta import Opt
+from atomsciflow.siesta.siesta import (
+    Siesta, 
+    Opt,
+    MD
+)

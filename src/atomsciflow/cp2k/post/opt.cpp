@@ -27,10 +27,13 @@ SOFTWARE.
 #include <regex>
 #include <fstream>
 #include <boost/filesystem.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
 namespace atomsciflow::cp2k::post {
 
 namespace fs = boost::filesystem;
+namespace pt = boost::property_tree;
 
 Opt::Opt() {
     this->set_run("opt-out", "cp2k.out");
@@ -54,7 +57,7 @@ void  Opt::read(const std::string& filepath) {
     };
 
     auto get_energy = [&](const std::string& str) {
-        std::regex pat("ENERGY| Total");
+        std::regex pat("ENERGY\\| Total");
         std::regex energy_pat("[-]\\d+\\.\\d+");
         std::smatch m1;
         std::smatch m2;
@@ -80,8 +83,21 @@ void Opt::set_run(std::string key, std::string value) {
     this->run_params[key] = value;
 }
 
+void Opt::write(const std::string& directory) {
+    pt::ptree post_opt_json;
+
+    for (auto& item : this->info) {
+        post_opt_json.put(item.first, item.second);
+    }
+
+    pt::write_json((fs::path(directory) / "post-opt.json").string(), post_opt_json);
+
+}
+
 void Opt::run(const std::string& directory) {
     this->read((fs::path(directory) / this->run_params["opt-out"]).string());
+    fs::create_directory(fs::path(directory) / "post.dir");
+    this->write((fs::path(directory) / "post.dir").string());
 }
 
 } // namespace atomsciflow::cp2k::post

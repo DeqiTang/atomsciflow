@@ -49,6 +49,23 @@ public:
 
     std::string to_string();
     void get_xyz(std::string xyzfile);
+    
+    template <typename T>
+    void set_param(std::string key, T value) {
+        if (this->electrons->incharge.find(key) != this->electrons->incharge.end()) {
+            this->electrons->set_param(key, value);
+            return;
+        } else if (this->ions->incharge.find(key) != this->ions->incharge.end()) {
+            this->ions->set_param(key, value);
+            return;
+        } else if (this->dfpt->incharge.find(key) != this->dfpt->incharge.end()) {
+            this->dfpt->set_param(key, value);
+            return;
+        } else {
+            this->misc->set_param(key, value);
+        }
+    }
+
     void set_params(std::map<std::string, std::string>& params);
     void set_n(int n);
     void set_kpoints(std::map<std::string, std::string>& kpoints);

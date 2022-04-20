@@ -22,5 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from atomsciflow.vasp.vasp import Vasp
-from atomsciflow.vasp.vasp import Static, Opt
+from atomsciflow.vasp.vasp import (
+    Vasp,
+    Static, 
+    Opt,
+    MD
+) 

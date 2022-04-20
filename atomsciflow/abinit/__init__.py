@@ -22,5 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from atomsciflow.abinit.abinit import Abinit
-from atomsciflow.abinit.abinit import Static, Opt
+from atomsciflow.abinit.abinit import (
+    Abinit,
+    Static, 
+    Opt
+)

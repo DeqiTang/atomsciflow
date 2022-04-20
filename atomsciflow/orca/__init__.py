@@ -22,6 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from atomsciflow.orca.orca import Orca
-from atomsciflow.orca.orca import Static, Opt
+from atomsciflow.orca.orca import (
+    Orca,
+    Static, 
+    Opt
+)
 from atomsciflow.cpp.server import JobScheduler

@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import sys
+
 from atomsciflow.cmd.calc_tools import (
     add_calc_parser_common,
     set_calc_processor_common
@@ -57,6 +59,9 @@ def vasp_processor(args):
         from atomsciflow.vasp import Opt
         job = Opt()
         job.set_params(params, "opt")
+    elif args.calc.lower() == "md":
+        from atomsciflow.vasp import MD
+        job = MD()
     else:
         print("The specified calculation type is unfound!")
         sys.exit(1)
