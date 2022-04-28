@@ -23,6 +23,7 @@ SOFTWARE.
 """
 
 from atomsciflow.cpp import elk
+from atomsciflow.cpp.server import JobScheduler
 
 class Elk(elk.Elk):
     def __init__(self):
@@ -33,5 +34,9 @@ class Static(Elk):
         super().__init__()
 
 class Opt(Elk):
+    def __init__(self):
+        super().__init__()
+
+class MD(Elk):
     def __init__(self):
         super().__init__()

@@ -25,5 +25,6 @@ SOFTWARE.
 from atomsciflow.abinit.abinit import (
     Abinit,
     Static, 
-    Opt
+    Opt,
+    MD
 )

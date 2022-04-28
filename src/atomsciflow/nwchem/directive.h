@@ -30,23 +30,61 @@ SOFTWARE.
 #ifndef ATOMSCIFLOW_NWCHEM_DIRECTIVE_H_
 #define ATOMSCIFLOW_NWCHEM_DIRECTIVE_H_
 
+#include <map>
 #include <vector>
 #include <string>
+#include <memory>
 
 namespace atomsciflow::nwchem {
 
+/**
+ * There are two types of directive, i.e. simple or compound.
+ * A simple directie consists of the name and keywords, with
+ * the keywords being a string of token or fields, separated 
+ * with whitespace, in format like this,
+ *  
+ *  NAME KEYWORD_1 KEYWORD_2 ... KEYWORD_N
+ * 
+ * A compound directive consists of the name, keywords and,
+ * unlike simple directive, multiline fields and embedded
+ * simple or compound directives, in format like this,
+ * 
+ *  NAME KEYWORD_1 KEYWORD_2 ... KEYWORD_N
+ *      FIELDS_1_1 FIELDS_1_2 ... FIELDS_1_N
+ *      FIELDS_2_1 FIELDS_2_2 ... FIELDS_2_N
+ *      .
+ *      .
+ *      FIELDS_M_1 FIELDS_M_2 ... FIELDS_M_N
+ *      
+ *      COMPOUND_DIRECTIVE
+ * 
+ *      SIMPLE_DIRECTIVE
+ *  END
+ * 
+ * Both simple directive and compound directiev are represented
+ * with atomsciflow::nwchem::Directive. The logical member variable 
+ * simple is used to differentiate them.
+ * 
+ */ 
 class Directive {
 public:
 
     Directive();
     explicit Directive(const std::string& name);
 
+    ~Directive();
+
     std::string to_string();
 
-    std::string name;
-    std::string keywords;
-    std::vector<std::string> data;
+    void set_keyworkds(std::vector<std::string>& keywords) {
+        this->keywords = keywords;
+    }
 
+    std::string name;
+    std::vector<std::string> keywords;
+    bool simple;
+    std::vector<std::vector<std::string>> fields;
+    std::map<std::string, std::shared_ptr<Directive>> directives;
 };
 
 } // namespace atomsciflow::nwchem

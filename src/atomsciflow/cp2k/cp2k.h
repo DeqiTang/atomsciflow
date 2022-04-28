@@ -31,11 +31,13 @@ SOFTWARE.
 #define ATOMSCIFLOW_CP2K_CP2K_H_
 
 #include <string>
+#include <memory>
 //#include <format> // support for c++20 only
 
 #include "atomsciflow/cp2k/section.h"
 #include "atomsciflow/base/xyz.h"
 #include "atomsciflow/server/job_scheduler.h"
+#include "atomsciflow/plumed/plumed.h"
 
 namespace atomsciflow {
 
@@ -71,6 +73,9 @@ public:
     std::map<std::string, std::shared_ptr<Cp2kSection>> sections;
     JobScheduler job;
     Xyz xyz;
+
+    std::shared_ptr<plumed::Plumed> plumed;
+
 private:
     std::shared_ptr<Cp2kSection>& set_subsys();
 };

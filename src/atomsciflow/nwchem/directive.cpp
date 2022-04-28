@@ -35,18 +35,34 @@ SOFTWARE.
 namespace atomsciflow::nwchem {
 
 Directive::Directive() {
-
+    
 }
 
 Directive::Directive(const std::string& name) {
     this->name = name;
 }
 
+Directive::~Directive() {
+    
+}
+
 std::string Directive::to_string() {
     std::ostringstream out;
-    out << this->name << " " << this->keywords << "\n";
-    for (const auto& item : this->data) {
-        out << item << "\n";
+    out << this->name << " ";
+    for (const auto& item : this->keywords) {
+        out << " " << item;
+    }
+    out << "\n";
+    if (false == this->simple ) {
+        for (const auto& row : this->fields) {
+            for (const auto& item : row) {
+                out << " " << item;
+            }
+            out << "\n";
+        }
+        for (const auto& directive : this->directives) {
+            out << directive.second->to_string();
+        }
     }
     out << "end\n";
     return out.str();

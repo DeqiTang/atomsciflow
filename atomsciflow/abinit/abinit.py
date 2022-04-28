@@ -36,3 +36,18 @@ class Static(Abinit):
 class Opt(Abinit):
     def __init__(self):
         super().__init__()
+        self.set_param("ionmov", 3)
+        self.set_param("optcell[0]", 0)
+        self.set_param("ntime[0]", 100)
+        self.set_param("tolmxf[0]", 0)
+        self.set_param("tolmxde[0]", "0.0001 eV")        
+
+class MD(Abinit):
+    def __init__(self):
+        super().__init__()
+        self.set_param("ionmov", 8)
+        self.set_param("dtion", 100)
+        self.set_param("ntime", 1000)
+        self.set_param("mdtemp(1)[0]", 300)
+        self.set_param("mdtemp(2)[0]", 300)
+        self.set_param("tolmxf[0]", 5.0e-4)

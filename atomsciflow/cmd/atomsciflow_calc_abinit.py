@@ -59,6 +59,9 @@ def abinit_processor(args):
     elif args.calc.lower() == "opt":
         from atomsciflow.abinit import Opt
         job = Opt()
+    elif args.calc.lower() == "md":
+        from atomsciflow.abinit import MD
+        job = MD()
     else:
         print("The specified calculation type is unfound!")
         sys.exit(1)

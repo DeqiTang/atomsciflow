@@ -24,6 +24,10 @@ SOFTWARE.
 
 from atomsciflow.cpp import cp2k
 from atomsciflow.cpp.server import JobScheduler
+from atomsciflow.cpp.plumed import (
+    Plumed,
+    Action
+)
 
 class Cp2k(cp2k.Cp2k):
     def __init__(self):
@@ -78,6 +82,26 @@ class MetaMD(Cp2k):
         self.set_param("motion/free_energy/metadyn/delta_t", 0.0)
         self.set_param("motion/free_energy/metadyn/do_hills", ".TRUE.")
         self.set_param("motion/free_energy/metadyn/nt_hills", 30)
+
+class MetaMDPlumed(Cp2k):
+    def __init__(self):
+        super().__init__()
+        self.set_param("global/run_type", "MD")
+        self.set_param("motion/md/ensemble", "NVT")
+        self.set_param("motion/md/timestep", 0.5)
+        self.set_param("motion/md/steps", 1000)
+        self.set_param("motion/md/thermostat/type", "NOSE")
+        self.set_param("motion/md/thermostat/region", "MASSIVE")
+        self.set_param("motion/md/thermostat/nose/timecon", 10.0)
+        self.set_param("motion/md/temperature", 300)
+        self.set_param("motion/free_energy/metadyn/use_plumed", ".TRUE.")
+        self.set_param("motion/free_energy/metadyn/plumed_input_file", "./plumed.dat")
+
+        self.plumed.add_action("d:distance")
+        self.plumed.add_action(":print")
+        self.plumed.actions["d:distance"].add_keyword("atoms=1,2")
+        self.plumed.actions[":print"].add_keyword("arg=d")
+        self.plumed.actions[":print"].add_keyword("file=colvar")
 
 class Neb(Cp2k):
     def __init__(self):

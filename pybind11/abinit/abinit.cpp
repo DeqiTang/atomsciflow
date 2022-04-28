@@ -16,7 +16,6 @@ void add_class_abinit(py::module& m) {
         .def(py::init<>())
         .def("get_xyz", &atomsciflow::Abinit::get_xyz)
         .def("to_string", &atomsciflow::Abinit::to_string)
-
         .def("set_param", py::overload_cast<std::string, int>(&atomsciflow::Abinit::py_set_param))
         .def("set_param", py::overload_cast<std::string, double>(&atomsciflow::Abinit::py_set_param))
         .def("set_param", py::overload_cast<std::string, std::string>(&atomsciflow::Abinit::py_set_param))

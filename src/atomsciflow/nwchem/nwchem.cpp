@@ -29,9 +29,9 @@ SOFTWARE.
 
 #include "atomsciflow/nwchem/nwchem.h"
 
+#include <iostream>
 #include <fstream>
 #include <boost/filesystem.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
 #include <iomanip>
 
@@ -41,10 +41,8 @@ namespace fs = boost::filesystem;
 
 NWChem::NWChem() {
 
-    this->non_directive = std::make_shared<VariableGroup>();
-
-    set_param("Charge", 0);
-    set_param("title", "NWChem calculation");
+    add_keyword("Charge", 0);
+    add_keyword("title", "NWChem calculation");
 
     job.set_run_default("llhpc");
     job.set_run_default("pbs");
@@ -57,16 +55,21 @@ NWChem::NWChem() {
     job.set_run("script_name_head", "nwchem-run");    
 }
 
-void NWChem::get_xyz(const std::string& filepath) {
-    this->xyz.read_xyz_file(filepath);
-    job.set_run("xyz_file", fs::absolute(filepath).string());
+NWChem::~NWChem() {
 
-    //TODO
 }
 
+// task directive must be specified in the end
 std::string NWChem::to_string() {
-    std::string out = "";
-    return out;
+    std::ostringstream out;
+    for (const auto& item : this->directives) {
+        if ("task" == item.first) {
+            continue;
+        }
+        out << item.second->to_string() << "\n";
+    }
+    out << this->directives["task"]->to_string();
+    return out.str();
 }
 
 void NWChem::new_directive(const std::string& name) {
@@ -74,44 +77,86 @@ void NWChem::new_directive(const std::string& name) {
 }
 
 template <typename T>
-void NWChem::set_param(const std::string& key, T value) {
-    this->non_directive->set_param(key, value);
+void NWChem::add_keyword(const std::string& path, T keyword) {
+    this->directives[path]->keywords.push_back(boost::lexical_cast<std::string>(keyword));
 }
 
-void NWChem::py_set_param(const std::string& key, int value) {
-    this->set_param(key, value);
+/**
+ * Sometimes in NWChem, only two keywords make sense, like "units angstroms"
+ * Thus, we provide an overloaded template here.
+ * Note that usually the keyword_1 in such case is usually a string, and 
+ * when build the instantiation of the template we only sepcify std::string
+ * for keyword_1 type.
+ */ 
+template <typename T, typename U>
+void NWChem::add_keyword(const std::string& path, T keyword_1, U keyword_2) {
+    this->add_keyword(path, keyword_1);
+    this->add_keyword(path, keyword_2);
 }
 
-void NWChem::py_set_param(const std::string& key, double value) {
-    this->set_param(key, value);
+void NWChem::py_add_keyword(const std::string& path, int keyword) {
+    this->add_keyword(path, keyword);
 }
 
-void NWChem::py_set_param(const std::string& key, std::string value) {
-    this->set_param(key, value);
+void NWChem::py_add_keyword(const std::string& path, double keyword) {
+    this->add_keyword(path, keyword);
 }
 
-void NWChem::py_set_param(const std::string& key, std::vector<int> value) {
-    this->set_param(key, value);
+void NWChem::py_add_keyword(const std::string& path, std::string keyword) {
+    this->add_keyword(path, keyword);
 }
 
-void NWChem::py_set_param(const std::string& key, std::vector<double> value) {
-    this->set_param(key, value);
+void NWChem::py_add_keyword(const std::string& path, std::string keyword_1, int keyword_2) {
+    this->add_keyword(path, keyword_1);
+    this->add_keyword(path, keyword_2);
 }
 
-void NWChem::py_set_param(const std::string& key, std::vector<std::string> value) {
-    this->set_param(key, value);
+void NWChem::py_add_keyword(const std::string& path, std::string keyword_1, double keyword_2) {
+    this->add_keyword(path, keyword_1);
+    this->add_keyword(path, keyword_2);
 }
 
-void NWChem::py_set_param(const std::string& key, std::vector<std::vector<int>> value) {
-    this->set_param(key, value);
+void NWChem::py_add_keyword(const std::string& path, std::string keyword_1, std::string keyword_2) {
+    this->add_keyword(path, keyword_1);
+    this->add_keyword(path, keyword_2);
 }
 
-void NWChem::py_set_param(const std::string& key, std::vector<std::vector<double>> value) {
-    this->set_param(key, value);
+void NWChem::py_set_field(const std::string& path, int field, int row, int col) {
+    this->set_field(path, field, row, col);
 }
 
-void NWChem::py_set_param(const std::string& key, std::vector<std::vector<std::string>> value) {
-    this->set_param(key, value);
+void NWChem::py_set_field(const std::string& path, double field, int row, int col) {
+    this->set_field(path, field, row, col);
+}
+
+void NWChem::py_set_field(const std::string& path, std::string field, int row, int col) {
+    this->set_field(path, field, row, col);
+}
+
+void NWChem::get_xyz(const std::string& filepath) {
+    this->xyz.read_xyz_file(filepath);
+    job.set_run("xyz_file", fs::absolute(filepath).string());
+
+    this->new_directive("geometry");
+    this->directives["geometry"]->keywords.push_back("units");
+    this->directives["geometry"]->keywords.push_back("angstroms");
+    for (const auto& item : this->xyz.atoms) {
+        std::vector<std::string> atom;
+        atom.push_back(item.name);
+        atom.push_back(boost::lexical_cast<std::string>(item.x));
+        atom.push_back(boost::lexical_cast<std::string>(item.y));
+        atom.push_back(boost::lexical_cast<std::string>(item.z)); 
+        this->directives["geometry"]->fields.push_back(atom);
+    }
+
+    this->new_directive("basis");
+    for (const auto& item : this->xyz.elements_set) {
+        std::vector<std::string> basis;
+        basis.push_back(item);
+        basis.push_back("library");
+        basis.push_back("6-31g");
+        this->directives["basis"]->fields.push_back(basis);
+    }
 }
 
 void NWChem::set_job_steps_default() {
@@ -131,15 +176,11 @@ void NWChem::run(const std::string& directory) {
 }
 
 // explicit template instantiation
-template void NWChem::set_param<int>(const std::string& key, int);
-template void NWChem::set_param<double>(const std::string& key, double);
-template void NWChem::set_param<std::string>(const std::string& key, std::string);
-template void NWChem::set_param<std::vector<int>>(const std::string& key, std::vector<int>);
-template void NWChem::set_param<std::vector<double>>(const std::string& key, std::vector<double>);
-template void NWChem::set_param<std::vector<std::string>>(const std::string& key, std::vector<std::string>);
-template void NWChem::set_param<std::vector<std::vector<int>>>(const std::string& key, std::vector<std::vector<int>>);
-template void NWChem::set_param<std::vector<std::vector<double>>>(const std::string& key, std::vector<std::vector<double>>);
-template void NWChem::set_param<std::vector<std::vector<std::string>>>(const std::string& key, std::vector<std::vector<std::string>>);
+template void NWChem::add_keyword<int>(const std::string&, int);
+template void NWChem::add_keyword<double>(const std::string&, double);
+template void NWChem::add_keyword<std::string>(const std::string&, std::string);
 
-
+template void NWChem::add_keyword<std::string, int>(const std::string&, std::string, int);
+template void NWChem::add_keyword<std::string, double>(const std::string&, std::string, double);
+template void NWChem::add_keyword<std::string, std::string>(const std::string&, std::string, std::string);
 } // namespace atomsciflow

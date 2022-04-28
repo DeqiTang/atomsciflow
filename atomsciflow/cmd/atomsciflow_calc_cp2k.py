@@ -88,13 +88,16 @@ def cp2k_processor(args):
         job = VcOpt()
     elif args.calc.lower() == "vib":
         from atomsciflow.cp2k import Vib
-        job = Vib()      
+        job = Vib()
     elif args.calc.lower() == "md":
         from atomsciflow.cp2k import MD
         job = MD()
     elif args.calc.lower() == "metamd":
         from atomsciflow.cp2k import MetaMD
-        job = MetaMD()   
+        job = MetaMD()
+    elif args.calc.lower() == "metamdplumed":
+        from atomsciflow.cp2k import MetaMDPlumed
+        job = MetaMDPlumed()
     else:
         print("The specified calculation type is unfound!")
         sys.exit(1)

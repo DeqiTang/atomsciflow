@@ -245,7 +245,7 @@ class CustomBuildExt(build_ext):
 
 setup(
     name = "atomsciflow",
-    version = '0.0.1a4',
+    version = '0.0.1a5',
     ## python3 setup.py build sdist bdist_wheel
     keywords = ("Atom Science, Workflow"),
     description = "A workflow manger for scientific research involving atoms",

@@ -32,6 +32,7 @@ SOFTWARE.
 
 #include <memory>
 #include <map>
+#include <boost/lexical_cast.hpp>
 
 #include "atomsciflow/variable/group.h"
 #include "atomsciflow/nwchem/directive.h"
@@ -43,6 +44,7 @@ namespace atomsciflow {
 class NWChem {
 public:
     NWChem();
+    ~NWChem();
     
     void get_xyz(const std::string& filepath);
     std::string to_string();
@@ -50,22 +52,49 @@ public:
     void new_directive(const std::string& name);
 
     template <typename T>
-    void set_param(const std::string& key, T value);
+    void add_keyword(const std::string& path, T keyword);
 
-    void py_set_param(const std::string& key, int value);
-    void py_set_param(const std::string& key, double value);
-    void py_set_param(const std::string& key, std::string value);
-    void py_set_param(const std::string& key, std::vector<int> value);
-    void py_set_param(const std::string& key, std::vector<double> value);
-    void py_set_param(const std::string& key, std::vector<std::string> value);
-    void py_set_param(const std::string& key, std::vector<std::vector<int>> value);
-    void py_set_param(const std::string& key, std::vector<std::vector<double>> value);
-    void py_set_param(const std::string& key, std::vector<std::vector<std::string>> value);
+    template <typename T, typename U>
+    void add_keyword(const std::string& path, T keyword_1, U keyword_2);
+
+    void py_add_keyword(const std::string& path, int keyword);
+    void py_add_keyword(const std::string& path, double keyword);
+    void py_add_keyword(const std::string& path, std::string keyword);
+    void py_add_keyword(const std::string& path, std::string keyword_1, int keyword_2);
+    void py_add_keyword(const std::string& path, std::string keyword_1, double keyword_2);
+    void py_add_keyword(const std::string& path, std::string keyword_1, std::string keyword_2);
+
+    template <typename T>
+    void set_field(const std::string& path, T field, int row, int col) {
+        set_field_size(path, row, col);
+        this->directives[path]->fields[row][col] = boost::lexical_cast<std::string>(field);
+    }
+
+    void set_field_size(const std::string& path, int row, int col) {
+        if (this->directives[path]->fields.size() < row) {
+            this->directives[path]->fields.resize(row);
+        }
+        for (auto& item : this->directives[path]->fields) {
+            if (item.size() < col) {
+                item.resize(col);
+            }
+        }
+        // for (std::vector<std::vector<std::string>>::iterator it = this->directives[path]->fields.begin(); 
+        //     it != this->directives[path]->fields.end(); 
+        //     ++it) {
+        //     if (it->size() < col) {
+        //         it->resize(col);
+        //     }
+        // }
+    }
+
+    void py_set_field(const std::string& path, int field, int row, int col);
+    void py_set_field(const std::string& path, double field, int row, int col);
+    void py_set_field(const std::string& path, std::string field, int row, int col);
 
     virtual void set_job_steps_default();
     virtual void run(const std::string& directory);
 
-    std::shared_ptr<VariableGroup> non_directive;
     std::map<std::string, std::shared_ptr<nwchem::Directive>> directives;
     Xyz xyz;
     JobScheduler job;

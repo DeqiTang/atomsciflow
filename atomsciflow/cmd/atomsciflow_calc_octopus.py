@@ -44,7 +44,7 @@ def add_octopus_subparser(subparsers):
         help="The spacing between the points in the mesh.")
 
     subparser.add_argument("--custom", type=str, default=None,
-        help="Specify parameters that are not provided directly in the command line argument, e.g. --custom \"ExtraStates=1;Spacing=0.5;\""
+        help="Specify parameters that are not provided directly in the command line argument, e.g. --custom \"ExtraStates=1;Spacing=0.2;Radius=2.5\""
     )
 
 def octopus_processor(args):

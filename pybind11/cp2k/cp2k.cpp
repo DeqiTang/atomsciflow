@@ -64,6 +64,7 @@ void add_class_cp2k(py::module& m) {
         .def("run", &atomsciflow::Cp2k::run)
         .def_readwrite("sections", &atomsciflow::Cp2k::sections)
         .def_readwrite("job", &atomsciflow::Cp2k::job)
+        .def_readwrite("plumed", &atomsciflow::Cp2k::plumed)
         ;
 }
 

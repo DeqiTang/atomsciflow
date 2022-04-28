@@ -211,6 +211,7 @@ file(GLOB BINDING_CP2K_SOURCES
     "./cp2k/*.cpp"
     "../src/atomsciflow/cp2k/*.cpp"
     "../src/atomsciflow/cp2k/post/*.cpp"
+    "../src/atomsciflow/plumed/*.cpp"
 )
 add_library(cp2k MODULE ${BINDING_CP2K_SOURCES})
 target_link_libraries(cp2k

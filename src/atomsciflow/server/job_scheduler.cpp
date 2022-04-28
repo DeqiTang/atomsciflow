@@ -271,10 +271,27 @@ void JobScheduler::gen_cdcloud(const std::string& script = "vasp.sub") {
     outfile.close();
 }
 
+/**
+ * @brief Overall control of the running of the job
+ * 
+ * @param directory
+ * 
+ * run_params["auto_level"]:
+ *  0 -> doing nothing; 
+ *  1 -> generate files only; 
+ *  2 -> generate and run locally using bash directly; 
+ *  3 -> generate and submit job to job scheduler locally;
+ *  4 -> generate and copy to remote server; 
+ *  5 -> generate and copy to remote server, then run remotely using bash directly; 
+ *  6 -> generate and copy to remote server, then submit it to remote server job scheduler;
+ */
 void JobScheduler::run(const std::string& directory) {
     this->set_run("absolute_work_dir", fs::absolute(fs::path(directory)).string());
 
-    if ("gen" == run_params["runopt"] || "genrun" == run_params["runopt"]) {
+    int auto_level = boost::lexical_cast<int>(run_params["auto_level"]);
+
+    // generate files
+    if (auto_level >= 1 && auto_level <= 6) {
         if (fs::exists(directory)) {
             fs::remove_all(directory);
         }
@@ -306,7 +323,8 @@ void JobScheduler::run(const std::string& directory) {
             ).string()
         );
     }
-    if ("run" == run_params["runopt"] || "genrun" == run_params["runopt"]) {
+    // run locally using bash directly
+    if (2 == auto_level) {
         std::string cmd = "";
         cmd += "bash ";
         cmd += (
