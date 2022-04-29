@@ -46,7 +46,9 @@ def cp2k_post_processor(args):
     elif args.calc.lower() == "vib":
         pass
     elif args.calc.lower() == "md":
-        pass
+        from atomsciflow.cp2k.post import MD
+        job = MD()
+        job.run(args.directory)
     elif args.calc.lower() == "metamd":
         pass
     else:

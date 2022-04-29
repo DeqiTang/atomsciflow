@@ -28,7 +28,12 @@ SOFTWARE.
 #include <string>
 #include <map>
 
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+
 namespace atomsciflow::cp2k::post {
+
+namespace pt = boost::property_tree;
 
 class Opt {
 public:
@@ -41,7 +46,7 @@ public:
     void set_run(std::string key, std::string value);
     void run(const std::string& directory);
 
-    std::map<std::string, std::string> info;
+    pt::ptree info;
     std::map<std::string, std::string> run_params;
 };
 

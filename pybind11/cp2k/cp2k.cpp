@@ -9,6 +9,7 @@
 #include "atomsciflow/cp2k/static.h"
 #include "atomsciflow/cp2k/opt.h"
 #include "atomsciflow/cp2k/post/opt.h"
+#include "atomsciflow/cp2k/post/md.h"
 
 namespace py = pybind11;
 
@@ -134,6 +135,14 @@ void add_class_post_opt(py::module& m) {
         ;
 }
 
+void add_class_post_md(py::module& m) {
+    py::class_<atomsciflow::cp2k::post::MD>(m, "PostMD")
+        .def(py::init<>())
+        .def("read", &atomsciflow::cp2k::post::MD::read)
+        .def("run", &atomsciflow::cp2k::post::MD::run)
+        ;
+}
+
 PYBIND11_MODULE(cp2k, m) {
     m.doc() = "cp2k module";
     m.attr("__version__") = "0.0.0";
@@ -144,4 +153,5 @@ PYBIND11_MODULE(cp2k, m) {
     add_class_cp2kopt(m);
 
     add_class_post_opt(m);
+    add_class_post_md(m);
 }

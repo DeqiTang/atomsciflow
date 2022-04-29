@@ -1,4 +1,4 @@
-"""
+/************************************************************************
 MIT License
 
 Copyright (c) 2021 Deqi Tang
@@ -20,15 +20,37 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-"""
+************************************************************************/
 
-from atomsciflow.cpp import cp2k
-from atomsciflow.cpp.server import JobScheduler
+#ifndef ATOMSCIFLOW_CP2K_POST_MD_H_
+#define ATOMSCIFLOW_CP2K_POST_MD_H_
 
-class Opt(cp2k.PostOpt):
-    def __init__(self):
-        super().__init__()
+#include <string>
+#include <map>
 
-class MD(cp2k.PostMD):
-    def __init__(self) -> None:
-        super().__init__()
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+
+namespace atomsciflow::cp2k::post {
+
+namespace pt = boost::property_tree;
+
+class MD {
+public:
+
+    MD();
+
+    ~MD();
+
+    void read(const std::string& filepath);
+    void write(const std::string& directory);
+    void set_run(std::string key, std::string value);
+    void run(const std::string& directory);
+
+    pt::ptree info;
+    std::map<std::string, std::string> run_params;
+};
+
+} // namespace atomsciflow::cp2k::post
+
+#endif //ATOMSCIFLOW_CP2K_POST_MD_H_

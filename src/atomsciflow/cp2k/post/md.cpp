@@ -22,26 +22,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ************************************************************************/
 
-#include "atomsciflow/cp2k/post/opt.h"
+#include "atomsciflow/cp2k/post/md.h"
 
 #include <regex>
 #include <fstream>
+#include <iostream>
 #include <boost/filesystem.hpp>
 
 namespace atomsciflow::cp2k::post {
 
 namespace fs = boost::filesystem;
 
-Opt::Opt() {
-    this->set_run("opt-out", "cp2k.out");
+MD::MD() {
+    this->set_run("md-out", "cp2k.out");
 }
 
-Opt::~Opt() {
+MD::~MD() {
 
 }
 
-void  Opt::read(const std::string& filepath) {
-
+void MD::read(const std::string& filepath) {
     auto get_start_time = [&](const std::string& str) {
         std::regex pat("STARTED\\ AT|ENDED \\ AT");
         std::regex time_pat("\\d{4}[-]\\d{2}[-]\\d{2}\\ [0-2][0-3]:[0-5][0-9]:[0-5][0-9]\\.[0-9]{3}");
@@ -49,7 +49,7 @@ void  Opt::read(const std::string& filepath) {
         std::smatch m2;
         if (std::regex_search(str, m1, pat)) {
             std::regex_search(str, m2, time_pat);
-            this->info.put(m1.str(0), m2.str(0));
+            info.put(m1.str(0), m2.str(0));
         }
     };
 
@@ -78,16 +78,16 @@ void  Opt::read(const std::string& filepath) {
     stream.close();
 }
 
-void Opt::set_run(std::string key, std::string value) {
+void MD::write(const std::string& directory) {
+    pt::write_json((fs::path(directory) / "post-md.json").string(), info);
+}
+
+void MD::set_run(std::string key, std::string value) {
     this->run_params[key] = value;
 }
 
-void Opt::write(const std::string& directory) {
-    pt::write_json((fs::path(directory) / "post-opt.json").string(), this->info);
-}
-
-void Opt::run(const std::string& directory) {
-    this->read((fs::path(directory) / this->run_params["opt-out"]).string());
+void MD::run(const std::string& directory) {
+    this->read((fs::path(directory) / this->run_params["md-out"]).string());
     fs::create_directory(fs::path(directory) / "post.dir");
     this->write((fs::path(directory) / "post.dir").string());
 }
