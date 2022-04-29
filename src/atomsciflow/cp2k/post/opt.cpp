@@ -43,7 +43,7 @@ Opt::~Opt() {
 void  Opt::read(const std::string& filepath) {
 
     auto get_start_time = [&](const std::string& str) {
-        std::regex pat("STARTED\\ AT|ENDED \\ AT");
+        std::regex pat("STARTED\\ AT|ENDED\\ AT");
         std::regex time_pat("\\d{4}[-]\\d{2}[-]\\d{2}\\ [0-2][0-3]:[0-5][0-9]:[0-5][0-9]\\.[0-9]{3}");
         std::smatch m1;
         std::smatch m2;
@@ -76,10 +76,6 @@ void  Opt::read(const std::string& filepath) {
     }
 
     stream.close();
-}
-
-void Opt::set_run(std::string key, std::string value) {
-    this->run_params[key] = value;
 }
 
 void Opt::write(const std::string& directory) {

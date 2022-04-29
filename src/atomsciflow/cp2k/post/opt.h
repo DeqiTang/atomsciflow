@@ -28,26 +28,19 @@ SOFTWARE.
 #include <string>
 #include <map>
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
+#include "atomsciflow/cp2k/post/post.h"
 
 namespace atomsciflow::cp2k::post {
 
-namespace pt = boost::property_tree;
-
-class Opt {
+class Opt : public Post {
 public:
 
     Opt();
     ~Opt();
 
-    void read(const std::string& filepath);
-    void write(const std::string& directory);
-    void set_run(std::string key, std::string value);
-    void run(const std::string& directory);
-
-    pt::ptree info;
-    std::map<std::string, std::string> run_params;
+    virtual void read(const std::string& filepath);
+    virtual void write(const std::string& directory);
+    virtual void run(const std::string& directory);
 };
 
 } // namespace atomsciflow::post

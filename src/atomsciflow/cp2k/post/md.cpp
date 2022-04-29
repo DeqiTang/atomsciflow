@@ -43,7 +43,7 @@ MD::~MD() {
 
 void MD::read(const std::string& filepath) {
     auto get_start_time = [&](const std::string& str) {
-        std::regex pat("STARTED\\ AT|ENDED \\ AT");
+        std::regex pat("STARTED\\ AT|ENDED\\ AT");
         std::regex time_pat("\\d{4}[-]\\d{2}[-]\\d{2}\\ [0-2][0-3]:[0-5][0-9]:[0-5][0-9]\\.[0-9]{3}");
         std::smatch m1;
         std::smatch m2;
@@ -80,10 +80,6 @@ void MD::read(const std::string& filepath) {
 
 void MD::write(const std::string& directory) {
     pt::write_json((fs::path(directory) / "post-md.json").string(), info);
-}
-
-void MD::set_run(std::string key, std::string value) {
-    this->run_params[key] = value;
 }
 
 void MD::run(const std::string& directory) {

@@ -25,30 +25,19 @@ SOFTWARE.
 #ifndef ATOMSCIFLOW_CP2K_POST_MD_H_
 #define ATOMSCIFLOW_CP2K_POST_MD_H_
 
-#include <string>
-#include <map>
-
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
+#include "atomsciflow/cp2k/post/post.h"
 
 namespace atomsciflow::cp2k::post {
 
-namespace pt = boost::property_tree;
-
-class MD {
+class MD : public Post {
 public:
 
     MD();
-
     ~MD();
 
     void read(const std::string& filepath);
     void write(const std::string& directory);
-    void set_run(std::string key, std::string value);
     void run(const std::string& directory);
-
-    pt::ptree info;
-    std::map<std::string, std::string> run_params;
 };
 
 } // namespace atomsciflow::cp2k::post
