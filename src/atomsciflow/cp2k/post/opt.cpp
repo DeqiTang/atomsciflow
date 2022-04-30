@@ -28,12 +28,15 @@ SOFTWARE.
 #include <fstream>
 #include <boost/filesystem.hpp>
 
+#include "atomsciflow/cp2k/post/utils.h"
+
 namespace atomsciflow::cp2k::post {
 
 namespace fs = boost::filesystem;
 
 Opt::Opt() {
     this->set_run("opt-out", "cp2k.out");
+    this->set_run("output-json", "post-opt.json");
 }
 
 Opt::~Opt() {
@@ -66,6 +69,19 @@ void  Opt::read(const std::string& filepath) {
         }
     };
 
+    pt::ptree converge_child;
+    info.add_child("SCF run converged in", converge_child);
+    auto get_scf_converge = [&](const std::string& str) {
+        std::regex pat("SCF run converged in");
+        std::regex converge_pat("\\d+");
+        std::smatch m1;
+        std::smatch m2;
+        if (std::regex_search(str, m1, pat)) {
+            std::regex_search(str, m2, converge_pat);
+            info.get_child(m1.str(0)).push_back(pt::ptree::value_type("", m2.str(0)));
+        }
+    };
+
     std::ifstream stream;
     stream.open(filepath);
     std::string line;
@@ -73,19 +89,10 @@ void  Opt::read(const std::string& filepath) {
     while (std::getline(stream, line)) {
         get_start_time(line);
         get_energy(line);
+        get_scf_converge(line);
     }
 
     stream.close();
-}
-
-void Opt::write(const std::string& directory) {
-    pt::write_json((fs::path(directory) / "post-opt.json").string(), this->info);
-}
-
-void Opt::run(const std::string& directory) {
-    this->read((fs::path(directory) / this->run_params["opt-out"]).string());
-    fs::create_directory(fs::path(directory) / "post.dir");
-    this->write((fs::path(directory) / "post.dir").string());
 }
 
 } // namespace atomsciflow::cp2k::post

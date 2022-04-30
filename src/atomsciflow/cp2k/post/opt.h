@@ -39,8 +39,6 @@ public:
     ~Opt();
 
     virtual void read(const std::string& filepath);
-    virtual void write(const std::string& directory);
-    virtual void run(const std::string& directory);
 };
 
 } // namespace atomsciflow::post

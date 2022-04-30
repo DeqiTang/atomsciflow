@@ -22,41 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ************************************************************************/
 
-#include "atomsciflow/cp2k/post/post.h"
+#include "atomsciflow/cp2k/post/utils.h"
 
 namespace atomsciflow::cp2k::post {
-
-Post::Post() {
-    this->set_run("post-dir", "post.dir");
-    this->set_run("cp2k-out", "cp2k.out");
-    this->set_run("output-json", "post-cp2k.json");
-}
-
-Post::~Post() {
-
-}
-
-void Post::read(const std::string& filepath) {
-
-}
-
-void Post::write(const std::string& directory) {
-    pt::write_json((fs::path(directory) / run_params["output-json"]).string(), this->info);
-}
-
-void Post::set_run(std::string key, std::string value) {
-    this->run_params[key] = value;
-}
-
-void Post::run(const std::string& directory) {
-    this->read((fs::path(directory) / this->run_params["cp2k-out"]).string());
-    fs::create_directory(fs::path(directory) / run_params["post-dir"]);
-    this->write((fs::path(directory) / run_params["post-dir"]).string());
-}
-
-//void Post::add_rule(const std::string& key, std::any rule) {
-void Post::add_rule(const std::string& key, boost::any rule) {
-    this->rules[key] = rule;
-}
 
 } // namespace atomsciflow::cp2k::post

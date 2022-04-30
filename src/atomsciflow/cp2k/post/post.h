@@ -27,13 +27,16 @@ SOFTWARE.
 
 #include <map>
 #include <string>
-
+//#include <any>
+#include <boost/any.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
 namespace atomsciflow::cp2k::post {
 
 namespace pt = boost::property_tree;
+namespace fs = boost::filesystem;
 
 class Post {
 public:
@@ -47,8 +50,13 @@ public:
     virtual void set_run(std::string key, std::string value);
     virtual void run(const std::string& directory);
 
+    //virtual void add_rule(const std::string& key, std::any rule);
+    virtual void add_rule(const std::string& key, boost::any rule);
+
     pt::ptree info;
     std::map<std::string, std::string> run_params;
+    //std::map<std::string, std::any> rules;
+    std::map<std::string, boost::any> rules;
 }; 
 
 } // namespace atomsciflow::cp2k::post

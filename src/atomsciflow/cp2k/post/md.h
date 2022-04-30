@@ -36,8 +36,6 @@ public:
     ~MD();
 
     void read(const std::string& filepath);
-    void write(const std::string& directory);
-    void run(const std::string& directory);
 };
 
 } // namespace atomsciflow::cp2k::post

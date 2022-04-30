@@ -22,41 +22,42 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ************************************************************************/
 
-#include "atomsciflow/cp2k/post/post.h"
+#ifndef ATOMSCIFLOW_CP2K_POST_UTILS_H_
+#define ATOMSCIFLOW_CP2K_POST_UTILS_H_
+
+#include <regex>
+#include <fstream>
+#include <string>
+#include <map>
+#include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
 namespace atomsciflow::cp2k::post {
 
-Post::Post() {
-    this->set_run("post-dir", "post.dir");
-    this->set_run("cp2k-out", "cp2k.out");
-    this->set_run("output-json", "post-cp2k.json");
-}
+namespace pt = boost::property_tree;
 
-Post::~Post() {
-
-}
-
-void Post::read(const std::string& filepath) {
-
-}
-
-void Post::write(const std::string& directory) {
-    pt::write_json((fs::path(directory) / run_params["output-json"]).string(), this->info);
-}
-
-void Post::set_run(std::string key, std::string value) {
-    this->run_params[key] = value;
-}
-
-void Post::run(const std::string& directory) {
-    this->read((fs::path(directory) / this->run_params["cp2k-out"]).string());
-    fs::create_directory(fs::path(directory) / run_params["post-dir"]);
-    this->write((fs::path(directory) / run_params["post-dir"]).string());
-}
-
-//void Post::add_rule(const std::string& key, std::any rule) {
-void Post::add_rule(const std::string& key, boost::any rule) {
-    this->rules[key] = rule;
+/**
+ * @brief Get the info pat
+ *  First, check whether pat1 is matched in str.
+ *  Then, pat2 is used to extract the value.
+ *  Finally, the matching result of pat1 and pat2
+ *  are used as the key and value to set in this->info
+ * @param info 
+ * @param str 
+ * @param pat1
+ * @param pat2
+ */
+inline void get_info_pat(pt::ptree& info, const std::string& str, std::regex pat1, std::regex pat2) {
+    std::smatch m1;
+    std::smatch m2;
+    if (std::regex_search(str, m1, pat1)) {
+        std::regex_search(str, m2, pat2);
+        info.put(m1.str(0), m2.str(0));
+    }
 }
 
 } // namespace atomsciflow::cp2k::post
+
+#endif // ATOMSCIFLOW_CP2K_POST_UTILS_H_
