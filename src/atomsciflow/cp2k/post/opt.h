@@ -36,9 +36,8 @@ class Opt : public Post {
 public:
 
     Opt();
-    ~Opt();
-
-    virtual void read(const std::string& filepath);
+    ~Opt() {
+    }
 };
 
 } // namespace atomsciflow::post

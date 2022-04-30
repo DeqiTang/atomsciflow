@@ -24,6 +24,10 @@ SOFTWARE.
 
 #include "atomsciflow/cp2k/post/post.h"
 
+#include <iostream>
+#include <chrono>
+#include <thread>
+
 namespace atomsciflow::cp2k::post {
 
 Post::Post() {
@@ -36,8 +40,47 @@ Post::~Post() {
 
 }
 
-void Post::read(const std::string& filepath) {
+void Post::read_lines(const std::string& filepath) {
+    std::ifstream stream;
+    stream.open(filepath);
+    std::string line;
 
+    while (std::getline(stream, line)) {
+        this->lines.emplace_back(line);
+    }
+    stream.close();
+}
+
+void Post::read(const std::string& filepath) {
+    this->read_lines(filepath);
+
+    auto apply_rules = [&](const std::string& line) {
+        for (auto& item : this->rules) {
+            boost::any_cast<std::function<void(const std::string&)>>(item.second)(line);
+        }        
+    };
+
+    auto start = std::chrono::system_clock::now();
+    // for (const auto& line : lines) {
+    //     apply_rules(line);
+    // }
+    auto apply_rules_partition = [&](int start, int end) {
+        for (auto it = lines.begin() + start; it != lines.begin() + end; it++) {
+            apply_rules(*it);
+        }
+    };    
+    int nlines_each_task = this->lines.size() / 4;
+    std::thread t1{apply_rules_partition, 0, 1*nlines_each_task};
+    std::thread t2{apply_rules_partition, 1*nlines_each_task, 2*nlines_each_task};
+    std::thread t3{apply_rules_partition, 2*nlines_each_task, 3*nlines_each_task};
+    std::thread t4{apply_rules_partition, 3*nlines_each_task, 4*nlines_each_task};
+    t1.join();
+    t2.join();
+    t3.join();
+    t4.join();
+    auto end = std::chrono::system_clock::now();
+    std::chrono::duration<double> time_consumed = end - start;
+    std::cout << "Time to apply rules: " << time_consumed.count() << " seconds\n";
 }
 
 void Post::write(const std::string& directory) {
@@ -54,9 +97,21 @@ void Post::run(const std::string& directory) {
     this->write((fs::path(directory) / run_params["post-dir"]).string());
 }
 
-//void Post::add_rule(const std::string& key, std::any rule) {
 void Post::add_rule(const std::string& key, boost::any rule) {
     this->rules[key] = rule;
+}
+
+void Post::add_rule_type_1(const std::string& key, std::string pat1, std::string pat2) {
+    this->add_rule(key, std::function<void(const std::string&)>{[&](const std::string& str) {
+        std::regex re_pat1{pat1};
+        std::regex re_pat2{pat2};
+        std::smatch m1;
+        std::smatch m2;
+        if (std::regex_search(str, m1, re_pat1)) {
+            std::regex_search(str, m2, re_pat2);
+            this->info.put(m1.str(0), m2.str(0));
+        }
+    }});
 }
 
 } // namespace atomsciflow::cp2k::post

@@ -27,7 +27,7 @@ SOFTWARE.
 
 #include <map>
 #include <string>
-//#include <any>
+#include <regex>
 #include <boost/any.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -45,17 +45,19 @@ public:
 
     virtual ~Post();
 
+    virtual void read_lines(const std::string& filepath);
     virtual void read(const std::string& filepath);
     virtual void write(const std::string& directory);
     virtual void set_run(std::string key, std::string value);
     virtual void run(const std::string& directory);
 
-    //virtual void add_rule(const std::string& key, std::any rule);
     virtual void add_rule(const std::string& key, boost::any rule);
 
+    void add_rule_type_1(const std::string& key, std::string pat1, std::string pat2);
+
+    std::vector<std::string> lines;
     pt::ptree info;
     std::map<std::string, std::string> run_params;
-    //std::map<std::string, std::any> rules;
     std::map<std::string, boost::any> rules;
 }; 
 

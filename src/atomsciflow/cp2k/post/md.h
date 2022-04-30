@@ -33,9 +33,8 @@ class MD : public Post {
 public:
 
     MD();
-    ~MD();
-
-    void read(const std::string& filepath);
+    ~MD() {
+    }
 };
 
 } // namespace atomsciflow::cp2k::post

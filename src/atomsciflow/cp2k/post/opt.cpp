@@ -37,28 +37,21 @@ namespace fs = boost::filesystem;
 Opt::Opt() {
     this->set_run("opt-out", "cp2k.out");
     this->set_run("output-json", "post-opt.json");
-}
 
-Opt::~Opt() {
-
-}
-
-void  Opt::read(const std::string& filepath) {
-
-    auto get_start_time = [&](const std::string& str) {
+    this->add_rule("time-start-end", std::function<void(const std::string&)>{[&](const std::string& str) -> void {
         std::regex pat("STARTED\\ AT|ENDED\\ AT");
         std::regex time_pat("\\d{4}[-]\\d{2}[-]\\d{2}\\ [0-2][0-3]:[0-5][0-9]:[0-5][0-9]\\.[0-9]{3}");
         std::smatch m1;
         std::smatch m2;
         if (std::regex_search(str, m1, pat)) {
             std::regex_search(str, m2, time_pat);
-            this->info.put(m1.str(0), m2.str(0));
+            info.put(m1.str(0), m2.str(0));
         }
-    };
+    }});
 
     pt::ptree energy_child;
     info.add_child("ENERGY| Total", energy_child);
-    auto get_energy = [&](const std::string& str) {
+    this->add_rule("total-energies", std::function<void(const std::string&)>{[&](const std::string& str) {
         std::regex pat("ENERGY\\| Total");
         std::regex energy_pat("[-][0-9]+\\.\\d+");
         std::smatch m1;
@@ -67,11 +60,11 @@ void  Opt::read(const std::string& filepath) {
             std::regex_search(str, m2, energy_pat);
             info.get_child(m1.str(0)).push_back(pt::ptree::value_type("", m2.str(0)));
         }
-    };
+    }});
 
     pt::ptree converge_child;
     info.add_child("SCF run converged in", converge_child);
-    auto get_scf_converge = [&](const std::string& str) {
+    this->add_rule("scf-convergencies", std::function<void(const std::string&)>{[&](const std::string& str) {
         std::regex pat("SCF run converged in");
         std::regex converge_pat("\\d+");
         std::smatch m1;
@@ -80,19 +73,8 @@ void  Opt::read(const std::string& filepath) {
             std::regex_search(str, m2, converge_pat);
             info.get_child(m1.str(0)).push_back(pt::ptree::value_type("", m2.str(0)));
         }
-    };
+    }});
 
-    std::ifstream stream;
-    stream.open(filepath);
-    std::string line;
-
-    while (std::getline(stream, line)) {
-        get_start_time(line);
-        get_energy(line);
-        get_scf_converge(line);
-    }
-
-    stream.close();
 }
 
 } // namespace atomsciflow::cp2k::post
