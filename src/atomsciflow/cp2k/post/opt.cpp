@@ -38,7 +38,7 @@ Opt::Opt() {
     this->set_run("opt-out", "cp2k.out");
     this->set_run("output-json", "post-opt.json");
 
-    this->add_rule("time-start-end", std::function<void(const std::string&)>{[&](const std::string& str) -> void {
+    this->add_rule(std::function<void(const std::string&)>{[&](const std::string& str) -> void {
         std::regex pat("STARTED\\ AT|ENDED\\ AT");
         std::regex time_pat("\\d{4}[-]\\d{2}[-]\\d{2}\\ [0-2][0-3]:[0-5][0-9]:[0-5][0-9]\\.[0-9]{3}");
         std::smatch m1;
@@ -51,7 +51,7 @@ Opt::Opt() {
 
     pt::ptree energy_child;
     info.add_child("ENERGY| Total", energy_child);
-    this->add_rule("total-energies", std::function<void(const std::string&)>{[&](const std::string& str) {
+    this->add_rule(std::function<void(const std::string&)>{[&](const std::string& str) {
         std::regex pat("ENERGY\\| Total");
         std::regex energy_pat("[-][0-9]+\\.\\d+");
         std::smatch m1;
@@ -64,7 +64,7 @@ Opt::Opt() {
 
     pt::ptree converge_child;
     info.add_child("SCF run converged in", converge_child);
-    this->add_rule("scf-convergencies", std::function<void(const std::string&)>{[&](const std::string& str) {
+    this->add_rule(std::function<void(const std::string&)>{[&](const std::string& str) {
         std::regex pat("SCF run converged in");
         std::regex converge_pat("\\d+");
         std::smatch m1;

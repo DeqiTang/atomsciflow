@@ -27,6 +27,9 @@ SOFTWARE.
 #include <iostream>
 #include <chrono>
 #include <thread>
+#ifdef _OPENMP
+#include <omp.h>
+#endif // _OPENMP
 
 namespace atomsciflow::cp2k::post {
 
@@ -52,34 +55,37 @@ void Post::read_lines(const std::string& filepath) {
 }
 
 void Post::read(const std::string& filepath) {
+    auto read_lines_start = std::chrono::system_clock::now();
     this->read_lines(filepath);
+    std::chrono::duration<double> time_consumed = std::chrono::system_clock::now() - read_lines_start;
+    std::cout << "Time for reading lines: " << time_consumed.count() << " seconds\n";
 
     auto apply_rules = [&](const std::string& line) {
-        for (auto& item : this->rules) {
-            boost::any_cast<std::function<void(const std::string&)>>(item.second)(line);
-        }        
+        // #pragma omp parallel for
+        // for (auto& item : this->rules) {
+        //     boost::any_cast<std::function<void(const std::string&)>>(item)(line);
+        // }
+        auto apply_rules_partition = [&](int start, int end) {
+            for (auto it = rules.begin() + start; it != rules.begin() + end; it++) {
+                boost::any_cast<std::function<void(const std::string&)>>(*it)(line);
+            }
+        };    
+        int nrules_each_task = this->rules.size() / 4;
+        std::thread t1{apply_rules_partition, 0, 1*nrules_each_task};
+        std::thread t2{apply_rules_partition, 1*nrules_each_task, 2*nrules_each_task};
+        std::thread t3{apply_rules_partition, 2*nrules_each_task, 3*nrules_each_task};
+        std::thread t4{apply_rules_partition, 3*nrules_each_task, 4*nrules_each_task};
+        t1.join();
+        t2.join();
+        t3.join();
+        t4.join();
     };
 
-    auto start = std::chrono::system_clock::now();
-    // for (const auto& line : lines) {
-    //     apply_rules(line);
-    // }
-    auto apply_rules_partition = [&](int start, int end) {
-        for (auto it = lines.begin() + start; it != lines.begin() + end; it++) {
-            apply_rules(*it);
-        }
-    };    
-    int nlines_each_task = this->lines.size() / 4;
-    std::thread t1{apply_rules_partition, 0, 1*nlines_each_task};
-    std::thread t2{apply_rules_partition, 1*nlines_each_task, 2*nlines_each_task};
-    std::thread t3{apply_rules_partition, 2*nlines_each_task, 3*nlines_each_task};
-    std::thread t4{apply_rules_partition, 3*nlines_each_task, 4*nlines_each_task};
-    t1.join();
-    t2.join();
-    t3.join();
-    t4.join();
-    auto end = std::chrono::system_clock::now();
-    std::chrono::duration<double> time_consumed = end - start;
+    auto apply_rules_start = std::chrono::system_clock::now();
+    for (const auto& item : lines) {
+        apply_rules(item);
+    }
+    time_consumed = std::chrono::system_clock::now() - apply_rules_start;
     std::cout << "Time to apply rules: " << time_consumed.count() << " seconds\n";
 }
 
@@ -97,12 +103,12 @@ void Post::run(const std::string& directory) {
     this->write((fs::path(directory) / run_params["post-dir"]).string());
 }
 
-void Post::add_rule(const std::string& key, boost::any rule) {
-    this->rules[key] = rule;
+void Post::add_rule(boost::any rule) {
+    this->rules.emplace_back(rule);
 }
 
-void Post::add_rule_type_1(const std::string& key, std::string pat1, std::string pat2) {
-    this->add_rule(key, std::function<void(const std::string&)>{[&](const std::string& str) {
+void Post::add_rule_type_1(std::string pat1, std::string pat2) {
+    this->add_rule(std::function<void(const std::string&)>{[&](const std::string& str) {
         std::regex re_pat1{pat1};
         std::regex re_pat2{pat2};
         std::smatch m1;

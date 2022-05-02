@@ -51,14 +51,14 @@ public:
     virtual void set_run(std::string key, std::string value);
     virtual void run(const std::string& directory);
 
-    virtual void add_rule(const std::string& key, boost::any rule);
+    virtual void add_rule(boost::any rule);
 
-    void add_rule_type_1(const std::string& key, std::string pat1, std::string pat2);
+    void add_rule_type_1(std::string pat1, std::string pat2);
 
     std::vector<std::string> lines;
     pt::ptree info;
     std::map<std::string, std::string> run_params;
-    std::map<std::string, boost::any> rules;
+    std::vector<boost::any> rules;
 }; 
 
 } // namespace atomsciflow::cp2k::post

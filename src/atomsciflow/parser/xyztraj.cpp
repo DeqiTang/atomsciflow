@@ -125,11 +125,8 @@ int read_xyztraj_file(std::vector<atomsciflow::Crystal>& traj, std::string filep
         traj.push_back(crystal);
     }
 
-
     return 0;
 }
-
-
 
 int write_xyztraj_file(std::vector<atomsciflow::Crystal>& traj, std::string filepath, int writecell) {
     //
