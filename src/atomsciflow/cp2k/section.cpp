@@ -31,6 +31,8 @@ SOFTWARE.
 
 #include <boost/algorithm/string.hpp>
 
+#include "atomsciflow/cp2k/utils.h"
+
 namespace atomsciflow {
 
 namespace ba = boost::algorithm;
@@ -73,7 +75,7 @@ std::string Cp2kSection::to_string(std::string indent) {
     out += this->section_var.to_string("same-line", indent + indent) + "\n";
 
     for (const auto& item : this->params) {
-        out += indent + indent + this->params[item.first].to_string("same-line", "") + "\n";
+        out += indent + indent + cp2k::to_string_same_line(item.second, "") + "\n";
     }
     for (const auto& item : this->sections) {
         //out += "\n";

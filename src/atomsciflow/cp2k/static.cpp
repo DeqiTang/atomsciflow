@@ -1,7 +1,7 @@
 /************************************************************************
 MIT License
 
-Copyright (c) 2021 Deqi Tang
+Copyright (c) 2022 Deqi Tang
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,28 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ************************************************************************/
 
-///  @file src/atomsciflow/cp2k/static.h
-///  @author Deqi Tang
-///  Mail: deqi_tang@163.com 
-///  Created Time: Tue 02 Feb 2021 04:29:35 PM CST
+#include "atomsciflow/cp2k/static.h"
 
-#ifndef ATOMSCIFLOW_CP2K_STATIC_H_
-#define ATOMSCIFLOW_CP2K_STATIC_H_
-
-#include "atomsciflow/cp2k/cp2k.h"
-
-namespace atomsciflow {
-
-class Cp2kStatic: public Cp2k {
-public:
-
-    Cp2kStatic() {};
-    ~Cp2kStatic() {};
-    
-private:
-
-};
+namespace atomsicflow {
 
 } // namespace atomsciflow
-
-#endif // ATOMSCIFLOW_CP2K_STATIC_H_

@@ -34,7 +34,7 @@ def add_cp2k_subparser(subparsers):
     add_calc_parser_common(subparser)
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "vcopt", "vib", "md", "metamd"],
+        choices=["static", "band", "opt", "vcopt", "vib", "md", "metamd"],
         help="The calculation to do. The specified value is case insensitive")
 
     ag = subparser.add_argument_group(title="global")
@@ -80,6 +80,9 @@ def cp2k_processor(args):
     if args.calc.lower() == "static":
         from atomsciflow.cp2k import Static
         job = Static()
+    elif args.calc.lower() == "band":
+        from atomsciflow.cp2k import Band
+        job = Band()
     elif args.calc.lower() == "opt":
         from atomsciflow.cp2k import Opt
         job = Opt()

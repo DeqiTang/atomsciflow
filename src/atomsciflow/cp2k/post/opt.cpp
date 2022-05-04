@@ -49,15 +49,45 @@ Opt::Opt() {
         }
     }});
 
+    this->add_rule(std::function<void(const std::string&)>{[&](const std::string& str) {
+        std::regex pat1{"Mixing method\\:"};
+        std::smatch m1;
+        std::vector<std::string> vec_str;
+        if (std::regex_search(str, m1, pat1)) {
+            boost::split(vec_str, str, boost::is_any_of(" "), boost::token_compress_on);
+            info.put(m1.str(0), vec_str[3]);
+        }
+    }});
+
+    this->add_rule(std::function<void(const std::string&)>{[&](const std::string& str) {
+        std::regex pat1("eps_scf\\:");
+        std::smatch m1;
+        std::vector<std::string> vec_str;
+        if (std::regex_search(str, m1, pat1)) {
+            boost::split(vec_str, str, boost::is_any_of(" "), boost::token_compress_on);
+            info.put(m1.str(0), vec_str[2]);
+        }
+    }});
+
+    this->add_rule(std::function<void(const std::string&)>{[&](const std::string& str) {
+        std::regex pat1("eps_diis\\:");
+        std::smatch m1;
+        std::vector<std::string> vec_str;
+        if (std::regex_search(str, m1, pat1)) {
+            boost::split(vec_str, str, boost::is_any_of(" "), boost::token_compress_on);
+            info.put(m1.str(0), vec_str[2]);
+        }
+    }});
+
     pt::ptree energy_child;
     info.add_child("ENERGY| Total", energy_child);
     this->add_rule(std::function<void(const std::string&)>{[&](const std::string& str) {
-        std::regex pat("ENERGY\\| Total");
-        std::regex energy_pat("[-][0-9]+\\.\\d+");
+        std::regex pat1("ENERGY\\| Total");
+        std::regex pat2("[-][0-9]+\\.\\d+");
         std::smatch m1;
         std::smatch m2;
-        if (std::regex_search(str, m1, pat)) {
-            std::regex_search(str, m2, energy_pat);
+        if (std::regex_search(str, m1, pat1)) {
+            std::regex_search(str, m2, pat2);
             info.get_child(m1.str(0)).push_back(pt::ptree::value_type("", m2.str(0)));
         }
     }});
@@ -65,12 +95,12 @@ Opt::Opt() {
     pt::ptree converge_child;
     info.add_child("SCF run converged in", converge_child);
     this->add_rule(std::function<void(const std::string&)>{[&](const std::string& str) {
-        std::regex pat("SCF run converged in");
-        std::regex converge_pat("\\d+");
+        std::regex pat1("SCF run converged in");
+        std::regex pat2("\\d+");
         std::smatch m1;
         std::smatch m2;
-        if (std::regex_search(str, m1, pat)) {
-            std::regex_search(str, m2, converge_pat);
+        if (std::regex_search(str, m1, pat1)) {
+            std::regex_search(str, m2, pat2);
             info.get_child(m1.str(0)).push_back(pt::ptree::value_type("", m2.str(0)));
         }
     }});

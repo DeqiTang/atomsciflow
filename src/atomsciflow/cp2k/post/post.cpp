@@ -69,16 +69,32 @@ void Post::read(const std::string& filepath) {
             for (auto it = rules.begin() + start; it != rules.begin() + end; it++) {
                 boost::any_cast<std::function<void(const std::string&)>>(*it)(line);
             }
-        };    
-        int nrules_each_task = this->rules.size() / 4;
-        std::thread t1{apply_rules_partition, 0, 1*nrules_each_task};
-        std::thread t2{apply_rules_partition, 1*nrules_each_task, 2*nrules_each_task};
-        std::thread t3{apply_rules_partition, 2*nrules_each_task, 3*nrules_each_task};
-        std::thread t4{apply_rules_partition, 3*nrules_each_task, 4*nrules_each_task};
-        t1.join();
-        t2.join();
-        t3.join();
-        t4.join();
+        };
+        int n_threads = 4;
+        int n_rules = this->rules.size();
+        int n_rules_each_task_base = n_rules / n_threads;
+        int n_rules_remainder = n_rules % n_threads;
+        std::vector<int> n_rules_each_task;
+        for (int i = 0; i < n_threads; i++) {
+            if (i < n_rules_remainder) {
+                n_rules_each_task.push_back(n_rules_each_task_base + 1);
+            } else {
+                n_rules_each_task.push_back(n_rules_each_task_base);
+            }
+        }
+        std::vector<std::thread> tasks;
+        int rules_range = 0;
+        for (int i = 0; i < n_threads; i++) {
+            tasks.push_back(std::thread{
+                apply_rules_partition,
+                rules_range,
+                rules_range + n_rules_each_task[i]
+            });
+            rules_range += n_rules_each_task[i];
+        }
+        for (auto& item : tasks) {
+            item.join();
+        }
     };
 
     auto apply_rules_start = std::chrono::system_clock::now();

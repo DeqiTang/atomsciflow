@@ -24,7 +24,7 @@ SOFTWARE.
 
 from atomsciflow.cp2k.cp2k import (
     Cp2k,
-    Static,
+    Static, Band,
     Opt,
     VcOpt,
     Vib,

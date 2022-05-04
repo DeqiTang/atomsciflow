@@ -25,9 +25,6 @@ SOFTWARE.
 #ifndef ATOMSCIFLOW_CP2K_POST_OPT_H_
 #define ATOMSCIFLOW_CP2K_POST_OPT_H_
 
-#include <string>
-#include <map>
-
 #include "atomsciflow/cp2k/post/post.h"
 
 namespace atomsciflow::cp2k::post {
