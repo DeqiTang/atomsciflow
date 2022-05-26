@@ -75,5 +75,4 @@ def octopus_processor(args):
         if params[item] == None:
             continue
         job.set_param(item, params[item])
-    job.set_job_steps_default()
     job.run(args.directory)

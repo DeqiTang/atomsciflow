@@ -100,7 +100,6 @@ void Elk::get_xyz(std::string xyzfile) {
         atm += std::to_string(item.z);
         this->set_param("data", item.name, atm);
     }
-    this->set_job_steps_default();
 }
 
 template <typename T>
@@ -144,7 +143,8 @@ void Elk::py_set_param(const std::string& group, std::string key, std::vector<st
     this->set_param(group, key, value);
 }
 
-void Elk::set_job_steps_default() {
+/// @param directory a place for all the generated files
+void Elk::run(const std::string& directory) {
     job.steps.clear();
     std::ostringstream step;
     step << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
@@ -155,10 +155,7 @@ void Elk::set_job_steps_default() {
     step << "$CMD_HEAD " << this->job.run_params["cmd"] << "\n";
     job.steps.push_back(step.str());
     step.clear();
-}
 
-/// @param directory a place for all the generated files
-void Elk::run(const std::string& directory) {
     job.run(directory);
 }
 

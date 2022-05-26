@@ -53,7 +53,6 @@ GamessUSOpt::GamessUSOpt() {
 
     this->set_param("guess", "guess", "huckel");
 
-    this->set_job_steps_default();
 }
 
 GamessUSOpt::~GamessUSOpt() {

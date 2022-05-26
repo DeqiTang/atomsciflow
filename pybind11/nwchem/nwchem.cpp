@@ -28,7 +28,6 @@ void add_class_nwchem(py::module& m) {
         .def("py_set_field", py::overload_cast<const std::string&, double, int, int>(&atomsciflow::NWChem::py_set_field))
         .def("py_set_field", py::overload_cast<const std::string&, std::string, int, int>(&atomsciflow::NWChem::py_set_field))
         .def("get_xyz", &atomsciflow::NWChem::get_xyz)
-        .def("set_job_steps_default", &atomsciflow::NWChem::set_job_steps_default)
         .def("run", &atomsciflow::NWChem::run)
         .def_readwrite("job", &atomsciflow::NWChem::job)
         ;

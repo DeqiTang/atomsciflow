@@ -32,5 +32,5 @@ from atomsciflow.cp2k.cp2k import (
     MetaMD
 )
 
-from atomsciflow.cp2k.cp2k import Phonopy
-#from atomsciflow.cpp.cp2k import Phonopy
+#from atomsciflow.cp2k.cp2k import Phonopy
+from atomsciflow.cpp.cp2k import Phonopy

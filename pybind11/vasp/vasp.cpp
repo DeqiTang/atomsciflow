@@ -28,7 +28,6 @@ void add_class_vasp(py::module& m) {
         .def("set_param", py::overload_cast<std::string, std::vector<std::vector<std::string>>>(&atomsciflow::Vasp::py_set_param))
         .def("set_params", &atomsciflow::Vasp::set_params)
         .def("set_kpoints", &atomsciflow::Vasp::set_kpoints)
-        .def("set_job_steps_default", &atomsciflow::Vasp::set_job_steps_default)
         .def("run", &atomsciflow::Vasp::run)
         .def_readwrite("job", &atomsciflow::Vasp::job)
         .def_readwrite("config", &atomsciflow::Vasp::config)

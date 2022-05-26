@@ -19,7 +19,6 @@ void add_class_orca(py::module& m) {
         .def("to_string", &atomsciflow::Orca::to_string)
         .def("new_block", &atomsciflow::Orca::new_block)
         .def("get_xyz", &atomsciflow::Orca::get_xyz)
-        .def("set_job_steps_default", &atomsciflow::Orca::set_job_steps_default)
         .def("run", &atomsciflow::Orca::run)
         .def_readwrite("keywords", &atomsciflow::Orca::keywords)
         .def_readwrite("blocks", &atomsciflow::Orca::blocks)

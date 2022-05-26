@@ -109,7 +109,6 @@ void GamessUS::get_xyz(const std::string& xyzfile) {
         atm.clear();
         i += 1;
     }
-    this->set_job_steps_default();
 }
 
 void GamessUS::set_param(const std::string& group, std::string key, int value) {
@@ -148,7 +147,7 @@ void GamessUS::set_param(const std::string& group, std::string key, std::vector<
     this->groups[group]->set_param(key, value);
 }
 
-void GamessUS::set_job_steps_default() {
+void GamessUS::run(const std::string& directory) {
     job.steps.clear();
     std::ostringstream step;
     step << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
@@ -158,9 +157,7 @@ void GamessUS::set_job_steps_default() {
     step << "$CMD_HEAD " << job.run_params["cmd"] << "\n";
     job.steps.push_back(step.str());
     step.clear();
-}
 
-void GamessUS::run(const std::string& directory) {
     job.run(directory);
 }
 

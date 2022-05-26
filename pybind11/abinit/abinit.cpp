@@ -34,7 +34,6 @@ void add_class_abinit(py::module& m) {
         .def("set_params", py::overload_cast<std::map<std::string, std::vector<std::vector<int>>>&>(&atomsciflow::Abinit::py_set_params))
         .def("set_params", py::overload_cast<std::map<std::string, std::vector<std::vector<double>>>&>(&atomsciflow::Abinit::py_set_params))
         .def("set_params", py::overload_cast<std::map<std::string, std::vector<std::vector<std::string>>>&>(&atomsciflow::Abinit::py_set_params))
-        .def("set_job_steps_default", &atomsciflow::Abinit::set_job_steps_default)
         .def("run", &atomsciflow::Abinit::run)
         .def_readwrite("job", &atomsciflow::Abinit::job)
         ;

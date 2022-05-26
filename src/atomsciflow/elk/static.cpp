@@ -43,9 +43,6 @@ ElkStatic::ElkStatic() {
 
     this->blocks["tasks"]->set_block_value(0);
     this->blocks["scale1"]->set_block_value(1.0);
-
-    this->set_job_steps_default();
-
 }
 
 ElkStatic::~ElkStatic() {

@@ -39,7 +39,6 @@ void add_class_pwscf(py::module& m) {
         .def("run", &atomsciflow::qe::PwScf::run)
         .def("set_kpoints", &atomsciflow::qe::PwScf::set_kpoints)
         .def("set_occupations", &atomsciflow::qe::PwScf::set_occupations)
-        .def("set_job_steps_default", &atomsciflow::qe::PwScf::set_job_steps_default)
         .def_readwrite("namelists", &atomsciflow::qe::PwScf::namelists)
         .def_readwrite("misc", &atomsciflow::qe::PwScf::misc)
         .def_readwrite("job", &atomsciflow::qe::PwScf::job)

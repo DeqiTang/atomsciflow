@@ -59,8 +59,6 @@ public:
     void set_param(const std::string& group, std::string key, std::vector<std::vector<double>> value);
     void set_param(const std::string& group, std::string key, std::vector<std::vector<std::string>> value);
 
-    void set_job_steps_default();
-
     virtual void run(const std::string& directory);
 
     std::map<std::string, VariableGroup*> groups;

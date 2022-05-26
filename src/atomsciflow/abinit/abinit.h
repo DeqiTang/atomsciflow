@@ -85,7 +85,6 @@ public:
     void set_pseudos(const std::string& directory);
     std::string to_string();
     void set_ndtset(int ndtset);
-    void set_job_steps_default();
 
     virtual void run(const std::string& directory);
 

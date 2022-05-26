@@ -42,9 +42,7 @@ public:
 
     void get_xyz(const std::string& xyzfile);
     std::string to_string();
-
-    void set_job_steps_default();
-
+    
     virtual void run(const std::string& directory);
 
     Xyz xyz;

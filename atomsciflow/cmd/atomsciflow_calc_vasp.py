@@ -68,5 +68,4 @@ def vasp_processor(args):
 
     job.get_xyz(args.xyz)
     set_calc_processor_common(job, args)    
-    job.set_job_steps_default()
     job.run(args.directory)

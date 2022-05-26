@@ -66,7 +66,6 @@ public:
     std::string to_string();
     void get_xyz(const std::string& xyzfile);
     std::shared_ptr<Cp2kSection>& set_subsys(Xyz& xyz);
-    virtual void set_job_steps_default();
 
     virtual void run(const std::string& directory);
 

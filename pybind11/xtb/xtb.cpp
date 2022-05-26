@@ -18,7 +18,6 @@ void add_class_xtb(py::module& m) {
         .def(py::init<>())
         .def("to_string", &atomsciflow::Xtb::to_string)
         .def("get_xyz", &atomsciflow::Xtb::get_xyz)
-        .def("set_job_steps_default", &atomsciflow::Xtb::set_job_steps_default)
         .def("run", &atomsciflow::Xtb::run)
         .def_readwrite("job", &atomsciflow::Xtb::job)
         ;

@@ -300,18 +300,6 @@ std::shared_ptr<Cp2kSection>& Cp2k::set_subsys() {
     return subsys;
 }
 
-void Cp2k::set_job_steps_default() {
-    //job.steps.clear();
-    std::ostringstream step;
-    step << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
-    step << boost::format("cat >%1%<<EOF\n") % job.run_params["input"];
-    step << this->to_string();
-    step << "EOF\n";
-    step << boost::format("$CMD_HEAD %1% -in %2% | tee %3%  \n") % job.run_params["cmd"] % job.run_params["input"] % job.run_params["output"];
-    job.steps.push_back(step.str());
-    //step.clear();
-}
-
 /**
  * @brief Cp2k::run The running entry for the calculation
  * @param directory The path to the directory where the calculation
@@ -320,7 +308,19 @@ void Cp2k::set_job_steps_default() {
  * by the JobScheduler.
  */
 void Cp2k::run(const std::string& directory) {
-    this->set_job_steps_default();
+    std::ostringstream step;
+    step << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
+    step << boost::format("cat >%1%<<EOF\n") % job.run_params["input"];
+    step << this->to_string();
+    step << "EOF\n";
+    step << boost::format("$CMD_HEAD %1% -in %2% | tee %3%  \n") 
+        % job.run_params["cmd"] 
+        % job.run_params["input"] 
+        % job.run_params["output"]
+        ;
+    job.steps.push_back(step.str());
+    step.clear();
+
     job.run(directory);
 }
 

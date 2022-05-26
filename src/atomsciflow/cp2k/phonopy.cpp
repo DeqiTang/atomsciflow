@@ -39,11 +39,6 @@ Phonopy::Phonopy() {
 }
 
 void Phonopy::run(const std::string& directory) {
-    this->set_job_steps_default();
-    job.run(directory);
-}
-
-void Phonopy::set_job_steps_default() {
     std::ostringstream step;
     step << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
     step << boost::format("cat >%1%<<EOF\n") % job.run_params["input"];
@@ -52,6 +47,7 @@ void Phonopy::set_job_steps_default() {
     //step << boost::format("$CMD_HEAD %1% -in %2% | tee %3%  \n") % job.run_params["cmd"] % job.run_params["input"] % job.run_params["output"];
     job.steps.push_back(step.str());
     step.clear();
+
     step << boost::format("phonopy --cp2k -c %1% -d --dim=\'%2% %3% %4%\'\n")
         % job.run_params["input"]
         % job.run_params["phonopy_dim_x"]
@@ -60,6 +56,20 @@ void Phonopy::set_job_steps_default() {
         ;
     job.steps.push_back(step.str());
     step.clear();
+
+    std::vector<std::string> vec_str;
+    boost::split(vec_str, job.run_params["input"], boost::is_any_of(".inp"));
+    step << boost::format("for inp in %1%-supercell-*.inp\n") % vec_str[0];
+    step << "do\n";
+    step << boost::format("$CMD_HEAD %1% -in %2% | tee %3% \n")
+        % job.run_params["cmd"]
+        % "${inp}"
+        % "${inp}.out"
+        ;
+    step << "done\n";
+    job.steps.push_back(step.str());
+
+    job.run(directory);
 }
 
 } // namespace atomsciflow::cp2k

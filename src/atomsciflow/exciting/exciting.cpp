@@ -60,14 +60,13 @@ Exciting::Exciting() {
 void Exciting::get_xyz(const std::string &xyzfile) {
     this->xyz.read_xyz_file(xyzfile);
     job.set_run("xyz_file", fs::absolute(xyzfile).string());
-    this->set_job_steps_default();
 }
 
 std::string Exciting::to_string() {
     return this->input.to_string();
 }
 
-void Exciting::set_job_steps_default() {
+void Exciting::run(const std::string& directory) {
     job.steps.clear();
     std::ostringstream step;
     step << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
@@ -78,9 +77,7 @@ void Exciting::set_job_steps_default() {
     step << boost::format("${CMD_HEAD} %1% %2%\n") % job.run_params["cmd"] % job.run_params["input"];
     job.steps.push_back(step.str());
     step.clear();
-}
 
-void Exciting::run(const std::string& directory) {
     job.run(directory);
 }
 

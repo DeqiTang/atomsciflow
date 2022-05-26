@@ -29,7 +29,6 @@ void add_class_elk(py::module& m) {
         .def("set_param", py::overload_cast<const std::string&, std::string, std::vector<std::vector<int>>>(&atomsciflow::Elk::py_set_param))
         .def("set_param", py::overload_cast<const std::string&, std::string, std::vector<std::vector<double>>>(&atomsciflow::Elk::py_set_param))
         .def("set_param", py::overload_cast<const std::string&, std::string, std::vector<std::vector<std::string>>>(&atomsciflow::Elk::py_set_param))        
-        .def("set_job_steps_default", &atomsciflow::Elk::set_job_steps_default)
         .def("run", &atomsciflow::Elk::run)
         .def_readwrite("job", &atomsciflow::Elk::job)
         ;

@@ -90,7 +90,6 @@ void PwScf::get_xyz(const std::string& xyzfile) {
     this->misc.xyz.read_xyz_file(xyzfile);
     job.set_run("xyz_file", fs::absolute(xyzfile).string());
     this->basic_setting_system();
-    this->set_job_steps_default();
 }
 
 void PwScf::set_param(const std::string& namelist, std::string key, int value) {
@@ -230,7 +229,7 @@ void PwScf::set_occupations(std::string occupations = "smearing", std::string sm
     }
 }
 
-void PwScf::set_job_steps_default() {
+void PwScf::run(const std::string& directory) {
     job.steps.clear();
     std::ostringstream step;
     step << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
@@ -245,9 +244,7 @@ void PwScf::set_job_steps_default() {
     step << boost::format("$CMD_HEAD %1% < %2% > %3%\n") % job.run_params["cmd"] % job.run_params["input"] % job.run_params["output"];
     job.steps.push_back(step.str());
     step.clear();
-}
 
-void PwScf::run(const std::string& directory) {
     job.run(directory);
 }
 

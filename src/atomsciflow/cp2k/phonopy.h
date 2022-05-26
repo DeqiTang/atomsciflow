@@ -34,7 +34,6 @@ public:
 
     Phonopy();
 
-    virtual void set_job_steps_default();
     virtual void run(const std::string& directory);
 };
 

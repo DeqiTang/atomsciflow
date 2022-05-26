@@ -1,7 +1,7 @@
 /************************************************************************
 MIT License
 
-Copyright (c) 2021 Deqi Tang
+Copyright (c) 2022 Deqi Tang
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,37 +22,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ************************************************************************/
 
-/// @file src/atomsciflow/gamessus/static.cpp
-/// @author DeqiTang
-/// Mail: deqitang@gmail.com
-/// Created Time: Fri 11 Mar 2022 10:22:22 AM CST
+#include "atomsciflow/cp2k/post/phonopy.h"
 
-#include "atomsciflow/gamessus/static.h"
+namespace atomsciflow::cp2k::post {
 
-namespace atomsciflow {
-
-GamessUSStatic::GamessUSStatic() {
-    this->new_group("contrl");
-    this->new_group("system");
-    this->new_group("basis");
-    this->new_group("guess");
-
-    this->set_param("contrl", "scftyp", "UHF");
-    this->set_param("contrl", "coord", "unique");
-    this->set_param("contrl", "mult", 3);
-    this->set_param("contrl", "runtyp", "gradient");
-    this->set_param("contrl", "local", "boys");
-
-    this->set_param("system", "timlim", 1);
-
-    this->set_param("basis", "gbasis", "sto");
-    this->set_param("basis", "ngauss", 2);
-
-    this->set_param("guess", "guess", "huckel");
-}
-
-GamessUSStatic::~GamessUSStatic() {
+Phonopy::Phonopy() {
 
 }
 
-} // namespace atomsciflow
+Phonopy::~Phonopy() {
+
+}
+
+} // namespace atomsciflow::cp2k::post

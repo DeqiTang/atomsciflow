@@ -66,8 +66,6 @@ public:
     void basic_setting_system();
     void set_occupations(std::string occupations, std::string smearing, double degauss);
 
-    void set_job_steps_default();
-
     virtual void run(const std::string& directory);
 
     std::map<std::string, Namelist> namelists;

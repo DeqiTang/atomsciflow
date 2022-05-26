@@ -52,7 +52,6 @@ public:
 
     void get_xyz(const std::string& xyzfile);
 
-    virtual void set_job_steps_default();
     virtual void run(const std::string& directory);
 
     std::vector<std::string> keywords;

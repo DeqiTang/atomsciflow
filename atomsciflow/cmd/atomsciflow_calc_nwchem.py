@@ -70,5 +70,4 @@ def nwchem_processor(args):
         if params[item] == None:
             continue
         job.add_keyword(item, params[item])       
-    job.set_job_steps_default()
     job.run(args.directory)

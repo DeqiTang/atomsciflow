@@ -44,7 +44,6 @@ def qchem_processor(args):
         job = Static()
         job.get_xyz(args.xyz)
         set_calc_processor_common(job, args)      
-        job.set_job_steps_default()
         job.run(args.directory)
     elif args.calc.lower() == "opt":
         from atomsciflow.qchem import Opt
@@ -52,7 +51,6 @@ def qchem_processor(args):
         job.get_xyz(args.xyz)
         job.job.set_run("runopt", args.runopt)
         job.job.set_run("server", args.server)        
-        job.set_job_steps_default()
         job.run(args.directory)
     else:
         print("The specified calculation type is unfound!")

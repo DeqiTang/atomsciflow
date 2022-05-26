@@ -197,11 +197,9 @@ void Octopus::get_xyz(const std::string& xyzfile) {
             tmp.str()
         );
     }
-
-    this->set_job_steps_default();
 }
 
-void Octopus::set_job_steps_default() {
+void Octopus::run(const std::string& directory) {
     job.steps.clear();
     std::ostringstream step;
     step << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
@@ -211,9 +209,7 @@ void Octopus::set_job_steps_default() {
     step << "$CMD_HEAD " << job.run_params["cmd"] << "\n";
     job.steps.push_back(step.str());
     step.clear();
-}
 
-void Octopus::run(const std::string& directory) {
     job.run(directory);
 }
 

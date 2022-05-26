@@ -61,7 +61,6 @@ def qe_processor(args):
         job.get_xyz(args.xyz)
         job.job.set_run("runopt", args.runopt)
         job.job.set_run("server", args.server)        
-        job.set_job_steps_default()
         job.run(args.directory)        
     else:
         print("The specified calculation type is unfound!")
@@ -73,5 +72,4 @@ def qe_processor(args):
         if params[item] == None:
             continue        
         job.set_param(item.split("/")[0], item.split("/")[1], params[item])    
-    job.set_job_steps_default()
     job.run(args.directory)

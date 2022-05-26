@@ -75,7 +75,6 @@ Abinit::~Abinit() {
 void Abinit::get_xyz(const std::string& xyzfile) {
     this->datasets[0]->system->get_xyz(xyzfile);
     job.set_run("xyz_file", fs::absolute(xyzfile).string());
-    this->set_job_steps_default();
 }
 
 /**
@@ -259,7 +258,7 @@ void Abinit::set_ndtset(int ndtset = 0) {
     }
 }
 
-void Abinit::set_job_steps_default() {
+void Abinit::run(const std::string& directory) {
     std::ostringstream step;
     step << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
     step << "cat > " << this->files.main_in << "<<EOF\n";
@@ -276,9 +275,7 @@ void Abinit::set_job_steps_default() {
     step << "$CMD_HEAD " << this->job.run_params["cmd"] << " < " << this->files.name << "\n";
     job.steps.push_back(step.str());
     step.clear();
-}
 
-void Abinit::run(const std::string& directory) {
     job.run(directory);
 }
 

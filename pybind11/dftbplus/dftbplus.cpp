@@ -18,7 +18,6 @@ void add_class_dftbplus(py::module& m) {
         .def(py::init<>())
         .def("to_string", &atomsciflow::DftbPlus::to_string)
         .def("get_xyz", &atomsciflow::DftbPlus::get_xyz)
-        .def("set_job_steps_default", &atomsciflow::DftbPlus::set_job_steps_default)
         .def("run", &atomsciflow::DftbPlus::run)
         .def_readwrite("job", &atomsciflow::DftbPlus::job)
         ;

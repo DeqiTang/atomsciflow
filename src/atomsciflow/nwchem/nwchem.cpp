@@ -40,7 +40,7 @@ namespace atomsciflow {
 namespace fs = boost::filesystem;
 
 NWChem::NWChem() {
-
+    
     add_keyword("Charge", 0);
     add_keyword("title", "NWChem calculation");
 
@@ -78,6 +78,9 @@ void NWChem::new_directive(const std::string& name) {
 
 template <typename T>
 void NWChem::add_keyword(const std::string& path, T keyword) {
+    if (this->directives.find(path) == this->directives.end()) {
+        this->new_directive(path);
+    }
     this->directives[path]->keywords.push_back(boost::lexical_cast<std::string>(keyword));
 }
 
@@ -159,8 +162,7 @@ void NWChem::get_xyz(const std::string& filepath) {
     }
 }
 
-void NWChem::set_job_steps_default() {
-    job.steps.clear();
+void NWChem::run(const std::string& directory) {    
     std::ostringstream step;
     step << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
     step << "cat > nwchem.nw<<EOF\n";
@@ -169,9 +171,7 @@ void NWChem::set_job_steps_default() {
     step << "$CMD_HEAD " << job.run_params["cmd"] << "\n";
     job.steps.push_back(step.str());
     step.clear();
-}
 
-void NWChem::run(const std::string& directory) {
     job.run(directory);
 }
 

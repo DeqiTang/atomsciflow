@@ -137,10 +137,6 @@ class Phonopy(Cp2k):
         self.job.set_run("phonopy_dim_z", 3)
     
     def run(self, directory):
-        self.set_job_steps_default()
-        self.job.run(directory)
-
-    def set_job_steps_default(self):
         step = "cd ${ABSOLUTE_WORK_DIR}\n"
         step += "cat >%s<<EOF\n" % self.job.run_params["input"]
         step += self.to_string()
@@ -155,7 +151,7 @@ class Phonopy(Cp2k):
         )
         self.job.append_step(step)
 
-        step = "for inp in cp2k-supercell-*.inp\n"
+        step = "for inp in %s-supercell-*.inp\n" % self.job.run_params["input"].split(".inp")[0]
         step += "do\n"
         step += "$CMD_HEAD %s -in %s | tee %s \n" % (
             self.job.run_params["cmd"],
@@ -164,3 +160,5 @@ class Phonopy(Cp2k):
         )
         step += "done\n"
         self.job.append_step(step)
+
+        self.job.run(directory)

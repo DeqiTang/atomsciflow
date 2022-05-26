@@ -65,7 +65,6 @@ public:
 
     void set_params(const std::map<std::string, std::string>& params, const std::string& runtype);
     void set_kpoints(const std::vector<int>& kpoints_mp, const std::string& option, Kpath* kpath);
-    void set_job_steps_default();
 
     virtual void run(const std::string& directory);
 

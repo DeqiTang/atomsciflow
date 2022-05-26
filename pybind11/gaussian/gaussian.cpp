@@ -18,8 +18,8 @@ void add_class_gaussian(py::module& m) {
         .def(py::init<>())
         .def("get_xyz", &atomsciflow::Gaussian::get_xyz)
         .def("to_string", &atomsciflow::Gaussian::to_string)
-        .def("set_job_steps_default", &atomsciflow::Gaussian::set_job_steps_default)
         .def("run", &atomsciflow::Gaussian::run)
+        .def_readwrite("job", &atomsciflow::Gaussian::job)
         ;
 }
 
