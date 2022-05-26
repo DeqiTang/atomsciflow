@@ -27,6 +27,16 @@ void add_class_job_scheduler(py::module& m) {
         .def("gen_lsf_sz", &atomsciflow::JobScheduler::gen_lsf_sz)
         .def("gen_lsf_sustc", &atomsciflow::JobScheduler::gen_lsf_sustc)
         .def("gen_cdcloud", &atomsciflow::JobScheduler::gen_cdcloud)
+        .def("run", &atomsciflow::JobScheduler::run)
+        // according to pybind11, atomsciflow::JobScheduler::steps is a std::vector
+        // when exposed to python, steps.append method will not work or take effect
+        // so we define append_step method to allow append new step to
+        // atomsciflow::JobScheduler::steps in python interface
+        .def("append_step", [&](atomsciflow::JobScheduler& _this, std::string step) {
+            _this.steps.push_back(step);
+        })
+        .def_readwrite("steps", &atomsciflow::JobScheduler::steps)
+        .def_readwrite("run_params", &atomsciflow::JobScheduler::run_params)
         ;
 }
 

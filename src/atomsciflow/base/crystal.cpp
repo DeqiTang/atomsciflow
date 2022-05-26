@@ -34,6 +34,7 @@ SOFTWARE.
 #include <map>
 #include <armadillo>
 #include <iomanip>
+#include <iterator>
 #include <string>
 
 namespace atomsciflow {

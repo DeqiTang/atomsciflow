@@ -33,7 +33,7 @@ class Cp2k(cp2k.Cp2k):
     def __init__(self):
         super().__init__()
 
-class Static(cp2k.Cp2kStatic):
+class Static(cp2k.Static):
     def __init__(self):
         super().__init__()
         self.set_param("global/run_type", "ENERGY_FORCE")
@@ -51,6 +51,7 @@ class Band(cp2k.Cp2k):
         self.set_param("force_eval/dft/print/band_structure/kpoint_set[1]/special_point[1]", ["Y", "0", "0.5", "0"])
         self.set_param("force_eval/dft/print/band_structure/kpoint_set[1]/npoints", 10)
         self.set_param("force_eval/dft/print/band_structure/kpoint_set[1]/units", "B_VECTOR")
+
 class Opt(cp2k.Cp2k):
     def __init__(self):
         super().__init__()
@@ -127,3 +128,39 @@ class Neb(Cp2k):
     def __init__(self):
         super().__init__()
         self.set_param("global/run_type", "BAND")
+
+class Phonopy(Cp2k):
+    def __init__(self):
+        super().__init__()
+        self.job.set_run("phonopy_dim_x", 1)
+        self.job.set_run("phonopy_dim_y", 2)
+        self.job.set_run("phonopy_dim_z", 3)
+    
+    def run(self, directory):
+        self.set_job_steps_default()
+        self.job.run(directory)
+
+    def set_job_steps_default(self):
+        step = "cd ${ABSOLUTE_WORK_DIR}\n"
+        step += "cat >%s<<EOF\n" % self.job.run_params["input"]
+        step += self.to_string()
+        step += "EOF\n"
+        self.job.append_step(step)
+
+        step = "phonopy --cp2k -c %s -d --dim='%s %s %s'" % (
+            self.job.run_params["input"],
+            self.job.run_params["phonopy_dim_x"],
+            self.job.run_params["phonopy_dim_y"],
+            self.job.run_params["phonopy_dim_z"]
+        )
+        self.job.append_step(step)
+
+        step = "for inp in cp2k-supercell-*.inp\n"
+        step += "do\n"
+        step += "$CMD_HEAD %s -in %s | tee %s \n" % (
+            self.job.run_params["cmd"],
+            "${inp}",
+            "${inp}.out"
+        )
+        step += "done\n"
+        self.job.append_step(step)

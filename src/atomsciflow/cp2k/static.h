@@ -32,18 +32,18 @@ SOFTWARE.
 
 #include "atomsciflow/cp2k/cp2k.h"
 
-namespace atomsciflow {
+namespace atomsciflow::cp2k {
 
-class Cp2kStatic: public Cp2k {
+class Static: public Cp2k {
 public:
 
-    Cp2kStatic() {};
-    ~Cp2kStatic() {};
+    Static() {};
+    ~Static() {};
     
 private:
 
 };
 
-} // namespace atomsciflow
+} // namespace atomsciflow::cp2k
 
 #endif // ATOMSCIFLOW_CP2K_STATIC_H_

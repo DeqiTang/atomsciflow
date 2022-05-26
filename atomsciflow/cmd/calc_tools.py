@@ -31,7 +31,15 @@ def add_calc_parser_common_structure(subparser):
     
     ag.add_argument("--cif", type=str, default=None,
         help="Spedify the cif structure file")
-    
+
+def add_calc_parser_common_phonopy(subparser):
+
+    ag = subparser.add_argument_group(title="phonopy")
+
+    ag.add_argument("--phonopy-dim", type=int, nargs="+", default=[1, 1, 1],
+        help="specify supercell dimension for phonopy")
+
+
 def add_calc_parser_common(subparser):
     
     add_calc_parser_common_structure(subparser)
@@ -46,6 +54,15 @@ def add_calc_parser_common(subparser):
     subparser.add_argument("--server", type=str, default="pbs",
         choices=["pbs", "llhpc", "yhbatch", "lsf_sz", "lsf_sustc", "cdcloud"])
 
+    add_calc_parser_common_phonopy(subparser)
+
+def set_calc_processor_common_phonopy(calc, args):
+    calc.job.set_run("phonopy_dim_x", args.phonopy_dim[0])
+    calc.job.set_run("phonopy_dim_y", args.phonopy_dim[1])
+    calc.job.set_run("phonopy_dim_z", args.phonopy_dim[2])
+    
+
 def set_calc_processor_common(calc, args):
     calc.job.set_run("auto_level", args.auto_level)
-    calc.job.set_run("server", args.server)  
+    calc.job.set_run("server", args.server)
+    set_calc_processor_common_phonopy(calc, args)

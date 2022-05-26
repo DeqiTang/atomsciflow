@@ -27,6 +27,7 @@ SOFTWARE.
 
 #include <iostream>
 #include <fstream>
+#include <iterator>
 
 #ifdef _OPENMP
 #include <omp.h>

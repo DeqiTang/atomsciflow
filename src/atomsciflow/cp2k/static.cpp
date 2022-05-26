@@ -24,6 +24,6 @@ SOFTWARE.
 
 #include "atomsciflow/cp2k/static.h"
 
-namespace atomsicflow {
+namespace atomsicflow::cp2k {
 
 } // namespace atomsciflow

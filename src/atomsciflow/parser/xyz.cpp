@@ -23,6 +23,9 @@ SOFTWARE.
 ************************************************************************/
 
 #include "atomsciflow/parser/xyz.h"
+
+#include <iterator>
+
 #include "atomsciflow/base/atom.h"
 
 namespace atomsciflow {

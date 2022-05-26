@@ -23,6 +23,9 @@ SOFTWARE.
 ************************************************************************/
 
 #include "atomsciflow/parser/cif.h"
+
+#include <iterator>
+
 #include "atomsciflow/base/atom.h"
 
 namespace atomsciflow {

@@ -84,7 +84,7 @@ void atomsciflow_calc_cp2k(po::parsed_options& parsed, po::variables_map& vm) {
     fs::path xyz_path(vm["xyz"].as<std::string>());
 
     std::cout << "working directory: " << vm["directory"].as<std::string>() << std::endl;
-    auto task = new atomsciflow::Cp2k();
+    auto task = new atomsciflow::cp2k::Cp2k();
     task->get_xyz(xyz_path.string());
     //std::cout << task->to_string() << std::endl;
     task->run(vm["directory"].as<std::string>());

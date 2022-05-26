@@ -34,12 +34,12 @@ SOFTWARE.
 #include <fstream>
 #include <iostream>
 
-namespace atomsciflow {
+namespace atomsciflow::cp2k {
 
 //namespace fs = std::filesystem;
 namespace fs = boost::filesystem;    // --std=c++11 -lboost_filesystem -lboost_system
 
-Cp2kOpt::Cp2kOpt() {
+Opt::Opt() {
     //this->sections["force_eval"].sections["dft"].sections["mgrid"].set_param("cutoff", 100);
     //this->sections["force_eval"].sections["dft"].sections["mgrid"].set_param("rel_cutoff", 60);
     set_param("force_eval/dft/mgrid/cutoff", 120);
@@ -52,9 +52,9 @@ Cp2kOpt::Cp2kOpt() {
     this->set_geo_opt();
 }
 
-void Cp2kOpt::set_geo_opt() {
+void Opt::set_geo_opt() {
     this->set_param("global/run_type", "GEO_OPT");
     this->sections["motion"]->set_status("geo_opt", true);
 }
 
-} // namespace atomsciflow
+} // namespace atomsciflow::cp2k

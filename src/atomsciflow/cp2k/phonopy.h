@@ -1,7 +1,7 @@
 /************************************************************************
 MIT License
 
-Copyright (c) 2021 Deqi Tang
+Copyright (c) 2022 Deqi Tang
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,25 +22,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ************************************************************************/
 
-/// @file src/atomsciflow/cp2k/opt.h
-/// @author DeqiTang
-/// Mail: deqitang@gmail.com
-/// Created Time: Sun 23 Jan 2022 03:12:04 PM CST
-
-#ifndef ATOMSCIFLOW_CP2K_OPT_H_
-#define ATOMSCIFLOW_CP2K_OPT_H_
+#ifndef ATOMSCIFLOW_CP2K_PHONOPY_H_
+#define ATOMSCIFLOW_CP2K_PHONOPY_H_
 
 #include "atomsciflow/cp2k/cp2k.h"
 
 namespace atomsciflow::cp2k {
 
-class Opt : public Cp2k {
+class Phonopy : public Cp2k {
 public:
-    
-    Opt();
 
-    void set_geo_opt();
+    Phonopy();
+
+    virtual void set_job_steps_default();
+    virtual void run(const std::string& directory);
 };
 
 } // namespace atomsciflow::cp2k
-#endif // ATOMSCIFLOW_CP2K_OPT_H_
+
+#endif // ATOMSCIFLOW_CP2K_PHONOPY_H_

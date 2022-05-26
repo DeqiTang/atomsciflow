@@ -40,7 +40,7 @@ SOFTWARE.
 #include "atomsciflow/server/submit_script.h"
 #include "atomsciflow/remote/server.h"
 
-namespace atomsciflow {
+namespace atomsciflow::cp2k {
 
 namespace fs = boost::filesystem;
 namespace ba = boost::algorithm;
@@ -260,7 +260,6 @@ void Cp2k::get_xyz(const std::string &xyzfile) {
     this->xyz.read_xyz_file(xyzfile);
     this->set_subsys();
     job.set_run("xyz_file", fs::absolute(xyzfile).string());
-    this->set_job_steps_default();
 }
 
 std::shared_ptr<Cp2kSection>& Cp2k::set_subsys(Xyz& xyz) {
@@ -302,7 +301,7 @@ std::shared_ptr<Cp2kSection>& Cp2k::set_subsys() {
 }
 
 void Cp2k::set_job_steps_default() {
-    job.steps.clear();
+    //job.steps.clear();
     std::ostringstream step;
     step << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
     step << boost::format("cat >%1%<<EOF\n") % job.run_params["input"];
@@ -310,7 +309,7 @@ void Cp2k::set_job_steps_default() {
     step << "EOF\n";
     step << boost::format("$CMD_HEAD %1% -in %2% | tee %3%  \n") % job.run_params["cmd"] % job.run_params["input"] % job.run_params["output"];
     job.steps.push_back(step.str());
-    step.clear();
+    //step.clear();
 }
 
 /**
@@ -321,6 +320,7 @@ void Cp2k::set_job_steps_default() {
  * by the JobScheduler.
  */
 void Cp2k::run(const std::string& directory) {
+    this->set_job_steps_default();
     job.run(directory);
 }
 
@@ -335,4 +335,4 @@ template void Cp2k::set_param<std::vector<std::vector<int>>>(const std::string&,
 template void Cp2k::set_param<std::vector<std::vector<double>>>(const std::string&, std::vector<std::vector<double>>);
 template void Cp2k::set_param<std::vector<std::vector<std::string>>>(const std::string&, std::vector<std::vector<std::string>>);
 
-} // namespace atomsciflow
+} // namespace atomsciflow::cp2k

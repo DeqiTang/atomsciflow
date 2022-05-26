@@ -35,7 +35,7 @@ SOFTWARE.
 
 #include "atomsciflow/variable/variable.h"
 
-namespace atomsciflow {
+namespace atomsciflow::cp2k {
 
 class Cp2kSection {
 public:
@@ -97,6 +97,6 @@ public:
     std::map<std::string, Variable> params;
 };
 
-} // namespace atomsciflow
+} // namespace atomsciflow::cp2k
 
 #endif // ATOMSCIFLOW_CP2K_SECTION_H_

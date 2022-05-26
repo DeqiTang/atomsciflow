@@ -33,7 +33,7 @@ SOFTWARE.
 
 #include "atomsciflow/cp2k/utils.h"
 
-namespace atomsciflow {
+namespace atomsciflow::cp2k {
 
 namespace ba = boost::algorithm;
 
@@ -198,4 +198,4 @@ template std::vector<std::vector<int>> Cp2kSection::get<std::vector<std::vector<
 template std::vector<std::vector<double>> Cp2kSection::get<std::vector<std::vector<double>>>(std::string);
 template std::vector<std::vector<std::string>> Cp2kSection::get<std::vector<std::vector<std::string>>>(std::string);
 
-} //namespace atomsciflow
+} //namespace atomsciflow::cp2k

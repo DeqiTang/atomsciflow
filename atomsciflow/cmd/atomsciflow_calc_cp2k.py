@@ -34,7 +34,7 @@ def add_cp2k_subparser(subparsers):
     add_calc_parser_common(subparser)
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "band", "opt", "vcopt", "vib", "md", "metamd"],
+        choices=["static", "band", "opt", "vcopt", "vib", "md", "metamd", "phonopy"],
         help="The calculation to do. The specified value is case insensitive")
 
     ag = subparser.add_argument_group(title="global")
@@ -101,6 +101,9 @@ def cp2k_processor(args):
     elif args.calc.lower() == "metamdplumed":
         from atomsciflow.cp2k import MetaMDPlumed
         job = MetaMDPlumed()
+    elif args.calc.lower() == "phonopy":
+        from atomsciflow.cp2k import Phonopy
+        job = Phonopy()
     else:
         print("The specified calculation type is unfound!")
         sys.exit(1)
@@ -111,5 +114,5 @@ def cp2k_processor(args):
         if params[item] == None:
             continue
         job.set_param(item, params[item])
-    job.set_job_steps_default()
+    #job.set_job_steps_default()
     job.run(args.directory)
