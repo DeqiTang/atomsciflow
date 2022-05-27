@@ -28,6 +28,7 @@ from atomsciflow.cpp.plumed import (
     Plumed,
     Action
 )
+from atomsciflow.cpp.base import Kpath
 
 class Cp2k(cp2k.Cp2k):
     def __init__(self):
@@ -42,15 +43,6 @@ class Band(cp2k.Cp2k):
     def __init__(self):
         super().__init__()
         self.set_param("global/run_type", "ENERGY_FORCE")
-        self.new_section("force_eval/dft/print/band_structure")
-        self.set_param("force_eval/dft/print/band_structure/kpoint_set[0]/special_point[0]", ["GAMMA", "0", "0", "0"])
-        self.set_param("force_eval/dft/print/band_structure/kpoint_set[0]/special_point[1]", ["X", "0.5", "0", "0"])
-        self.set_param("force_eval/dft/print/band_structure/kpoint_set[0]/npoints", 10)
-        self.set_param("force_eval/dft/print/band_structure/kpoint_set[0]/units", "B_VECTOR")
-        self.set_param("force_eval/dft/print/band_structure/kpoint_set[1]/special_point[0]", ["x", "0.5", "0", "0"])
-        self.set_param("force_eval/dft/print/band_structure/kpoint_set[1]/special_point[1]", ["Y", "0", "0.5", "0"])
-        self.set_param("force_eval/dft/print/band_structure/kpoint_set[1]/npoints", 10)
-        self.set_param("force_eval/dft/print/band_structure/kpoint_set[1]/units", "B_VECTOR")
 
 class Opt(cp2k.Cp2k):
     def __init__(self):

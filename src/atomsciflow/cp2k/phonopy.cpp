@@ -44,8 +44,8 @@ void Phonopy::run(const std::string& directory) {
     step << boost::format("cat >%1%<<EOF\n") % job.run_params["input"];
     step << this->to_string();
     step << "EOF\n";
-    //step << boost::format("$CMD_HEAD %1% -in %2% | tee %3%  \n") % job.run_params["cmd"] % job.run_params["input"] % job.run_params["output"];
     job.steps.push_back(step.str());
+    step.str("");
     step.clear();
 
     step << boost::format("phonopy --cp2k -c %1% -d --dim=\'%2% %3% %4%\'\n")
@@ -55,10 +55,11 @@ void Phonopy::run(const std::string& directory) {
         % job.run_params["phonopy_dim_z"]
         ;
     job.steps.push_back(step.str());
+    step.str("");
     step.clear();
 
     std::vector<std::string> vec_str;
-    boost::split(vec_str, job.run_params["input"], boost::is_any_of(".inp"));
+    boost::split(vec_str, job.run_params["input"], boost::is_any_of("."));
     step << boost::format("for inp in %1%-supercell-*.inp\n") % vec_str[0];
     step << "do\n";
     step << boost::format("$CMD_HEAD %1% -in %2% | tee %3% \n")
@@ -68,6 +69,17 @@ void Phonopy::run(const std::string& directory) {
         ;
     step << "done\n";
     job.steps.push_back(step.str());
+    step.str("");
+    step.clear();
+
+    // step << "cat >phonopy-run.txt<<EOF\n"
+    //     << job.run_params["xyz_file"]
+    //     << "\n"
+    //     << "EOF\n"
+    //     ;
+    // job.steps.push_back(step.str());
+    // step.str("");
+    // step.clear();
 
     job.run(directory);
 }

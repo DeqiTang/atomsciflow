@@ -26,6 +26,7 @@ SOFTWARE.
 #define ATOMSCIFLOW_CP2K_POST_PHONOPY_H_
 
 #include "atomsciflow/cp2k/post/post.h"
+#include "atomsciflow/base/xyz.h"
 
 namespace atomsciflow::cp2k::post {
 
@@ -35,6 +36,9 @@ public:
     Phonopy();
     ~Phonopy();
 
+    virtual void run(const std::string& directory);
+
+    // Xyz xyz;
 };
 
 } // namespace atomsciflow::cp2k::post

@@ -32,3 +32,7 @@ class Opt(cp2k.PostOpt):
 class MD(cp2k.PostMD):
     def __init__(self) -> None:
         super().__init__()
+
+class Phonopy(cp2k.PostPhonopy):
+    def __init__(self):
+        super().__init__()

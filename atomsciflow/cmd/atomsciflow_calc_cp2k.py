@@ -83,6 +83,11 @@ def cp2k_processor(args):
     elif args.calc.lower() == "band":
         from atomsciflow.cp2k import Band
         job = Band()
+        from atomsciflow.cpp.base import Kpath
+        kpath = Kpath()
+        #kpath.read("0 0 0 GAMMA 10;0.5 0 0 X 10;0 0.5 0 Y 10;0 0 0 GAMMA |;")
+        kpath.read("0 0 0 GAMMA 10;0.5 0 0 X 10;0 0.5 0 Y 10;0 0 0 GAMMA |")
+        job.set_kpoint_set(kpath)
     elif args.calc.lower() == "opt":
         from atomsciflow.cp2k import Opt
         job = Opt()

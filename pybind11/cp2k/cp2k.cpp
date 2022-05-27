@@ -11,6 +11,7 @@
 #include "atomsciflow/cp2k/phonopy.h"
 #include "atomsciflow/cp2k/post/opt.h"
 #include "atomsciflow/cp2k/post/md.h"
+#include "atomsciflow/cp2k/post/phonopy.h"
 
 
 namespace py = pybind11;
@@ -62,6 +63,7 @@ void add_class_cp2k(py::module& m) {
         // we don't expose it to python. so only provide the following
         //.def("set_subsys", py::overload_cast<atomsciflow::Xyz&>(&atomsciflow::cp2k::Cp2k::set_subsys), py::return_value_policy::reference)
         .def("set_subsys", py::overload_cast<atomsciflow::Xyz&>(&atomsciflow::cp2k::Cp2k::set_subsys))
+        .def("set_kpoint_set", &atomsciflow::cp2k::Cp2k::set_kpoint_set)
         .def("get_xyz", &atomsciflow::cp2k::Cp2k::get_xyz)
         .def("run", &atomsciflow::cp2k::Cp2k::run)
         .def_readwrite("sections", &atomsciflow::cp2k::Cp2k::sections)
@@ -126,22 +128,6 @@ void add_class_cp2k_opt(py::module& m) {
         ;
 }
 
-void add_class_post_opt(py::module& m) {
-    py::class_<atomsciflow::cp2k::post::Opt>(m, "PostOpt")
-        .def(py::init<>())
-        .def("read", &atomsciflow::cp2k::post::Opt::read)
-        .def("run", &atomsciflow::cp2k::post::Opt::run)
-        ;
-}
-
-void add_class_post_md(py::module& m) {
-    py::class_<atomsciflow::cp2k::post::MD>(m, "PostMD")
-        .def(py::init<>())
-        .def("read", &atomsciflow::cp2k::post::MD::read)
-        .def("run", &atomsciflow::cp2k::post::MD::run)
-        ;
-}
-
 void add_class_cp2k_phonopy(py::module& m) {
     py::class_<atomsciflow::cp2k::Phonopy>(m, "Phonopy")
         .def(py::init<>())
@@ -169,6 +155,29 @@ void add_class_cp2k_phonopy(py::module& m) {
         ;
 }
 
+void add_class_post_opt(py::module& m) {
+    py::class_<atomsciflow::cp2k::post::Opt>(m, "PostOpt")
+        .def(py::init<>())
+        .def("read", &atomsciflow::cp2k::post::Opt::read)
+        .def("run", &atomsciflow::cp2k::post::Opt::run)
+        ;
+}
+
+void add_class_post_md(py::module& m) {
+    py::class_<atomsciflow::cp2k::post::MD>(m, "PostMD")
+        .def(py::init<>())
+        .def("read", &atomsciflow::cp2k::post::MD::read)
+        .def("run", &atomsciflow::cp2k::post::MD::run)
+        ;
+}
+
+void add_class_post_phonopy(py::module& m) {
+    py::class_<atomsciflow::cp2k::post::Phonopy>(m, "PostPhonopy")
+        .def(py::init<>())
+        .def("run", &atomsciflow::cp2k::post::Phonopy::run)
+        ;
+}
+
 PYBIND11_MODULE(cp2k, m) {
     m.doc() = "cp2k module";
     m.attr("__version__") = "0.0.0";
@@ -182,4 +191,5 @@ PYBIND11_MODULE(cp2k, m) {
 
     add_class_post_opt(m);
     add_class_post_md(m);
+    add_class_post_phonopy(m);
 }

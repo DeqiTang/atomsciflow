@@ -300,6 +300,57 @@ std::shared_ptr<Cp2kSection>& Cp2k::set_subsys() {
     return subsys;
 }
 
+void Cp2k::set_kpoint_set(const Kpath& kpath) {
+    this->new_section("force_eval/dft/print/band_structure");
+
+    int kpoint_set_i = 0;
+    for (int i = 0; i < kpath.labels.size() - 1; i++) {
+        if (kpath.links[i] != 0) {
+            this->set_param(
+                (
+                    boost::format(
+                        "force_eval/dft/print/band_structure/kpoint_set[%1%]/special_point[%2%]"
+                    ) % kpoint_set_i % 0
+                ).str(), 
+                std::vector<std::string>{
+                boost::lexical_cast<std::string>(kpath.labels[i]),
+                boost::lexical_cast<std::string>(kpath.coords[i][0]),
+                boost::lexical_cast<std::string>(kpath.coords[i][1]),
+                boost::lexical_cast<std::string>(kpath.coords[i][2]),
+            });     
+            this->set_param(
+                (
+                    boost::format(
+                        "force_eval/dft/print/band_structure/kpoint_set[%1%]/special_point[%2%]"
+                    ) % kpoint_set_i % 1
+                ).str(), 
+                std::vector<std::string>{
+                boost::lexical_cast<std::string>(kpath.labels[i+1]),
+                boost::lexical_cast<std::string>(kpath.coords[i+1][0]),
+                boost::lexical_cast<std::string>(kpath.coords[i+1][1]),
+                boost::lexical_cast<std::string>(kpath.coords[i+1][2]),
+            });
+            this->set_param(
+                (
+                    boost::format(
+                        "force_eval/dft/print/band_structure/kpoint_set[%1%]/npoints"
+                    ) % kpoint_set_i
+                ).str(),
+                kpath.links[i] - 1
+            );        
+            this->set_param(
+                (
+                    boost::format(
+                        "force_eval/dft/print/band_structure/kpoint_set[%1%]/units"
+                    ) % kpoint_set_i
+                ).str(),
+                "B_VECTOR"
+            );
+            kpoint_set_i += 1;                            
+        }
+    } 
+}
+
 /**
  * @brief Cp2k::run The running entry for the calculation
  * @param directory The path to the directory where the calculation

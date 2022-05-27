@@ -99,6 +99,10 @@ void add_class_kpath(py::module& m) {
 
     py::class_<atomsciflow::Kpath>(m, "Kpath")
         .def(py::init<>())
+        .def("add_point", &atomsciflow::Kpath::add_point)
+        .def("read", py::overload_cast<const std::vector<std::string>&>(&atomsciflow::Kpath::read))
+        .def("read", py::overload_cast<const std::string&>(&atomsciflow::Kpath::read))
+        .def("read_file", &atomsciflow::Kpath::read_file)
         .def_readwrite("coords", &atomsciflow::Kpath::coords)
         .def_readwrite("labels", &atomsciflow::Kpath::labels)
         .def_readwrite("links", &atomsciflow::Kpath::links)
@@ -106,7 +110,10 @@ void add_class_kpath(py::module& m) {
 }
 
 void add_func_get_kpath(py::module& m) {
-    m.def("get_kpath", &atomsciflow::get_kpath);
+    m.def("get_kpath", py::overload_cast<const std::vector<std::string>&>(&atomsciflow::get_kpath))
+        .def("get_kpath", py::overload_cast<const std::string&>(&atomsciflow::get_kpath))
+        .def("get_kpath", py::overload_cast<const std::vector<std::string>&,const std::string&>(&atomsciflow::get_kpath))
+        ;
 }
 
 PYBIND11_MODULE(base, m) {

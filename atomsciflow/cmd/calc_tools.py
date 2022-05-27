@@ -37,8 +37,14 @@ def add_calc_parser_common_phonopy(subparser):
     ag = subparser.add_argument_group(title="phonopy")
 
     ag.add_argument("--phonopy-dim", type=int, nargs="+", default=[1, 1, 1],
-        help="specify supercell dimension for phonopy")
+        help="Specify supercell dimension for phonopy")
 
+def add_calc_parser_common_kpoints(subparser):
+
+    ag = subparser.add_argument_group(title="kpoints")
+
+    ag.add_argument("--kpath", type=str, default=None,
+        help="Specify the kpath, either from a file or command line string, e.g. --kpath kpath.txt or --kpath \"0 0 0 GAMMA 5;0.5 0 0 x |\"")
 
 def add_calc_parser_common(subparser):
     
@@ -55,12 +61,12 @@ def add_calc_parser_common(subparser):
         choices=["pbs", "llhpc", "yhbatch", "lsf_sz", "lsf_sustc", "cdcloud"])
 
     add_calc_parser_common_phonopy(subparser)
+    add_calc_parser_common_kpoints(subparser)
 
 def set_calc_processor_common_phonopy(calc, args):
     calc.job.set_run("phonopy_dim_x", args.phonopy_dim[0])
     calc.job.set_run("phonopy_dim_y", args.phonopy_dim[1])
     calc.job.set_run("phonopy_dim_z", args.phonopy_dim[2])
-    
 
 def set_calc_processor_common(calc, args):
     calc.job.set_run("auto_level", args.auto_level)

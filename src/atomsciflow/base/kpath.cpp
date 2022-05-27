@@ -38,15 +38,52 @@ namespace atomsciflow {
 namespace ba = boost::algorithm;
 
 /**
- * @param kpath_manual a vector of string
- *  manual input of kpath in format like
+ * @param kpath a vector of string
+ * input of kpath in format like
  *  {
  *      "0.000000 0.000000 0.000000 GAMMA 5",
  *      "0.500000 0.000000 0.000000 X 5",
- *      "0.000000 0.000000 0.500000 A |",
- *      "0.500000 0.500000 0.500000 R "
+ *      "0.000000 0.000000 0.500000 A 10",
+ *      "0.500000 0.500000 0.500000 R |"
  *  }
- *
+ */
+void Kpath::read(const std::vector<std::string>& kpath) {
+    std::vector<std::string> vec_str;
+
+    for (const auto& kpoint : kpath) {
+        boost::split(vec_str, kpoint, boost::is_space());
+        if (vec_str[4] != "|") {
+            this->add_point(
+                std::atof(vec_str[0].c_str()),
+                std::atof(vec_str[1].c_str()),
+                std::atof(vec_str[2].c_str()),
+                ba::to_upper_copy(vec_str[3]),
+                int(std::atof(vec_str[4].c_str())) 
+            );
+        } else {
+            this->add_point(
+                std::atof(vec_str[0].c_str()),
+                std::atof(vec_str[1].c_str()),
+                std::atof(vec_str[2].c_str()),
+                ba::to_upper_copy(vec_str[3]),
+                0
+            );
+        }
+    }
+}
+
+/**
+ * @param kpath a string containging the kpath information
+ * in format like
+ *  "0.000000 0.000000 0.000000 GAMMA 5;0.500000 0.000000 0.000000 X 5;0.000000 0.000000 0.500000 A |;0.500000 0.500000 0.500000 R |"
+ */
+void Kpath::read(const std::string& kpath) {
+    std::vector<std::string> vec_str;
+    boost::split(vec_str, kpath, boost::is_any_of(";"));
+    this->read(vec_str);
+}
+
+/**
  * @param kpath_file the kpath file path
  *  input kpath by reading from the file
  *  which is in format like this
@@ -55,77 +92,74 @@ namespace ba = boost::algorithm;
  *  x.x x.x x.x #XXX |
  *  x.x x.x x.x #XXX 10
  *  x.x x.x x.x #XXX 15
- *  x.x x.x x.x #XXX 20                                                           // if there is a '|' behind the label it means the path is
- * @return kpath
+ *  x.x x.x x.x #XXX |
  */
-Kpath get_kpath(const std::vector<std::string>& kpath_manual, const std::string& kpath_file) {
-    atomsciflow::Kpath kpath{};
+void Kpath::read_file(const std::string& kpath_file) {
     std::vector<std::string> vec_str;
     std::vector<std::string> vec_str_1;
     std::vector<std::string> vec_str_2;
     std::vector<std::string> vec_str_3;
-    if (kpath_manual.size() != 0 ) {
-        for (const auto& kpoint : kpath_manual) {
-            boost::split(vec_str, kpoint, boost::is_space());
-            if (vec_str[4] != "|") {
-                kpath.add_point(
-                    std::atof(vec_str[0].c_str()),
-                    std::atof(vec_str[1].c_str()),
-                    std::atof(vec_str[2].c_str()),
-                    ba::to_upper_copy(vec_str[3]),
-                    int(std::atof(vec_str[4].c_str())) 
-                );
-            } else {
-                kpath.add_point(
-                    std::atof(vec_str[0].c_str()),
-                    std::atof(vec_str[1].c_str()),
-                    std::atof(vec_str[2].c_str()),
-                    ba::to_upper_copy(vec_str[3]),
-                    0
-                );
-            }
-        }
-        return kpath;
-    } else if (kpath_file != "") {
-        std::ifstream kpath_file_stream;
-        std::string line;
-        std::vector<std::string> lines;
-        kpath_file_stream.open(kpath_file);
-        while (std::getline(kpath_file_stream, line)) {
-            lines.emplace_back(line);
-        }
-        kpath_file_stream.close();
-        boost::split(vec_str, lines[0], boost::is_any_of("\n"));
-        int nk = int(std::atof(vec_str[0].c_str()));
-        for (int i = 0; i < nk; i++) {
-            boost::split(vec_str_1, lines[i+1], boost::is_any_of("\n"));
-            boost::split(vec_str_2, vec_str_1[0], boost::is_any_of("!"));
-            if (vec_str_2[4] != "|") {
-                boost::split(vec_str, lines[i+1], boost::is_space());
-                boost::split(vec_str_3, vec_str[3], boost::is_any_of("#"));
-                kpath.add_point(
-                    std::atof(vec_str[0].c_str()),
-                    std::atof(vec_str[1].c_str()),
-                    std::atof(vec_str[2].c_str()),
-                    ba::to_upper_copy(vec_str_3[1]),
-                    int(std::atof(vec_str[4].c_str()))
-                );
-            } else if (vec_str_2[4] == "|") {
-                boost::split(vec_str, lines[i+1], boost::is_space());
-                boost::split(vec_str_3, vec_str[3], boost::is_any_of("#"));
-                kpath.add_point(
-                    std::atof(vec_str[0].c_str()),
-                    std::atof(vec_str[1].c_str()),
-                    std::atof(vec_str[2].c_str()),
-                    ba::to_upper_copy(vec_str_3[1]),
-                    0
-                );
-            }
-        }
-        return kpath;
-    } else {
-        return kpath;
+
+    std::ifstream kpath_file_stream;
+    std::string line;
+    std::vector<std::string> lines;
+    kpath_file_stream.open(kpath_file);
+    while (std::getline(kpath_file_stream, line)) {
+        lines.emplace_back(line);
     }
+    kpath_file_stream.close();
+    boost::split(vec_str, lines[0], boost::is_any_of("\n"));
+    int nk = int(std::atof(vec_str[0].c_str()));
+    for (int i = 0; i < nk; i++) {
+        boost::split(vec_str_1, lines[i+1], boost::is_any_of("\n"));
+        boost::split(vec_str_2, vec_str_1[0], boost::is_any_of("!"));
+        if (vec_str_2[4] != "|") {
+            boost::split(vec_str, lines[i+1], boost::is_space());
+            boost::split(vec_str_3, vec_str[3], boost::is_any_of("#"));
+            this->add_point(
+                std::atof(vec_str[0].c_str()),
+                std::atof(vec_str[1].c_str()),
+                std::atof(vec_str[2].c_str()),
+                ba::to_upper_copy(vec_str_3[1]),
+                int(std::atof(vec_str[4].c_str()))
+            );
+        } else if (vec_str_2[4] == "|") {
+            boost::split(vec_str, lines[i+1], boost::is_space());
+            boost::split(vec_str_3, vec_str[3], boost::is_any_of("#"));
+            this->add_point(
+                std::atof(vec_str[0].c_str()),
+                std::atof(vec_str[1].c_str()),
+                std::atof(vec_str[2].c_str()),
+                ba::to_upper_copy(vec_str_3[1]),
+                0
+            );
+        }
+    }
+}
+
+Kpath get_kpath(const std::vector<std::string>& kpath) {
+    atomsciflow::Kpath out{};
+    out.read(kpath);
+    return out;
+}
+
+Kpath get_kpath(const std::string& kpath) {
+    atomsciflow::Kpath out{};
+    out.read(kpath);
+    return out;
+}
+
+Kpath get_kpath(const std::vector<std::string>& kpath_manual, const std::string& kpath_file) {
+
+    atomsciflow::Kpath kpath{};
+
+    if (kpath_manual.size() != 0 ) {
+        kpath =get_kpath(kpath_manual);
+    } else if (kpath_file != "") {
+        kpath = get_kpath(kpath_file);
+    }
+
+    return kpath;
 }
 
 } // namespace atomsciflow

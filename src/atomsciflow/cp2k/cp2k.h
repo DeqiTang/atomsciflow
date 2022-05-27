@@ -36,6 +36,7 @@ SOFTWARE.
 
 #include "atomsciflow/cp2k/section.h"
 #include "atomsciflow/base/xyz.h"
+#include "atomsciflow/base/kpath.h"
 #include "atomsciflow/server/job_scheduler.h"
 #include "atomsciflow/plumed/plumed.h"
 
@@ -66,6 +67,8 @@ public:
     std::string to_string();
     void get_xyz(const std::string& xyzfile);
     std::shared_ptr<Cp2kSection>& set_subsys(Xyz& xyz);
+
+    void set_kpoint_set(const Kpath& kpath);
 
     virtual void run(const std::string& directory);
 

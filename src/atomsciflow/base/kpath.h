@@ -53,17 +53,22 @@ public:
         this->coords.push_back(std::vector<double>{kx, ky, kz});
         this->labels.push_back(label);
         this->links.push_back(link);
-        return ;
+        return;
     }
 
+    void read(const std::vector<std::string>& kpath);
+    void read(const std::string& kpath);
+    void read_file(const std::string& kpath_file);
+    
     std::vector<std::vector<double> > coords;
     std::vector<std::string> labels;
     std::vector<int> links;
     int nkpoint;
 };
 
-Kpath get_kpath(const std::vector<std::string>& kpath_manual, const std::string& kpath_file); 
-
+Kpath get_kpath(const std::vector<std::string>& kpath); 
+Kpath get_kpath(const std::string& kpath_file); 
+Kpath get_kpath(const std::vector<std::string>& kpath_manual, const std::string& kpath_file);
 } // namespace atomsciflow
 
 #endif // ATOMSCIFLOW_BASE_KPATH_H_

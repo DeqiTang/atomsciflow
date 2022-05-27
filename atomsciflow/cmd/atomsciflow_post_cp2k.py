@@ -30,7 +30,7 @@ def add_cp2k_post_subparser(subparsers):
         help="The working directory where calculation is happening")
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "vc-opt", "vib", "md", "metamd"],
+        choices=["static", "opt", "vc-opt", "vib", "md", "metamd", "phonopy"],
         help="The calculation to do. The specified value is case insensitive")
         
 def cp2k_post_processor(args):
@@ -51,6 +51,10 @@ def cp2k_post_processor(args):
         job.run(args.directory)
     elif args.calc.lower() == "metamd":
         pass
+    elif args.calc.lower() == "phonopy":
+        from atomsciflow.cp2k.post import Phonopy
+        job = Phonopy()
+        job.run(args.directory)
     else:
         print("The specified post-processing type is unfound!")
         sys.exit(1)
