@@ -80,7 +80,10 @@ void Phonopy::run(const std::string& directory) {
 
     stream.open((fs::path(directory) / run_params["post-dir"] / "analysis.sh").string());
     stream << "#!/bin/bash\n\n"
-        << "cp ../phonopy_disp.yml ./\n"
+        << "#\n"
+        << boost::format("cd %1%\n") % (fs::absolute(fs::path(directory)) / run_params["post-dir"]).string()
+        << "\n"
+        << "cp ../phonopy_disp.yaml ./\n"
         << "# generate the FORCE_SETS\n"
         << "phonopy --cp2k -f ../cp2k-supercell-{001..032}-forces-1_0.xyz\n"
         << "# plot the phonon dos\n"

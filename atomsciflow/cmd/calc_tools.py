@@ -60,6 +60,18 @@ def add_calc_parser_common(subparser):
     subparser.add_argument("--server", type=str, default="pbs",
         choices=["pbs", "llhpc", "yhbatch", "lsf_sz", "lsf_sustc", "cdcloud"])
 
+    subparser.add_argument("--partition", type=str, default="free",
+        help="Specify the partition to submit the job")
+
+    subparser.add_argument("--nodes", type=int, default=1,
+        help="Specify the number of nodes to submit the job")
+
+    subparser.add_argument("--ntask", type=int, default=24,
+        help="Specify the ntask parameter")
+
+    subparser.add_argument("--ppn", type=int, default=32,
+        help="Specify the ppn parameter")
+
     add_calc_parser_common_phonopy(subparser)
     add_calc_parser_common_kpoints(subparser)
 
@@ -71,4 +83,8 @@ def set_calc_processor_common_phonopy(calc, args):
 def set_calc_processor_common(calc, args):
     calc.job.set_run("auto_level", args.auto_level)
     calc.job.set_run("server", args.server)
+    calc.job.set_run("partition", args.partition)
+    calc.job.set_run("nodes", args.nodes)
+    calc.job.set_run("ntask", args.ntask)
+    calc.job.set_run("ppn", args.ppn)
     set_calc_processor_common_phonopy(calc, args)
