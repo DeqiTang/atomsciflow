@@ -35,7 +35,7 @@ SOFTWARE.
 
 TEST(cp2k, section) {
     //EXPECT_EQ(atomsciflow::version(), "0.0.0");
-    auto cp2k = new atomsciflow::Cp2k;
+    auto cp2k = new atomsciflow::cp2k::Cp2k;
     
     //std::cout << cp2k->to_string() << std::endl;
 
