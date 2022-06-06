@@ -5,4 +5,5 @@ include(${SELF_DIR}/atomsciflow.cmake)
 #set(ATOMSCIFLOW_INCLUDE_DIR @CMAKE_INSTALL_FULL_INCLUDEDIR@)
 set(ATOMSCIFLOW_INCLUDE_DIR ${SELF_DIR}/../../../include)
 
-set(ATOMSCIFLOW_LIBRARIES ${SELF_DIR}/../../../lib/libatomsciflow.a)
+#set(ATOMSCIFLOW_LIBRARIES ${SELF_DIR}/../../../lib/libatomsciflow.a)
+set(ATOMSCIFLOW_LIBRARIES atomsciflow)

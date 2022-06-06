@@ -21,8 +21,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC ")
 set(CMAKE_POSITION_INDEPENDENT_CODE ON) # -fPIC needed for build in linux
 
-find_package(GTest REQUIRED)
-
 find_package(Boost COMPONENTS program_options filesystem system  REQUIRED)
 include_directories( 
     ${Boost_INCLUDE_DIR}  
@@ -98,7 +96,6 @@ link_libraries(${ARMADILLO_LIBRARIES})
 
 #find_package(LAPACK REQUIRED)
 #find_package(BLAS REQUIRED)
-
 
 #AUX_SOURCE_DIRECTORY(./src PROJECT_LIB_SOURCES)
 #file(GLOB_RECURSE PROJECT_LIB_SOURCES 
