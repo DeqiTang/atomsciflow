@@ -58,11 +58,15 @@ def add_cp2k_subparser(subparsers):
     # force_eval/dft/scf
     ag = subparser.add_argument_group(title="force_eval/dft/scf")
 
-    # custom
+    # custom specification of cp2k params
     ag = subparser.add_argument_group(title="custom")
     
     ag.add_argument("--custom", type=str, default=None,
         help="Specify parameters that are not provided directly in the command line argument, e.g. --custom \"force_eval/dft/scf/max_diis=4;force_eval/dft/scf/eps_scf=1.0e-5\""
+    )
+
+    ag.add_argument("--custom-file", type=str, default=None,
+        help="Specify the file containing the custom style cp2k params"
     )
 
 def cp2k_processor(args):
@@ -115,6 +119,9 @@ def cp2k_processor(args):
             
     job.get_xyz(args.xyz)
     set_calc_processor_common(job, args)
+    if args.custom_file != None:
+        from atomsciflow.cp2k.io import read_params
+        read_params(job, args.custom_file)
     for item in params:
         if params[item] == None:
             continue

@@ -12,6 +12,7 @@
 #include "atomsciflow/cp2k/post/opt.h"
 #include "atomsciflow/cp2k/post/md.h"
 #include "atomsciflow/cp2k/post/phonopy.h"
+#include "atomsciflow/cp2k/io/params.h"
 
 
 namespace py = pybind11;
@@ -74,7 +75,7 @@ void add_class_cp2k(py::module& m) {
 
 void add_class_cp2k_static(py::module& m) {
 
-    py::class_<atomsciflow::cp2k::Static>(m, "Static")
+    py::class_<atomsciflow::cp2k::Static, atomsciflow::cp2k::Cp2k>(m, "Static")
         .def(py::init<>())
         .def("new_section", &atomsciflow::cp2k::Static::new_section)  
         .def("exists_section", &atomsciflow::cp2k::Static::exists_section)       
@@ -102,7 +103,7 @@ void add_class_cp2k_static(py::module& m) {
 
 void add_class_cp2k_opt(py::module& m) {
 
-    py::class_<atomsciflow::cp2k::Opt>(m, "Opt")
+    py::class_<atomsciflow::cp2k::Opt, atomsciflow::cp2k::Cp2k>(m, "Opt")
         .def(py::init<>())
         .def("new_section", &atomsciflow::cp2k::Opt::new_section)
         .def("exists_section", &atomsciflow::cp2k::Opt::exists_section)
@@ -129,7 +130,7 @@ void add_class_cp2k_opt(py::module& m) {
 }
 
 void add_class_cp2k_phonopy(py::module& m) {
-    py::class_<atomsciflow::cp2k::Phonopy>(m, "Phonopy")
+    py::class_<atomsciflow::cp2k::Phonopy, atomsciflow::cp2k::Cp2k>(m, "Phonopy")
         .def(py::init<>())
         .def("new_section", &atomsciflow::cp2k::Phonopy::new_section)
         .def("exists_section", &atomsciflow::cp2k::Phonopy::exists_section)
@@ -178,6 +179,10 @@ void add_class_post_phonopy(py::module& m) {
         ;
 }
 
+void add_func_read_params(py::module& m) {
+    m.def("read_params", atomsciflow::cp2k::io::read_params);
+}
+
 PYBIND11_MODULE(cp2k, m) {
     m.doc() = "cp2k module";
     m.attr("__version__") = "0.0.0";
@@ -192,4 +197,6 @@ PYBIND11_MODULE(cp2k, m) {
     add_class_post_opt(m);
     add_class_post_md(m);
     add_class_post_phonopy(m);
+
+    add_func_read_params(m);
 }
