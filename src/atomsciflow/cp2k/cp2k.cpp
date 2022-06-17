@@ -285,9 +285,8 @@ std::shared_ptr<Cp2kSection>& Cp2k::set_subsys() {
         });
     }
     coord->section_var.set("", matrix_str);
-    int i = 0;
     for (const auto& element : this->xyz.elements_set) {
-        auto kind_name = (boost::format("kind[%1%]") % i).str();
+        auto kind_name = (boost::format("kind[%1%]") % element).str();
         this->sections["force_eval"]->sections["subsys"]->add_section(
         kind_name);
         //this->sections["force_eval"].sections["subsys"].sections[kind_name].set_param("basis_set", "DZVP-MOLOPT-SR-GTH");
@@ -295,7 +294,6 @@ std::shared_ptr<Cp2kSection>& Cp2k::set_subsys() {
         this->set_param((boost::format("force_eval/subsys/%1%/basis_set") % kind_name).str(), "DZVP-MOLOPT-SR-GTH");
         this->set_param((boost::format("force_eval/subsys/%1%/potential") % kind_name).str(), "GTH-PBE");
         this->sections["force_eval"]->sections["subsys"]->sections[kind_name]->section_parameter = element;
-        i++;
     }
     return subsys;
 }

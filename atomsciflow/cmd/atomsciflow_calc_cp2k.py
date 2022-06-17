@@ -62,11 +62,11 @@ def add_cp2k_subparser(subparsers):
     ag = subparser.add_argument_group(title="custom")
     
     ag.add_argument("--custom", type=str, default=None,
-        help="Specify parameters that are not provided directly in the command line argument, e.g. --custom \"force_eval/dft/scf/max_diis=4;force_eval/dft/scf/eps_scf=1.0e-5\""
+        help="Specify parameters that are not provided directly in the command line argument, e.g. --custom \"force_eval/dft/scf/max_diis=4;force_eval/dft/scf/eps_scf=1.0e-5\". The privilege of --custom is higher than --custom-file."
     )
 
     ag.add_argument("--custom-file", type=str, default=None,
-        help="Specify the file containing the custom style cp2k params"
+        help="Specify the file containing the custom style cp2k params. The privilege of --custom-file is lower than --custom."
     )
 
 def cp2k_processor(args):
@@ -76,9 +76,11 @@ def cp2k_processor(args):
     params["force_eval/dft/qs/eps_default"] = args.eps_default
 
     if args.custom != None:
-        custom_str = args.custom.replace(" ", "") # remove all space
+        custom_str = args.custom
         for item in custom_str.split(";"):
-            params[item.split("=")[0]] = item.split("=")[1]
+            if item.isspace() or item == "":
+                continue
+            params[item.split("=")[0].replace(" ", "")] = item.split("=")[1]
 
     print("working directory: %s" % args.directory)
     if args.calc.lower() == "static":

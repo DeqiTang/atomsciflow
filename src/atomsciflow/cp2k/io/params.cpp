@@ -44,11 +44,15 @@ void read_params(Cp2k& cp2k, const std::string& filepath) {
     std::string tmp_str;
 
     for (const auto& item : lines) {
-        tmp_str = item;
+        boost::split(str_vec, item, boost::is_any_of("="));
+        tmp_str = str_vec[0];
         boost::erase_all(tmp_str, " ");
-        boost::split(str_vec, tmp_str, boost::is_any_of("="));
-
-        cp2k.set_param(str_vec[0], str_vec[1]);
+        boost::erase_all(tmp_str, "\t");
+        
+        if (boost::starts_with(tmp_str, "#")) {
+            continue;
+        }
+        cp2k.set_param(tmp_str, str_vec[1]);
     }
 
     in_stream.close();
