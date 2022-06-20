@@ -37,27 +37,6 @@ def add_cp2k_subparser(subparsers):
         choices=["static", "band", "opt", "vcopt", "vib", "md", "metamd", "phonopy"],
         help="The calculation to do. The specified value is case insensitive")
 
-    ag = subparser.add_argument_group(title="global")
-
-    ag.add_argument("--print-level", type=str, default="LOW",
-        choices=["HIGH", "LOW", "MEDIUM", "high", "low", "medium"],
-        help="Decide how much output is written out"
-    )
-
-    # force_eval/dft
-    ag = subparser.add_argument_group(title="force_eval/dft")
-
-    ag.add_argument("--qs-method", type=str, default=None,
-        choices=["GAPW", "GPW", "GAPW_XC", "gapw", "gpw", "gapw_xc"],
-        help="Specify the electronic structure method"
-    )
-    
-    ag.add_argument("--eps-default", type=float, default=1.0e-14,
-        help="Specify the value of QS/EPS_DEFAULT")
-
-    # force_eval/dft/scf
-    ag = subparser.add_argument_group(title="force_eval/dft/scf")
-
     # custom specification of cp2k params
     ag = subparser.add_argument_group(title="custom")
     
@@ -71,9 +50,7 @@ def add_cp2k_subparser(subparsers):
 
 def cp2k_processor(args):
     params = {}
-    params["global/print_level"] = args.print_level
-    params["force_eval/dft/qs/method"] = args.qs_method
-    params["force_eval/dft/qs/eps_default"] = args.eps_default
+    params["global/print_level"] = "LOW"
 
     if args.custom != None:
         custom_str = args.custom
@@ -127,5 +104,5 @@ def cp2k_processor(args):
     for item in params:
         if params[item] == None:
             continue
-        job.set_param(item, params[item])        
+        job.set_param(item, params[item])
     job.run(args.directory)

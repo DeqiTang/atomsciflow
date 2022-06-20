@@ -6,7 +6,6 @@
 # cmake -DCMAKE_PREFIX_PATH=/PATH/TO/atomsciflow/CMAKE_INSTALL_PREFIX
 # or add it to the CMAKE_MODULE_PATH environment variable
 
-
 cmake_minimum_required(VERSION 3.20)
 
 project(atomsciflow LANGUAGES CXX VERSION 0.0.0)
@@ -98,10 +97,6 @@ link_libraries(${ARMADILLO_LIBRARIES})
 #find_package(BLAS REQUIRED)
 
 #AUX_SOURCE_DIRECTORY(./src PROJECT_LIB_SOURCES)
-#file(GLOB_RECURSE PROJECT_LIB_SOURCES 
-#    "./src/*" 
-#    "./include/*"
-#    )
 file(GLOB PROJECT_LIB_SOURCES
     "./src/atomsciflow/*.cpp"
     "./src/atomsciflow/base/*.cpp"
@@ -179,7 +174,6 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib) #
 set(LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib) # 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
-
 
 add_library(atomsciflow STATIC
     ${PROJECT_LIB_SOURCES}

@@ -116,29 +116,56 @@ void Cp2k::new_section(const std::string& path) {
     int length =vec_str.size();
 
     auto new_recursive = [&] (auto&& _new_recursive, std::map<std::string, std::shared_ptr<Cp2kSection>>& _sections, int i) {
-        if (_sections.find(vec_str[i]) == _sections.end()) {
-            _sections[vec_str[i]] = std::make_shared<Cp2kSection>(vec_str[i]);
+        std::string sec_name = "";
+        std::vector<std::string> vec_str_1;
+        std::vector<std::string> vec_str_2;
+        if (boost::contains(vec_str[i], "(")) {
+            boost::split(vec_str_1, vec_str[i], boost::is_any_of("("));
+            sec_name = vec_str_1[0];
+        } else {
+            sec_name = vec_str[i];
         }
+
+        if (_sections.find(sec_name) == _sections.end()) {
+            _sections[sec_name] = std::make_shared<Cp2kSection>(sec_name);
+            if (boost::contains(vec_str[i], "(")) {
+                boost::split(vec_str_1, vec_str[i], boost::is_any_of("("));
+                boost::split(vec_str_2, vec_str_1[1], boost::is_any_of(")"));
+                _sections[sec_name]->section_parameter = vec_str_2[0];
+            }
+        }
+
         if (i + 1 >= length) {
             return;
         }
-        _new_recursive(_new_recursive, _sections[vec_str[i]]->sections, i + 1);
+        _new_recursive(_new_recursive, _sections[sec_name]->sections, i + 1);
     };
     new_recursive(new_recursive, this->sections, 0);
 
     // auto& sec = this->sections;
     // int i = 0;
-    // std::string mid_name = "";
+    // std::string sec_name = "";
+    // std::vector<std::string> vec_str_1;
+    // std::vector<std::string> vec_str_2;
     // while (i < length) {
-    //     mid_name = vec_str[i];
-    //     if (sec.find(mid_name) == sec.end()) {
-    //         sec[mid_name] = std::make_shared<Cp2kSection>(mid_name);
-    //         std::cout << "Cp2k::new_section -> sec[?].name: " << sec[mid_name]->name << "\n";
+    //     if (boost::contains(vec_str[i], "(")) {
+    //         boost::split(vec_str_1, vec_str[i], boost::is_any_of("("));
+    //         sec_name = vec_str_1[0];
+    //     } else {
+    //         sec_name = vec_str[i];
     //     }
-    //     std::cout << "Cp2k::new_section -> sec.size(): " << sec.size() << "\n";
-    //     sec = sec[mid_name]->sections;
+    //     if (sec.find(sec_name) == sec.end()) {
+    //         sec[sec_name] = std::make_shared<Cp2kSection>(sec_name);
+    //         if (boost::contains(vec_str[i], "(")) {
+    //             boost::split(vec_str_1, vec_str[i], boost::is_any_of("("));
+    //             boost::split(vec_str_2, vec_str_1[1], boost::is_any_of(")"));
+    //             sec[sec_name]->section_parameter = vec_str_2[0];
+    //         }
+    //     }
+    //     sec = sec[sec_name]->sections;
     //     i++;
     // }
+
     return;
 }
 
@@ -153,11 +180,21 @@ bool Cp2k::exists_section(const std::string& path) {
     int i = 0;
     auto sec = this->sections;
     while (i < length) {
-        if (0 == sec.count(vec_str[i])) {
+        std::string section_name = "";
+
+        if (boost::contains(vec_str[i], "(")) {
+            std::vector<std::string> vec_str_1;
+            boost::split(vec_str_1, vec_str[i], boost::is_any_of("("));
+            section_name = vec_str_1[0];
+        } else {
+            section_name = vec_str[i];
+        }
+
+        if (0 == sec.count(section_name)) {
             exists = false;
             break;
         }
-        sec = sec[vec_str[i]]->sections;
+        sec = sec[section_name]->sections;
         i++;
     }
 
@@ -175,34 +212,45 @@ void Cp2k::set_param(const std::string& path, T value) {
         this->new_section(ba::join(vec_sections, "/"));
     }
 
-    switch (vec_str.size()) {
+    std::vector<std::string> vec_str_name;
+    std::vector<std::string> vec_str_1;
+    for (auto& item : vec_str) {
+        if (boost::contains(item, "(")) {
+            boost::split(vec_str_1, item, boost::is_any_of("("));
+            vec_str_name.push_back(vec_str_1[0]);
+        } else {
+            vec_str_name.push_back(item);
+        }
+    }
+
+    switch (vec_str_name.size()) {
         case 0:
             break;
         case 1:
             break;
         case 2:
-            this->sections[vec_str[0]]->set_param(vec_str[1], value);
+            this->sections[vec_str_name[0]]->set_param(vec_str_name[1], value);
             break;
         case 3:
-            this->sections[vec_str[0]]->sections[vec_str[1]]->set_param(vec_str[2], value);
+            this->sections[vec_str_name[0]]->sections[vec_str_name[1]]->set_param(vec_str_name[2], value);
             break;
         case 4:
-            this->sections[vec_str[0]]->sections[vec_str[1]]->sections[vec_str[2]]->set_param(vec_str[3], value);
+            this->sections[vec_str_name[0]]->sections[vec_str_name[1]]->sections[vec_str_name[2]]->set_param(vec_str_name[3], value);
             break;
         case 5:
-            this->sections[vec_str[0]]->sections[vec_str[1]]->sections[vec_str[2]]->sections[vec_str[3]]->set_param(vec_str[4], value);
+            this->sections[vec_str_name[0]]->sections[vec_str_name[1]]->sections[vec_str_name[2]]->sections[vec_str_name[3]]->set_param(vec_str_name[4], value);
             break;
         case 6:
-            this->sections[vec_str[0]]->sections[vec_str[1]]->sections[vec_str[2]]->sections[vec_str[3]]->sections[vec_str[4]]->set_param(vec_str[5], value);
+            this->sections[vec_str_name[0]]->sections[vec_str_name[1]]->sections[vec_str_name[2]]->sections[vec_str_name[3]]->sections[vec_str_name[4]]->set_param(vec_str_name[5], value);
             break; 
         case 7:
-            this->sections[vec_str[0]]->sections[vec_str[1]]->sections[vec_str[2]]->sections[vec_str[3]]->sections[vec_str[4]]->sections[vec_str[5]]->set_param(vec_str[6], value);
+            this->sections[vec_str_name[0]]->sections[vec_str_name[1]]->sections[vec_str_name[2]]->sections[vec_str_name[3]]->sections[vec_str_name[4]]->sections[vec_str_name[5]]->set_param(vec_str_name[6], value);
             break;  
         case 8:
-            this->sections[vec_str[0]]->sections[vec_str[1]]->sections[vec_str[2]]->sections[vec_str[3]]->sections[vec_str[4]]->sections[vec_str[5]]->sections[vec_str[6]]->set_param(vec_str[7], value);
+            this->sections[vec_str_name[0]]->sections[vec_str_name[1]]->sections[vec_str_name[2]]->sections[vec_str_name[3]]->sections[vec_str_name[4]]->sections[vec_str_name[5]]->sections[vec_str_name[6]]->set_param(vec_str_name[7], value);
             break;  
         case 9:
-            this->sections[vec_str[0]]->sections[vec_str[1]]->sections[vec_str[2]]->sections[vec_str[3]]->sections[vec_str[4]]->sections[vec_str[5]]->sections[vec_str[6]]->sections[vec_str[7]]->set_param(vec_str[8], value);
+            this->sections[vec_str_name[0]]->sections[vec_str_name[1]]->sections[vec_str_name[2]]->sections[vec_str_name[3]]->sections[vec_str_name[4]]->sections[vec_str_name[5]]->sections[vec_str_name[6]]->sections[vec_str_name[7]]->set_param(vec_str_name[8], value);
             break;                                           
         default:
             break;
