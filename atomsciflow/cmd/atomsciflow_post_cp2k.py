@@ -30,19 +30,35 @@ def add_cp2k_post_subparser(subparsers):
         help="The working directory where calculation is happening")
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "vc-opt", "vib", "md", "metamd", "phonopy"],
+        choices=["static", "opt", "vcopt", "vib", "md", "metamd", "phonopy", "dos", "band"],
         help="The calculation to do. The specified value is case insensitive")
         
+    ag = subparser.add_argument_group(title="kpoints")
+
+    ag.add_argument("--kpath", type=str, default=None,
+        help="Specify the kpath, either from a file or command line string, e.g. --kpath kpath.txt or --kpath \"0 0 0 GAMMA 5;0.5 0 0 x |\"")
+
+
 def cp2k_post_processor(args):
     print("working directory: %s" % args.directory)
     if args.calc.lower() == "static":
         pass
+    elif args.calc.lower() == "dos":
+        from atomsciflow.cp2k.post import Pdos
+        job = Pdos()
+        job.run(args.directory)
+    elif args.calc.lower() == "band":
+        from atomsciflow.cp2k.post import Bands
+        job = Bands()      
+        job.run(args.directory)
     elif args.calc.lower() == "opt":
         from atomsciflow.cp2k.post import Opt
         job = Opt()
         job.run(args.directory)
-    elif args.calc.lower() == "vc-opt":
-        pass
+    elif args.calc.lower() == "vcopt":
+        from atomsciflow.cp2k.post import VcOpt
+        job = VcOpt()
+        job.run(args.directory)        
     elif args.calc.lower() == "vib":
         pass
     elif args.calc.lower() == "md":
@@ -54,6 +70,13 @@ def cp2k_post_processor(args):
     elif args.calc.lower() == "phonopy":
         from atomsciflow.cp2k.post import Phonopy
         job = Phonopy()
+        from atomsciflow.cpp.base import Kpath
+        kpath = Kpath()
+        if args.kpath.count(";") != 0:
+            kpath.read(args.kpath)
+        else:
+            kpath.read_file(args.kpath)
+        job.set_kpath(kpath)
         job.run(args.directory)
     else:
         print("The specified post-processing type is unfound!")

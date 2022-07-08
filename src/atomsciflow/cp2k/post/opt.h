@@ -35,6 +35,8 @@ public:
     Opt();
     ~Opt() {
     }
+
+    void run(const std::string& directory);
 };
 
 } // namespace atomsciflow::post

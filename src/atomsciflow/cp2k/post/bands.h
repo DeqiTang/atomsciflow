@@ -22,30 +22,32 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ************************************************************************/
 
-#ifndef ATOMSCIFLOW_CP2K_POST_PHONOPY_H_
-#define ATOMSCIFLOW_CP2K_POST_PHONOPY_H_
+#ifndef ATOMSCIFLOW_CP2K_POST_BANDS_H_
+#define ATOMSCIFLOW_CP2K_POST_BANDS_H_
 
 #include "atomsciflow/cp2k/post/post.h"
-#include "atomsciflow/base/xyz.h"
 #include "atomsciflow/base/kpath.h"
+#include <armadillo>
 
 namespace atomsciflow::cp2k::post {
 
-class Phonopy : public Post {
+class Bands : public Post {
 public:
 
-    Phonopy();
-    ~Phonopy();
+    Bands();
+    ~Bands();
 
     virtual void run(const std::string& directory);
 
     void set_kpath(Kpath& kpath) {
         this->kpath = kpath;
     }
-
+    
+    // used to convert energy from [a.u.] unit to [eV] unit
+    double ha_to_ev;
     Kpath kpath;
 };
 
 } // namespace atomsciflow::cp2k::post
 
-#endif // ATOMSCIFLOW_CP2K_POST_PHONOPY_H_
+#endif // ATOMSCIFLOW_CP2K_POST_BANDS_H_

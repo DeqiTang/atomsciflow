@@ -29,10 +29,22 @@ class Opt(cp2k.PostOpt):
     def __init__(self):
         super().__init__()
 
+class VcOpt(cp2k.PostVcOpt):
+    def __init__(self):
+        super().__init__()
+
 class MD(cp2k.PostMD):
     def __init__(self) -> None:
         super().__init__()
 
 class Phonopy(cp2k.PostPhonopy):
+    def __init__(self):
+        super().__init__()
+
+class Pdos(cp2k.PostPdos):
+    def __init__(self):
+        super().__init__()
+
+class Bands(cp2k.PostBands):
     def __init__(self):
         super().__init__()

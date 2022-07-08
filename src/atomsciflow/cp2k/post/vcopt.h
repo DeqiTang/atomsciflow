@@ -22,30 +22,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ************************************************************************/
 
-#ifndef ATOMSCIFLOW_CP2K_POST_PHONOPY_H_
-#define ATOMSCIFLOW_CP2K_POST_PHONOPY_H_
+#ifndef ATOMSCIFLOW_CP2K_POST_VCOPT_H_
+#define ATOMSCIFLOW_CP2K_POST_VCOPT_H_
 
 #include "atomsciflow/cp2k/post/post.h"
-#include "atomsciflow/base/xyz.h"
-#include "atomsciflow/base/kpath.h"
 
 namespace atomsciflow::cp2k::post {
 
-class Phonopy : public Post {
+class VcOpt : public Post {
 public:
 
-    Phonopy();
-    ~Phonopy();
-
-    virtual void run(const std::string& directory);
-
-    void set_kpath(Kpath& kpath) {
-        this->kpath = kpath;
+    VcOpt();
+    ~VcOpt() {
     }
 
-    Kpath kpath;
+    void run(const std::string& directory);
 };
 
-} // namespace atomsciflow::cp2k::post
+} // namespace atomsciflow::post
 
-#endif // ATOMSCIFLOW_CP2K_POST_PHONOPY_H_
+#endif // ATOMSCIFLOW_CP2K_POST_VCOPT_H_

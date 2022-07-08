@@ -22,30 +22,49 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ************************************************************************/
 
-#ifndef ATOMSCIFLOW_CP2K_POST_PHONOPY_H_
-#define ATOMSCIFLOW_CP2K_POST_PHONOPY_H_
+#ifndef ATOMSCIFLOW_CP2K_POST_PDOS_H_
+#define ATOMSCIFLOW_CP2K_POST_PDOS_H_
 
 #include "atomsciflow/cp2k/post/post.h"
 #include "atomsciflow/base/xyz.h"
-#include "atomsciflow/base/kpath.h"
+#include <armadillo>
 
 namespace atomsciflow::cp2k::post {
 
-class Phonopy : public Post {
+class ElementPdos {
 public:
 
-    Phonopy();
-    ~Phonopy();
+    ElementPdos(const std::string& pdos_file);
+    ~ElementPdos() {
+    };
+
+    void get_data();
+
+    std::string get_spin();
+
+    std::string pdos_file;
+    std::string spin;
+    std::string kind;
+    double fermi; // in a.u.
+    // used to convert energy from [a.u.] unit to [eV] unit
+    double ha_to_ev;
+    arma::mat data;
+    std::vector<std::string> orbitals;
+};
+
+class Pdos : public Post {
+public:
+
+    Pdos();
+    ~Pdos();
 
     virtual void run(const std::string& directory);
 
-    void set_kpath(Kpath& kpath) {
-        this->kpath = kpath;
-    }
+    std::vector<std::shared_ptr<ElementPdos>> data;
+    std::vector<std::shared_ptr<ElementPdos>> data_smearing;
 
-    Kpath kpath;
 };
 
 } // namespace atomsciflow::cp2k::post
 
-#endif // ATOMSCIFLOW_CP2K_POST_PHONOPY_H_
+#endif // ATOMSCIFLOW_CP2K_POST_PDOS_H_

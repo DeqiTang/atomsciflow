@@ -68,8 +68,10 @@ def cp2k_processor(args):
         job = Band()
         from atomsciflow.cpp.base import Kpath
         kpath = Kpath()
-        #kpath.read("0 0 0 GAMMA 10;0.5 0 0 X 10;0 0.5 0 Y 10;0 0 0 GAMMA |;")
-        kpath.read("0 0 0 GAMMA 10;0.5 0 0 X 10;0 0.5 0 Y 10;0 0 0 GAMMA |")
+        if args.kpath.count(";") != 0:
+            kpath.read(args.kpath)
+        else:
+            kpath.read_file(args.kpath)
         job.set_kpoint_set(kpath)
     elif args.calc.lower() == "opt":
         from atomsciflow.cp2k import Opt
@@ -92,6 +94,9 @@ def cp2k_processor(args):
     elif args.calc.lower() == "phonopy":
         from atomsciflow.cp2k import Phonopy
         job = Phonopy()
+        job.job.set_run("phonopy_dim_x", args.phonopy_dim[0])
+        job.job.set_run("phonopy_dim_x", args.phonopy_dim[1])
+        job.job.set_run("phonopy_dim_x", args.phonopy_dim[2])
     else:
         print("The specified calculation type is unfound!")
         sys.exit(1)

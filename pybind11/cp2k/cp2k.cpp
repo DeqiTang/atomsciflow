@@ -10,8 +10,11 @@
 #include "atomsciflow/cp2k/opt.h"
 #include "atomsciflow/cp2k/phonopy.h"
 #include "atomsciflow/cp2k/post/opt.h"
+#include "atomsciflow/cp2k/post/vcopt.h"
 #include "atomsciflow/cp2k/post/md.h"
 #include "atomsciflow/cp2k/post/phonopy.h"
+#include "atomsciflow/cp2k/post/pdos.h"
+#include "atomsciflow/cp2k/post/bands.h"
 #include "atomsciflow/cp2k/io/params.h"
 
 
@@ -164,6 +167,14 @@ void add_class_post_opt(py::module& m) {
         ;
 }
 
+void add_class_post_vcopt(py::module& m) {
+    py::class_<atomsciflow::cp2k::post::VcOpt>(m, "PostVcOpt")
+        .def(py::init<>())
+        .def("read", &atomsciflow::cp2k::post::VcOpt::read)
+        .def("run", &atomsciflow::cp2k::post::VcOpt::run)
+        ;
+}
+
 void add_class_post_md(py::module& m) {
     py::class_<atomsciflow::cp2k::post::MD>(m, "PostMD")
         .def(py::init<>())
@@ -176,6 +187,22 @@ void add_class_post_phonopy(py::module& m) {
     py::class_<atomsciflow::cp2k::post::Phonopy>(m, "PostPhonopy")
         .def(py::init<>())
         .def("run", &atomsciflow::cp2k::post::Phonopy::run)
+        .def("set_kpath", &atomsciflow::cp2k::post::Phonopy::set_kpath)
+        ;
+}
+
+void add_class_post_pdos(py::module& m) {
+    py::class_<atomsciflow::cp2k::post::Pdos>(m, "PostPdos")
+        .def(py::init<>())
+        .def("run", &atomsciflow::cp2k::post::Pdos::run)
+        ;
+}
+
+void add_class_post_bands(py::module& m) {
+    py::class_<atomsciflow::cp2k::post::Bands>(m, "PostBands")
+        .def(py::init<>())
+        .def("run", &atomsciflow::cp2k::post::Bands::run)
+        .def("set_kpath", &atomsciflow::cp2k::post::Bands::set_kpath)
         ;
 }
 
@@ -195,8 +222,11 @@ PYBIND11_MODULE(cp2k, m) {
     add_class_cp2k_phonopy(m);
 
     add_class_post_opt(m);
+    add_class_post_vcopt(m);
     add_class_post_md(m);
     add_class_post_phonopy(m);
+    add_class_post_pdos(m);
+    add_class_post_bands(m);
 
     add_func_read_params(m);
 }

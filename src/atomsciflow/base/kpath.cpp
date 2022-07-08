@@ -112,7 +112,7 @@ void Kpath::read_file(const std::string& kpath_file) {
     int nk = int(std::atof(vec_str[0].c_str()));
     for (int i = 0; i < nk; i++) {
         boost::split(vec_str_1, lines[i+1], boost::is_any_of("\n"));
-        boost::split(vec_str_2, vec_str_1[0], boost::is_any_of("!"));
+        boost::split(vec_str_2, vec_str_1[0], boost::is_any_of(" "));
         if (vec_str_2[4] != "|") {
             boost::split(vec_str, lines[i+1], boost::is_space());
             boost::split(vec_str_3, vec_str[3], boost::is_any_of("#"));

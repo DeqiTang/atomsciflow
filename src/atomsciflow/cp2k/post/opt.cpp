@@ -27,15 +27,20 @@ SOFTWARE.
 #include <regex>
 #include <fstream>
 #include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/format.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include "atomsciflow/cp2k/post/utils.h"
+#include "atomsciflow/base/xyz.h"
 
 namespace atomsciflow::cp2k::post {
 
 namespace fs = boost::filesystem;
+namespace ba = boost::algorithm;
 
 Opt::Opt() {
-    this->set_run("opt-out", "cp2k.out");
+    this->set_run("cp2k-out", "cp2k.out");
     this->set_run("output-json", "post-opt.json");
 
     this->add_rule(std::function<void(const std::string&)>{[&](const std::string& str) -> void {
@@ -105,6 +110,57 @@ Opt::Opt() {
         }
     }});
 
+}
+
+void Opt::run(const std::string& directory) {
+    Post::run(directory);
+    
+    std::ifstream stream;
+    stream.open((fs::path(directory) / "optimization-pos-1.xyz").string());
+
+    std::vector<std::string> vec_str;
+
+    std::vector<std::string> traj_lines;
+    std::string line;
+    while (std::getline(stream, line)) {
+        traj_lines.push_back(line);
+    }
+    stream.close();
+
+    std::string tmp_str = traj_lines[0];
+    ba::replace_all(tmp_str, "\n", "");
+    ba::replace_all(tmp_str, " ", "");
+    int natoms = boost::lexical_cast<int>(tmp_str);
+
+    stream.open((fs::path(directory) / "optimization-1.cell").string());
+    std::vector<std::string> cell_lines;
+    while (std::getline(stream, line)) {
+        tmp_str = line;
+        ba::replace_all(tmp_str, "\n", "");
+        ba::replace_all(tmp_str, " ", "");
+        ba::replace_all(tmp_str, "\t", "");
+        if (tmp_str != "") {
+            cell_lines.push_back(line);
+        }
+    }
+    stream.close();
+
+    std::ofstream out;
+    out.open((fs::path(directory) / run_params["post-dir"] / "optimized.xyz").string());
+    out << boost::format("%1%\n") % natoms;
+    tmp_str = cell_lines[cell_lines.size() - 1];
+    ba::replace_all(tmp_str, "\t", " ");
+    ba::replace_all(tmp_str, "\n", " ");
+    boost::split(vec_str, tmp_str, boost::is_any_of(" "), boost::token_compress_on);
+    out << boost::format("cell: %1% %2% %3% | %4% %5% %6% | %7% %8% %9%\n")
+        % vec_str[3] % vec_str[4] % vec_str[5]
+        % vec_str[6] % vec_str[7] % vec_str[8]
+        % vec_str[9] % vec_str[10] % vec_str[11];
+    int traj_lines_size = traj_lines.size();
+    for (int i = (natoms+2) * (int(traj_lines_size / (natoms+2))-1) + 2; i < (natoms+2) * (int(traj_lines_size / (natoms+2))); i++) {
+        out << traj_lines[i] << "\n";
+    }
+    out.close();
 }
 
 } // namespace atomsciflow::cp2k::post
