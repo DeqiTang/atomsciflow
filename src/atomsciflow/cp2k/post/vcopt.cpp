@@ -40,7 +40,7 @@ namespace ba = boost::algorithm;
 
 VcOpt::VcOpt() {
     this->set_run("cp2k-out", "cp2k.out");
-    this->set_run("output-json", "post-opt.json");
+    this->set_run("output-json", "post-vcopt.json");
 
     this->add_rule(std::function<void(const std::string&)>{[&](const std::string& str) -> void {
         std::regex pat("STARTED\\ AT|ENDED\\ AT");

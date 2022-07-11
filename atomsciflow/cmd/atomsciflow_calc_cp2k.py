@@ -95,8 +95,8 @@ def cp2k_processor(args):
         from atomsciflow.cp2k import Phonopy
         job = Phonopy()
         job.job.set_run("phonopy_dim_x", args.phonopy_dim[0])
-        job.job.set_run("phonopy_dim_x", args.phonopy_dim[1])
-        job.job.set_run("phonopy_dim_x", args.phonopy_dim[2])
+        job.job.set_run("phonopy_dim_y", args.phonopy_dim[1])
+        job.job.set_run("phonopy_dim_z", args.phonopy_dim[2])
     else:
         print("The specified calculation type is unfound!")
         sys.exit(1)
