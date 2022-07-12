@@ -9,6 +9,7 @@
 #include "atomsciflow/cp2k/static.h"
 #include "atomsciflow/cp2k/opt.h"
 #include "atomsciflow/cp2k/phonopy.h"
+#include "atomsciflow/cp2k/neb.h"
 #include "atomsciflow/cp2k/post/opt.h"
 #include "atomsciflow/cp2k/post/vcopt.h"
 #include "atomsciflow/cp2k/post/md.h"
@@ -159,6 +160,34 @@ void add_class_cp2k_phonopy(py::module& m) {
         ;
 }
 
+void add_class_cp2k_neb(py::module& m) {
+    py::class_<atomsciflow::cp2k::Neb, atomsciflow::cp2k::Cp2k>(m, "Neb")
+        .def(py::init<>())
+        .def("new_section", &atomsciflow::cp2k::Neb::new_section)
+        .def("exists_section", &atomsciflow::cp2k::Neb::exists_section)
+        .def("to_string", &atomsciflow::cp2k::Neb::to_string)
+        .def("set_param", py::overload_cast<const std::string&, int>(&atomsciflow::cp2k::Neb::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, double>(&atomsciflow::cp2k::Neb::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::string>(&atomsciflow::cp2k::Neb::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::vector<int>>(&atomsciflow::cp2k::Neb::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::vector<double>>(&atomsciflow::cp2k::Neb::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::vector<std::string>>(&atomsciflow::cp2k::Neb::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::vector<std::vector<int>>>(&atomsciflow::cp2k::Neb::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::vector<std::vector<double>>>(&atomsciflow::cp2k::Neb::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::vector<std::vector<std::string>>>(&atomsciflow::cp2k::Neb::py_set_param))        
+        // atomsciflow::cp2k::Neb::set_subsys is a overloaded function
+        // and atomsciflow::cp2k::Neb::set_subsys() is private
+        // we don't expose it to python. so only provide the following
+        //.def("set_subsys", py::overload_cast<atomsciflow::Xyz&>(&atomsciflow::cp2k::Neb::set_subsys), py::return_value_policy::reference)
+        .def("set_subsys", py::overload_cast<atomsciflow::Xyz&>(&atomsciflow::cp2k::Neb::set_subsys))
+        .def("get_xyz", &atomsciflow::cp2k::Neb::get_xyz)
+        .def("run", &atomsciflow::cp2k::Neb::run)
+        .def("set_images", &atomsciflow::cp2k::Neb::set_images)
+        .def_readwrite("sections", &atomsciflow::cp2k::Neb::sections)
+        .def_readwrite("job", &atomsciflow::cp2k::Neb::job)
+        ;
+}
+
 void add_class_post_opt(py::module& m) {
     py::class_<atomsciflow::cp2k::post::Opt>(m, "PostOpt")
         .def(py::init<>())
@@ -220,6 +249,7 @@ PYBIND11_MODULE(cp2k, m) {
     add_class_cp2k_static(m);
     add_class_cp2k_opt(m);
     add_class_cp2k_phonopy(m);
+    add_class_cp2k_neb(m);
 
     add_class_post_opt(m);
     add_class_post_vcopt(m);

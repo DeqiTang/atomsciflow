@@ -34,8 +34,15 @@ def add_cp2k_subparser(subparsers):
     add_calc_parser_common(subparser)
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "band", "opt", "vcopt", "vib", "md", "metamd", "phonopy"],
+        choices=["static", "band", "opt", "vcopt", "vib", "md", "metamd", "phonopy", "neb"],
         help="The calculation to do. The specified value is case insensitive")
+
+    # neb calculation
+    ag = subparser.add_argument_group(title="neb")
+    
+    ag.add_argument("--images", type=str, nargs="+", 
+        help="Specify the images to do the neb calculation, e.g. --images initial.xyz intermidiate.xyz ... final.xyz"
+    )
 
     # custom specification of cp2k params
     ag = subparser.add_argument_group(title="custom")
@@ -97,6 +104,10 @@ def cp2k_processor(args):
         job.job.set_run("phonopy_dim_x", args.phonopy_dim[0])
         job.job.set_run("phonopy_dim_y", args.phonopy_dim[1])
         job.job.set_run("phonopy_dim_z", args.phonopy_dim[2])
+    elif args.calc.lower() == "neb":
+        from atomsciflow.cp2k import Neb
+        job = Neb()
+        job.set_images(args.images)
     else:
         print("The specified calculation type is unfound!")
         sys.exit(1)

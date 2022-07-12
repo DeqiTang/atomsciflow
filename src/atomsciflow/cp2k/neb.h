@@ -1,7 +1,7 @@
-"""
+/************************************************************************
 MIT License
 
-Copyright (c) 2021 Deqi Tang
+Copyright (c) 2022 Deqi Tang
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,18 +20,27 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-"""
+************************************************************************/
 
-from atomsciflow.cp2k.cp2k import (
-    Cp2k,
-    Static, Band,
-    Opt,
-    VcOpt,
-    Vib,
-    MD,
-    MetaMD,
-    Neb
-)
+#ifndef ATOMSCIFLOW_CP2K_NEB_H_
+#define ATOMSCIFLOW_CP2K_NEB_H_
 
-#from atomsciflow.cp2k.cp2k import Phonopy
-from atomsciflow.cpp.cp2k import Phonopy
+#include "atomsciflow/cp2k/cp2k.h"
+
+namespace atomsciflow::cp2k {
+
+class Neb : public Cp2k {
+public:
+    Neb();
+    ~Neb() = default;
+
+    void set_images(const std::vector<std::string>&);
+    std::vector<Xyz> images;
+
+    virtual void run(const std::string& directory);
+    
+};
+
+} // namespace atomsciflow::cp2k
+
+#endif // ATOMSCIFLOW_CP2K_NEB_H_

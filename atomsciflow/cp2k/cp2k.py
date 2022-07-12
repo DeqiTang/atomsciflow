@@ -154,3 +154,7 @@ class Phonopy(Cp2k):
         self.job.append_step(step)
 
         self.job.run(directory)
+
+class Neb(cp2k.Neb):
+    def __init__(self):
+        super().__init__()
