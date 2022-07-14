@@ -47,6 +47,10 @@ def add_octopus_subparser(subparsers):
         help="Specify parameters that are not provided directly in the command line argument, e.g. --custom \"ExtraStates=1;Spacing=0.2;Radius=2.5\""
     )
 
+    ag.add_argument("--custom-file", type=str, default=None,
+        help="Specify the file containing the custom style octopus params. The privilege of --custom-file is lower than --custom."
+    )
+
 def octopus_processor(args):
 
     params = {}
@@ -56,6 +60,8 @@ def octopus_processor(args):
     if args.custom != None:
         custom_str = args.custom.replace(" ", "") # remove all space
         for item in custom_str.split(";"):
+            if item == "":
+                continue
             params[item.split("=")[0]] = item.split("=")[1]
 
     print("working directory: %s" % args.directory)
@@ -70,7 +76,10 @@ def octopus_processor(args):
         sys.exit(1)
     
     job.get_xyz(args.xyz)
-    set_calc_processor_common(job, args)  
+    set_calc_processor_common(job, args)
+    if args.custom_file != None:
+        from atomsciflow.octopus.io import read_params
+        read_params(job, args.custom_file)  
     for item in params:
         if params[item] == None:
             continue

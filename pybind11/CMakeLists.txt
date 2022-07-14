@@ -638,6 +638,7 @@ set_target_properties(lammps PROPERTIES
 file(GLOB BINDING_OCTOPUS_SOURCES
     "./octopus/octopus.cpp"
     "../src/atomsciflow/octopus/*.cpp"
+    "../src/atomsciflow/octopus/io/*.cpp"
 )
 #add_library(octopus MODULE ${BINDING_OCTOPUS_SOURCES})
 add_library(octopus MODULE ${BINDING_OCTOPUS_SOURCES})
