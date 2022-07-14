@@ -1,7 +1,7 @@
-"""
+/************************************************************************
 MIT License
 
-Copyright (c) 2021 Deqi Tang
+Copyright (c) 2022 Deqi Tang
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,11 +20,17 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-"""
+************************************************************************/
 
-from atomsciflow.qe.pwscf import (
-    PwScf,
-    Static, 
-    Opt,
-    VcOpt
-)
+#ifndef ATOMSCIFLOW_QE_IO_PARAMS_H_
+#define ATOMSCIFLOW_QE_IO_PARAMS_H_
+
+#include "atomsciflow/qe/pwscf.h"
+
+namespace atomsciflow::qe::io {
+
+void read_params(PwScf& pwscf, const std::string& filepath);
+
+} // namespace atomsciflow::qe::io
+
+#endif // ATOMSCIFLOW_QE_IO_PARAMS_H_

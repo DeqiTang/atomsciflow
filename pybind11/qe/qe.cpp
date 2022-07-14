@@ -6,6 +6,7 @@
 #include "atomsciflow/base/atom.h"
 #include "atomsciflow/base/crystal.h"
 #include "atomsciflow/qe/pwscf.h"
+#include "atomsciflow/qe/io/params.h"
 
 namespace py = pybind11;
 
@@ -73,6 +74,10 @@ void add_class_pwscfmisc(py::module& m) {
         ;
 }
 
+void add_qe_read_params(py::module& m) {
+    m.def("read_params", &atomsciflow::qe::io::read_params);
+}
+
 PYBIND11_MODULE(qe, m) {
     m.doc() = "qe module";
     m.attr("__version__") = "0.0.1";
@@ -81,4 +86,6 @@ PYBIND11_MODULE(qe, m) {
     add_class_pwscfpseudo(m);
     add_class_pwscfmisc(m);
     add_class_pwscf(m);
+
+    add_qe_read_params(m);
 }

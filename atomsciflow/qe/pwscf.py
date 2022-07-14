@@ -36,7 +36,6 @@ class Static(PwScf):
         super().__init__()
 
     def run(self, directory):
-        self.set_job_steps_default()
         super().run(directory)
         
 class Opt(PwScf):
@@ -50,5 +49,18 @@ class Opt(PwScf):
         self.set_param("control", "forc_conv_thr", 1.0e-5)
         
     def run(self, directory):
-        self.set_job_steps_default()
         super().run(directory)
+
+class VcOpt(PwScf):
+    def __init__(self):
+        super().__init__()
+        
+        self.set_param("control", "calculation", "vc-relax")
+        self.set_param("control", "title", "cell optimization")
+        self.set_param("control", "nstep", 200)
+        self.set_param("control", "etot_conv_thr", 1.0e-6)
+        self.set_param("control", "forc_conv_thr", 1.0e-5)   
+
+        self.set_param("cell", "cell_dynamics", "bfgs")
+        self.set_param("cell", "press_conv_thr", 0.5)
+        self.set_param("cell", "cell_dofree", "all")

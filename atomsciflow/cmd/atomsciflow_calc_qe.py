@@ -32,7 +32,7 @@ def add_qe_subparser(subparsers):
         help="The Quantum Espresso calculator")
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "md"],
+        choices=["static", "opt", "vcopt", "md"],
         help="The calculation to do. The specified value is case insensitive")
 
     add_calc_parser_common(subparser)
@@ -44,11 +44,17 @@ def add_qe_subparser(subparsers):
         help="Specify parameters that are not provided directly in the command line argument, e.g. --custom \"control/nstep=1;electrons/conv_thr=1.0e-7\""
     )
 
+    ag.add_argument("--custom-file", type=str, default=None,
+        help="Specify the file containing the custom style qe params. The privilege of --custom-file is lower than --custom."
+    )
+
 def qe_processor(args):
     params = {}
     if args.custom != None:
         custom_str = args.custom.replace(" ", "") # remove all space
         for item in custom_str.split(";"):
+            if item == "":
+                continue
             params[item.split("=")[0]] = item.split("=")[1]
 
     print("working directory: %s" % args.directory)
@@ -58,16 +64,18 @@ def qe_processor(args):
     elif args.calc.lower() == "opt":
         from atomsciflow.qe import Opt
         job = Opt()
-        job.get_xyz(args.xyz)
-        job.job.set_run("runopt", args.runopt)
-        job.job.set_run("server", args.server)        
-        job.run(args.directory)        
+    elif args.calc.lower() == "vcopt":
+        from atomsciflow.qe import VcOpt
+        job = VcOpt()
     else:
         print("The specified calculation type is unfound!")
         sys.exit(1)
     
     job.get_xyz(args.xyz)
-    set_calc_processor_common(job, args)      
+    set_calc_processor_common(job, args)
+    if args.custom_file != None:
+        from atomsciflow.qe.io import read_params
+        read_params(job, args.custom_file)      
     for item in params:
         if params[item] == None:
             continue        

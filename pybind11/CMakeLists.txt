@@ -238,6 +238,7 @@ set_target_properties(cp2k PROPERTIES
 file(GLOB BINDING_QE_SOURCES
     "./qe/*.cpp"
     "../src/atomsciflow/qe/*.cpp"
+    "../src/atomsciflow/qe/io/*.cpp"
 )
 add_library(qe MODULE ${BINDING_QE_SOURCES})
 target_link_libraries(qe
