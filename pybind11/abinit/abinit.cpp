@@ -7,6 +7,7 @@
 #include <pybind11/stl.h> // needed for automatical handling with STL
 
 #include "atomsciflow/abinit/abinit.h"
+#include "atomsciflow/abinit/io/params.h"
 
 namespace py = pybind11;
 
@@ -66,11 +67,17 @@ void add_class_abinit(py::module& m) {
         ;
 }
 
+void add_abinit_read_params(py::module& m) {
+    m.def("read_params", atomsciflow::abinit::io::read_params);
+}
+
 PYBIND11_MODULE(abinit, m) {
     m.doc() = "abinit module";
     
     add_class_abinit_system(m);
     add_class_abinit_input(m);
     add_class_abinit(m);
+
+    add_abinit_read_params(m);
 }
 

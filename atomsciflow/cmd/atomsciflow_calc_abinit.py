@@ -43,14 +43,13 @@ def add_abinit_subparser(subparsers):
     ag.add_argument("--custom", type=str, default=None,
         help="Specify parameters that are not provided directly in the command line argument, e.g. --custom \"ecut[0]=15;nstep[0]=100\""
     )
+        
+    ag.add_argument("--custom-file", type=str, default=None,
+        help="Specify the file containing the custom style abinit params. The privilege of --custom-file is lower than --custom."
+    )
 
 def abinit_processor(args):
     params = {}
-
-    if args.custom != None:
-        custom_str = args.custom.replace(" ", "") # remove all space
-        for item in custom_str.split(";"):
-            params[item.split("=")[0]] = item.split("=")[1]
 
     print("working directory: %s" % args.directory)
     if args.calc.lower() == "static":
@@ -71,6 +70,15 @@ def abinit_processor(args):
 
     job.get_xyz(args.xyz)
     set_calc_processor_common(job, args)
+    if args.custom_file != None:
+        from atomsciflow.abinit.io import read_params
+        read_params(job, args.custom_file)
+    if args.custom != None:
+        custom_str = args.custom.replace(" ", "") # remove all space
+        for item in custom_str.split(";"):
+            if item == "":
+                continue
+            params[item.split("=")[0]] = item.split("=")[1]
     for item in params:
         if params[item] == None:
             continue

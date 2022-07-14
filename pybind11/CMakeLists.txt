@@ -263,6 +263,7 @@ set_target_properties(qe PROPERTIES
 file(GLOB BINDING_ABINIT_SOURCES
     "./abinit/abinit.cpp"
     "../src/atomsciflow/abinit/*.cpp"
+    "../src/atomsciflow/abinit/io/*.cpp"
 )
 add_library(abinit MODULE ${BINDING_ABINIT_SOURCES})
 target_link_libraries(abinit
