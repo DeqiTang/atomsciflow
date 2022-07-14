@@ -34,7 +34,7 @@ def add_abinit_subparser(subparsers):
     add_calc_parser_common(subparser)
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "md"],
+        choices=["static", "opt", "md", "dfpt-epd"],
         help="The calculation to do. The specified value is case insensitive")
 
     # custom
@@ -62,6 +62,9 @@ def abinit_processor(args):
     elif args.calc.lower() == "md":
         from atomsciflow.abinit import MD
         job = MD()
+    elif args.calc.lower() == "dfpt-epd":
+        from atomsciflow.abinit import DfptElasticPiezoDielec
+        job = DfptElasticPiezoDielec()
     else:
         print("The specified calculation type is unfound!")
         sys.exit(1)

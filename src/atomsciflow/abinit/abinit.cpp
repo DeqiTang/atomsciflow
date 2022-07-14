@@ -253,8 +253,9 @@ std::string Abinit::to_string() {
 void Abinit::set_ndtset(int ndtset = 0) {
     this->ndtset = ndtset;
     while (this->datasets.size() - 1 < ndtset) {
-        this->datasets.push_back(new AbinitInput());
-        this->datasets[-1]->n = this->datasets.size() - 1;
+        auto abinit_input = new AbinitInput{};
+        this->datasets.push_back(abinit_input);
+        abinit_input->n = this->datasets.size() - 1;
     }
 }
 

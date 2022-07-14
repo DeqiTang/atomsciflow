@@ -24,6 +24,7 @@ SOFTWARE.
 
 from atomsciflow.cpp import abinit
 from atomsciflow.cpp.server import JobScheduler
+from atomsciflow.cpp.base import Xyz
 
 class Abinit(abinit.Abinit):
     def __init__(self):
@@ -51,3 +52,35 @@ class MD(Abinit):
         self.set_param("mdtemp(1)[0]", 300)
         self.set_param("mdtemp(2)[0]", 300)
         self.set_param("tolmxf[0]", 5.0e-4)
+
+class DfptElasticPiezoDielec(abinit.Abinit):
+    def __init__(self):
+        super().__init__()
+
+        self.set_ndtset(3)
+
+        self.set_param("tolvrs[1]", 1.0e-18)
+        self.set_param("ngkpt[1]", [1, 1, 1])
+
+        self.set_param("tolwfr[2]", 1.0e-22)
+        self.set_param("getwfc[2]", -1)
+        self.set_param("kptopt[2]", 2)
+        self.set_param("ngkpt[2]", [1, 1, 1])
+        self.set_param("iscf[2]", -3)
+        self.set_param("rfelfd[2]", 2)
+        self.set_param("rfdir[2]", [1, 1, 1])
+        self.set_param("nqpt[2]", 1)
+        self.set_param("qpt[2]", [0, 0, 0])
+
+        self.set_param("tolvrs[3]", 1.0e-10)
+        self.set_param("kptopt[3]", 2)
+        self.set_param("ngkpt[3]", [1, 1, 1])
+        self.set_param("getddk[3]", -1)
+        self.set_param("getwfk[3]", -2)
+        self.set_param("nqpt[3]", 1)
+        self.set_param("qpt[3]", [0, 0, 0])
+        self.set_param("rfphon[3]", 1)
+        self.set_param("rfelfd[3]", 3)
+        self.set_param("rfatpol[3]", [1, self.datasets[0].system.xyz.natom()])
+        self.set_param("rfdir[3]", [1, 1, 1])
+        self.set_param("rfstrs[3]", 3)

@@ -26,5 +26,6 @@ from atomsciflow.abinit.abinit import (
     Abinit,
     Static, 
     Opt,
-    MD
+    MD,
+    DfptElasticPiezoDielec
 )
