@@ -314,6 +314,7 @@ file(GLOB BINDING_VASP_SOURCES
     "./vasp/vasp.cpp"
     "../src/atomsciflow/vasp/*.cpp"
     "../src/atomsciflow/vasp/post/*.cpp"
+    "../src/atomsciflow/vasp/io/*.cpp"
 )
 add_library(vasp MODULE ${BINDING_VASP_SOURCES})
 target_link_libraries(vasp

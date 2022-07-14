@@ -1,7 +1,7 @@
-"""
+/************************************************************************
 MIT License
 
-Copyright (c) 2021 Deqi Tang
+Copyright (c) 2022 Deqi Tang
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,12 +20,17 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-"""
+************************************************************************/
 
-from atomsciflow.vasp.vasp import (
-    Vasp,
-    Static, 
-    Opt,
-    VcOpt,
-    MD
-) 
+#ifndef ATOMSCIFLOW_VASP_IO_PARAMS_H_
+#define ATOMSCIFLOW_VASP_IO_PARAMS_H_
+
+#include "atomsciflow/vasp/vasp.h"
+
+namespace atomsciflow::vasp::io {
+
+void read_params(Vasp& vasp, const std::string& filepath);
+
+} // atomsciflow::vasp::io
+
+#endif // ATOMSCIFLOW_VASP_IO_PARAMS_H_

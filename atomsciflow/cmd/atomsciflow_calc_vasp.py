@@ -36,11 +36,18 @@ def add_vasp_subparser(subparsers):
     add_calc_parser_common(subparser)
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "md"],
+        choices=["static", "opt", "vcopt", "md"],
         help="The calculation to do. The specified value is case insensitive")
 
-    subparser.add_argument("--custom", type=str, default=None,
+    #custom
+    ag = subparser.add_argument_group(title="custom")
+
+    ag.add_argument("--custom", type=str, default=None,
         help="Specify parameters that are not provided directly in the command line argument, e.g. --custom \"ALGO=Normal;EDIFF=1.0E-5;\""
+    )
+
+    ag.add_argument("--custom-file", type=str, default=None,
+        help="Specify the file containing the custom style vasp params. The privilege of --custom-file is lower than --custom."
     )
 
 def vasp_processor(args):
@@ -48,17 +55,22 @@ def vasp_processor(args):
     if args.custom != None:
         custom_str = args.custom.replace(" ", "") # remove all space
         for item in custom_str.split(";"):
+            if item == "":
+                continue
             params[item.split("=")[0]] = item.split("=")[1]
 
     print("working directory: %s" % args.directory)
     if args.calc.lower() == "static":
         from atomsciflow.vasp import Static
         job = Static()
-        job.set_params(params, "static")
+        # job.set_params(params, "static")
     elif args.calc.lower() == "opt":
         from atomsciflow.vasp import Opt
         job = Opt()
-        job.set_params(params, "opt")
+        # job.set_params(params, "opt")
+    elif args.calc.lower() == "vcopt":
+        from atomsciflow.vasp import VcOpt
+        job = VcOpt()
     elif args.calc.lower() == "md":
         from atomsciflow.vasp import MD
         job = MD()
@@ -67,5 +79,12 @@ def vasp_processor(args):
         sys.exit(1)
 
     job.get_xyz(args.xyz)
-    set_calc_processor_common(job, args)    
+    set_calc_processor_common(job, args)
+    if args.custom_file != None:
+        from atomsciflow.vasp.io import read_params
+        read_params(job, args.custom_file)
+    for item in params:
+        if params[item] == None:
+            continue
+        job.set_param(item, params[item]) 
     job.run(args.directory)

@@ -9,6 +9,7 @@
 #include "atomsciflow/vasp/static.h"
 #include "atomsciflow/vasp/post/phonopy.h"
 #include "atomsciflow/server/job_scheduler.h"
+#include "atomsciflow/vasp/io/params.h"
 
 namespace py = pybind11;
 
@@ -81,6 +82,10 @@ void add_class_phonopypost(py::module& m) {
 
 }
 
+void add_vasp_read_params(py::module& m) {
+    m.def("read_params", &atomsciflow::vasp::io::read_params);
+}
+
 PYBIND11_MODULE(vasp, m) {
     m.doc() = "vasp module";
     m.attr("__version__") = "0.0.1";
@@ -90,5 +95,7 @@ PYBIND11_MODULE(vasp, m) {
     add_class_vaspposcar(m);
     add_class_vaspkpoints(m);
     add_class_phonopypost(m);
+
+    add_vasp_read_params(m);
 }
 
