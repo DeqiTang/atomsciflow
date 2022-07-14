@@ -44,6 +44,21 @@ class Opt(Siesta):
         self.set_param("WriteCoorXmol", "true")
         self.set_param("WriteMDXmol", "true")
 
+class VcOpt(Siesta):
+    def __init__(self):
+        super().__init__()
+        self.set_param("MD.TypeOfRun", "CG")
+        self.set_param("MD.VariableCell", "true")
+        # self.set_param("MD.ConstantVolume", "true")
+        self.set_param("MD.ConstantVolume", "false")
+        self.set_param("MD.MaxForceTol", "0.001 eV/Ang")
+        self.set_param("MD.MaxStressTol", "0.01 GPa")
+        self.set_param("MD.Steps", 100)
+        self.set_param("MD.MaxDispl", "0.2 Bohr")
+        self.set_param("MD.PreconditionVariableCell", "5 Ang")
+        self.set_param("WriteCoorXmol", "true")
+        self.set_param("WriteMDXmol", "true")
+
 class MD(Siesta):
     def __init__(self):
         super().__init__()

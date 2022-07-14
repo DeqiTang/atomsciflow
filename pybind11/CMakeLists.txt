@@ -461,6 +461,7 @@ set_target_properties(dalton PROPERTIES
 file(GLOB BINDING_SIESTA_SOURCES
     "./siesta/siesta.cpp"
     "../src/atomsciflow/siesta/*.cpp"
+    "../src/atomsciflow/siesta/io/*.cpp"
 )
 add_library(siesta MODULE ${BINDING_SIESTA_SOURCES})
 target_link_libraries(siesta

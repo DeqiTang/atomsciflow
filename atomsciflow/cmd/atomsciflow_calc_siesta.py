@@ -34,11 +34,18 @@ def add_siesta_subparser(subparsers):
     add_calc_parser_common(subparser)
     
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "md"],
+        choices=["static", "opt", "vcopt", "md"],
         help="The calculation to do. The specified value is case insensitive")
 
-    subparser.add_argument("--custom", type=str, default=None,
+    # custom
+    ag = subparser.add_argument_group(title="custom")
+    
+    ag.add_argument("--custom", type=str, default=None,
         help="Specify parameters that are not provided directly in the command line argument, e.g. --custom \"XC.Authors=PBE;SCF.Mixer.Weight=0.05;\""
+    )
+
+    ag.add_argument("--custom-file", type=str, default=None,
+        help="Specify the file containing the custom style siesta params. The privilege of --custom-file is lower than --custom."
     )
 
 def siesta_processor(args):
@@ -46,6 +53,8 @@ def siesta_processor(args):
     if args.custom != None:
         custom_str = args.custom.replace(" ", "") # remove all space
         for item in custom_str.split(";"):
+            if item == "":
+                continue
             params[item.split("=")[0]] = item.split("=")[1]
 
     print("working directory: %s" % args.directory)
@@ -55,6 +64,9 @@ def siesta_processor(args):
     elif args.calc.lower() == "opt":
         from atomsciflow.siesta import Opt
         job = Opt()
+    elif args.calc.lower() == "vcopt":
+        from atomsciflow.siesta import VcOpt
+        job = VcOpt()
     elif args.calc.lower() == "md":
         from atomsciflow.siesta import MD
         job = MD()
@@ -64,6 +76,9 @@ def siesta_processor(args):
 
     job.get_xyz(args.xyz)
     set_calc_processor_common(job, args)
+    if args.custom_file != None:
+        from atomsciflow.siesta.io import read_params
+        read_params(job, args.custom_file)   
     for item in params:
         if params[item] == None:
             continue

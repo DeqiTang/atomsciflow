@@ -9,6 +9,7 @@
 
 #include "atomsciflow/siesta/siesta.h"
 #include "atomsciflow/siesta/opt.h"
+#include "atomsciflow/siesta/io/params.h"
 
 namespace py = pybind11;
 
@@ -42,10 +43,16 @@ void add_class_siestaopt(py::module& m) {
         ;
 }
 
+void add_siesta_read_params(py::module& m) {
+    m.def("read_params", &atomsciflow::siesta::io::read_params);
+}
+
 PYBIND11_MODULE(siesta, m) {
     m.doc() = "siesta module";
     m.attr("__version__") = "0.0.0";
 
     add_class_siesta(m);
     add_class_siestaopt(m);
+
+    add_siesta_read_params(m);
 }
