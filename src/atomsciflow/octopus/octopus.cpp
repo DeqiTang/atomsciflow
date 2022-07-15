@@ -51,7 +51,7 @@ Octopus::Octopus() {
     set_param("ExtraStates", 1);
     set_param("Radius", 2.5);
     set_param("Spacing", 0.2);
-    set_param("UnitsInput", "eV_Angstrom");
+    // set_param("UnitsInput", "eV_Angstrom");
     set_param("UnitsOutput", "eV_Angstrom");
 
     job.set_run_default("llhpc");

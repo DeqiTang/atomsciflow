@@ -265,6 +265,7 @@ void Abinit::run(const std::string& directory) {
     step << "cat > " << this->files.main_in << "<<EOF\n";
     step << this->to_string();
     step << "EOF\n";
+    this->files.set_pseudo_ext(".GGA_PBE-JTH.xml");
     step << "cat > " << this->files.name << "<<EOF\n";
     step << this->files.to_string(*this->datasets[0]->system);
     step << "EOF\n";

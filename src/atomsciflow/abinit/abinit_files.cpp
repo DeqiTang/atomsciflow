@@ -42,10 +42,14 @@ std::string AbinitFiles::to_string(AbinitSystem& system) {
     out << this->wavefunc_out << "\n";
     out << this->tmp << "\n";
     for (const auto& element : system.xyz.elements_set) {
-        out << (element + ".psp8");
+        out << (element + this->pseudo_ext);
         out << "\n";
     }
     return out.str();
+}
+
+void AbinitFiles::set_pseudo_ext(const std::string& ext) {
+    this->pseudo_ext = ext;
 }
 
 } // namespace atomsciflow

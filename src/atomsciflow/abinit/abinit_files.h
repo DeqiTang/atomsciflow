@@ -43,8 +43,11 @@ public:
         this->wavefunc_in = "abinit-i";
         this->wavefunc_out = "abinit-o";
         this->tmp = "tmp";
+
+        this->pseudo_ext = ".GGA_PBE-JTH.xml"; // .GGA_PBE-JTH.xml or .psp8
     }
     std::string to_string(AbinitSystem& system);
+    void set_pseudo_ext(const std::string& ext);
 
     std::string name;
     std::string main_in;
@@ -52,6 +55,8 @@ public:
     std::string wavefunc_in;
     std::string wavefunc_out;
     std::string tmp;
+
+    std::string pseudo_ext;
 };
 
 } // namespace atomsciflow
