@@ -37,13 +37,10 @@ def add_octopus_subparser(subparsers):
         choices=["static", "opt", "md"],
         help="The calculation to do. The specified value is case insensitive")
 
-    ag = subparser.add_argument_group(title="Octopus setting", 
-        description="Specify Octopus parameters")
-    
-    ag.add_argument("--spacing", type=float, default=0.2,
-        help="The spacing between the points in the mesh.")
+    # custom
+    ag = subparser.add_argument_group(title="custom")
 
-    subparser.add_argument("--custom", type=str, default=None,
+    ag.add_argument("--custom", type=str, default=None,
         help="Specify parameters that are not provided directly in the command line argument, e.g. --custom \"ExtraStates=1;Spacing=0.2;Radius=2.5\""
     )
 
@@ -54,8 +51,6 @@ def add_octopus_subparser(subparsers):
 def octopus_processor(args):
 
     params = {}
-
-    params["Spacing"] = args.spacing
 
     if args.custom != None:
         custom_str = args.custom.replace(" ", "") # remove all space
