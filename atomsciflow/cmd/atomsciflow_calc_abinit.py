@@ -37,6 +37,10 @@ def add_abinit_subparser(subparsers):
         choices=["static", "opt", "md", "dfpt-epd"],
         help="The calculation to do. The specified value is case insensitive")
 
+    subparser.add_argument("--pot", type=str, default="ncpp",
+        choices=["ncpp", "paw"],
+        help="Specify the pseudo potential setting.")
+
     # custom
     ag = subparser.add_argument_group(title="custom")
     
@@ -69,6 +73,7 @@ def abinit_processor(args):
         sys.exit(1)
 
     job.get_xyz(args.xyz)
+    job.set_pot(args.pot)
     set_calc_processor_common(job, args)
     if args.custom_file != None:
         from atomsciflow.abinit.io import read_params

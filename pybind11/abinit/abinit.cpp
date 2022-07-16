@@ -61,6 +61,7 @@ void add_class_abinit(py::module& m) {
         .def("set_params", py::overload_cast<std::map<std::string, std::vector<std::vector<double>>>&>(&atomsciflow::Abinit::py_set_params))
         .def("set_params", py::overload_cast<std::map<std::string, std::vector<std::vector<std::string>>>&>(&atomsciflow::Abinit::py_set_params))
         .def("set_ndtset", &atomsciflow::Abinit::set_ndtset)
+        .def("set_pot", &atomsciflow::Abinit::set_pot)
         .def("run", &atomsciflow::Abinit::run)
         .def_readwrite("datasets", &atomsciflow::Abinit::datasets)
         .def_readwrite("job", &atomsciflow::Abinit::job)

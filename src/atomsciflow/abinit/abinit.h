@@ -83,6 +83,7 @@ public:
 
     void set_kpoints(std::map<std::string, std::string>& kpoints, int ndtset);
     void set_pseudos(const std::string& directory);
+    void set_pot(const std::string& pot);
     std::string to_string();
     void set_ndtset(int ndtset);
 

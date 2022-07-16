@@ -51,6 +51,8 @@ Abinit::Abinit() {
     }
     this->datasets[0]->electrons->basic_setting();
     this->pseudo_input_str = "";
+    this->set_pot("ncpp");
+
     job.set_run("cmd", "$ASF_CMD_ABINIT");
     job.set_run("script_name_head", "abinit-run");
 }
@@ -219,6 +221,16 @@ void Abinit::set_pseudos(const std::string& directory) {
     this->pseudo_input_str += "\"\n";
 }
 
+void Abinit::set_pot(const std::string& pot) {
+    if (boost::to_lower_copy(pot) == "ncpp") {
+        this->files.set_pseudo_ext(".psp8");
+    } else if (boost::to_lower_copy(pot) == "paw") {
+        this->files.set_pseudo_ext(".GGA_PBE-JTH.xml");
+    } else {
+        this->files.set_pseudo_ext(".psp8");
+    }
+}
+
 /// \brief Abinit::to_string
 /// \return the Abinit input as a string
 /// The AbinitSystem related setting for dataset other than 0 is
@@ -265,13 +277,18 @@ void Abinit::run(const std::string& directory) {
     step << "cat > " << this->files.main_in << "<<EOF\n";
     step << this->to_string();
     step << "EOF\n";
-    this->files.set_pseudo_ext(".GGA_PBE-JTH.xml");
     step << "cat > " << this->files.name << "<<EOF\n";
     step << this->files.to_string(*this->datasets[0]->system);
     step << "EOF\n";
     step << "cp";
     for (const auto& item : this->datasets[0]->system->xyz.elements_set) {
-        step << " " << (fs::path(config.get_pseudo_pot_dir()["abinit"]) / "JTH-PBE-atomicdata-1.1/ATOMICDATA/" / (item + ".GGA_PBE-JTH.xml")).string();
+        if (this->files.pseudo_ext == ".psp8") {
+            step << " " << (fs::path(config.get_pseudo_pot_dir()["abinit"]) / "pbe_s_sr/" / (item + ".psp8")).string();
+        } else if (this->files.pseudo_ext == ".GGA_PBE-JTH.xml") {
+            step << " " << (fs::path(config.get_pseudo_pot_dir()["abinit"]) / "JTH-PBE-atomicdata-1.1/ATOMICDATA/" / (item + ".GGA_PBE-JTH.xml")).string();
+        } else {
+            step << " " << (fs::path(config.get_pseudo_pot_dir()["abinit"]) / "pbe_s_sr/" / (item + ".psp8")).string();
+        }
     }
     step << " ./\n";
     step << "$CMD_HEAD " << this->job.run_params["cmd"] << " < " << this->files.name << "\n";
