@@ -29,9 +29,11 @@ SOFTWARE.
 
 #include "atomsciflow/qe/misc.h"
 
+#include <regex>
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string.hpp>
 #include <armadillo>
 
 #include "atomsciflow/base/element.h"
@@ -48,29 +50,41 @@ PwScfPseudo::PwScfPseudo() {
 std::string PwScfPseudo::to_string(Xyz& xyz) {
     auto element_map = get_element_number_map();
 
-    std::string out = "";
-    out += "ATOMIC_SPECIES\n";
-    // std::vector<std::string> all_file;
-    // for (const auto& p : fs::directory_iterator(this->directory)) {
-    //     all_file.emplace_back(p.path().string());
-    // }
-    // for (const auto& element : xyz.elements_set) {
-    //     for (const auto& item : all_file) {
-    //         out += element;
-    //         out += " ";
-    //         out += boost::lexical_cast<std::string>(element_map[element].mass);
-    //         out += " ";
-    //         out+= item;
-    //     }
-    // }
-    for (const auto& element : xyz.elements_set) {
-        out += element;
-        out += " ";
-        out += boost::lexical_cast<std::string>(element_map[element].mass);
-        out += " ";
-        out += element + ".UPF";
+    std::ostringstream out;
+    out << "ATOMIC_SPECIES\n";
+
+    std::vector<fs::path> all_files;
+    for (const auto& p : fs::directory_iterator(fs::path(config.get_pseudo_pot_dir()["qe"]) / "SSSP_efficiency_pseudos")) {
+        all_files.emplace_back(p.path());
     }
-    return out;
+    for (const auto& element : xyz.elements_set) {
+        out << boost::format("%1% %2% ") 
+            % element
+            % boost::lexical_cast<std::string>(element_map[element].mass);
+
+        std::string pat_string = "";
+        if (element.size() == 1) {
+            pat_string = (boost::format("^[%1%|%2%][.|_]")
+                % boost::to_upper_copy(element)
+                % boost::to_lower_copy(element)
+            ).str();
+        } else {
+            pat_string = (boost::format("^[%1%|%2%][%3%|%4%][.|_]")
+                % boost::to_upper_copy(boost::lexical_cast<std::string>(element[0]))
+                % boost::to_lower_copy(boost::lexical_cast<std::string>(element[0]))
+                % boost::to_upper_copy(boost::lexical_cast<std::string>(element[1]))
+                % boost::to_lower_copy(boost::lexical_cast<std::string>(element[1]))
+            ).str();            
+        }
+        for (const auto& item : all_files) {
+            std::regex pat{pat_string};
+            if (std::regex_search(item.filename().string(), pat)) {
+                out << item.filename().string() << "\n";
+                break;
+            }
+        }
+    }
+    return out.str();
 }
 
 PwScfMisc::PwScfMisc() {

@@ -36,6 +36,7 @@ SOFTWARE.
 #include "atomsciflow/base/xyz.h"
 #include "atomsciflow/variable/group.h"
 #include "atomsciflow/base/kpath.h"
+#include "atomsciflow/config/config_manager.h"
 
 namespace atomsciflow::qe {
 
@@ -46,6 +47,7 @@ public:
     std::string to_string(Xyz& xyz);
 
     std::string directory;
+    ConfigManager config;
 };
 
 /**

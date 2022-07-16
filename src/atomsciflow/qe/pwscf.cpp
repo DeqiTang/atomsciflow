@@ -32,6 +32,7 @@ SOFTWARE.
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include "atomsciflow/server/submit_script.h"
 #include "atomsciflow/remote/server.h"
@@ -46,6 +47,8 @@ PwScf::PwScf() {
     this->namelists["electrons"] = qe::gen::electrons();
     this->namelists["ions"] = qe::gen::ions();
     this->namelists["cell"] = qe::gen::cell();
+
+    this->set_param("control", "pseudo_dir", "./");
 
     job.set_run_default("bash");
     job.set_run_default("yh");
@@ -73,11 +76,18 @@ std::string PwScf::to_string() {
 
 std::string PwScf::to_string(std::string indent) {
     std::string out = "";
-    for (const auto& item : this->namelists) {
-        if (false == this->namelists[item.first].status) {
+
+    std::vector<std::string> namelists_order;
+    namelists_order.push_back("control");
+    namelists_order.push_back("system");
+    namelists_order.push_back("electrons");
+    namelists_order.push_back("ions");
+    namelists_order.push_back("cell");
+    for (const auto& item : namelists_order) {
+        if (false == this->namelists[item].status) {
             continue;
         } else {
-            out += this->namelists[item.first].to_string(indent);
+            out += this->namelists[item].to_string(indent);
             out += "\n";
         }
     }
@@ -236,11 +246,27 @@ void PwScf::run(const std::string& directory) {
     step << boost::format("cat > %1%<<EOF\n") % job.run_params["input"];
     step << this->to_string();
     step << "EOF\n";
-    step << "cat";
     for (const auto& item : this->misc.xyz.elements_set) {
-        step << " " << (fs::path(config.get_pseudo_pot_dir()["qe"]) / "SSSP_efficiency_pseudos" / (item + "*.upf")).string();
+        step << "# pseudopotential file for element: " << item << "\n";
+        step << boost::format("for item in %1%/*\n") 
+            % (fs::path(config.get_pseudo_pot_dir()["qe"]) / "SSSP_efficiency_pseudos").string();
+        step << "do\n";
+        if (item.size() == 1) {
+            step << boost::format("if [[ ${item} =~ /[%1%|%2%][.|_] ]]\n")
+                % boost::to_upper_copy(item)
+                % boost::to_lower_copy(item);
+        } else {
+            step << boost::format("if [[ ${item} =~ /[%1%|%2%][%3%|%4%][.|_] ]]\n")
+                % boost::to_upper_copy(boost::lexical_cast<std::string>(item[0]))
+                % boost::to_lower_copy(boost::lexical_cast<std::string>(item[0]))
+                % boost::to_upper_copy(boost::lexical_cast<std::string>(item[1]))
+                % boost::to_lower_copy(boost::lexical_cast<std::string>(item[1]));
+        }
+        step << "then\n";
+        step << "cp ${item} ${ABSOLUTE_WORK_DIR}/\n";
+        step << "fi\n";
+        step << "done\n";
     }
-    step << " ./\n";
     step << boost::format("$CMD_HEAD %1% < %2% > %3%\n") % job.run_params["cmd"] % job.run_params["input"] % job.run_params["output"];
     job.steps.push_back(step.str());
     step.clear();

@@ -48,7 +48,7 @@ Namelist system() {
 
 Namelist electrons() {
     Namelist out;
-    out.name = "electron";
+    out.name = "electrons";
     out.set_param("electron_maxstep", 100);
     out.set_param("conv_thr", "1.0E-6");
     return out;
@@ -56,7 +56,7 @@ Namelist electrons() {
 
 Namelist ions() {
     Namelist out;
-    out.name = "ion";
+    out.name = "ions";
     out.set_param("ion_dynamics", "bfgs");
     return out;
 }
