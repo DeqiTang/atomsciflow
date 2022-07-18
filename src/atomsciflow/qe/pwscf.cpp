@@ -92,7 +92,8 @@ std::string PwScf::to_string(std::string indent) {
         }
     }
     out += "\n";
-    out += this->misc.to_string("angstrom");
+    // out += this->misc.to_string("angstrom");
+    out += this->misc.to_string("crystal");
     return out;
 }
 

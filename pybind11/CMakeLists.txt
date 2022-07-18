@@ -164,6 +164,12 @@ file(GLOB ATOMSCIFLOW_UTILS_SOURCES
 add_library(atomsciflow-utils STATIC
     ${ATOMSCIFLOW_UTILS_SOURCES}
 )
+file(GLOB ATOMSCIFLOW_POST_SOURCES
+    "../src/atomsciflow/post/*.cpp"
+)
+add_library(atomsciflow-post STATIC
+    ${ATOMSCIFLOW_POST_SOURCES}
+)
 
 # -----------------------------------------------------
 # for pybind11 and scikit-build
@@ -239,6 +245,7 @@ file(GLOB BINDING_QE_SOURCES
     "./qe/*.cpp"
     "../src/atomsciflow/qe/*.cpp"
     "../src/atomsciflow/qe/io/*.cpp"
+    "../src/atomsciflow/qe/post/*.cpp"
 )
 add_library(qe MODULE ${BINDING_QE_SOURCES})
 target_link_libraries(qe
@@ -254,6 +261,7 @@ target_link_libraries(qe
     atomsciflow-remote
     atomsciflow-config
     atomsciflow-utils
+    atomsciflow-post
 )
 set_target_properties(qe PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"

@@ -110,6 +110,7 @@ file(GLOB PROJECT_LIB_SOURCES
     "./src/atomsciflow/cp2k/io/*.cpp"
     "./src/atomsciflow/qe/*.cpp"
     "./src/atomsciflow/qe/io/*.cpp"
+    "./src/atomsciflow/qe/post/*.cpp"
     "./src/atomsciflow/qmcpack/*.cpp"
     "./src/atomsciflow/elk/*.cpp"
     "./src/atomsciflow/vasp/*.cpp"
@@ -135,6 +136,7 @@ file(GLOB PROJECT_LIB_SOURCES
     "./src/atomsciflow/cmd/*.cpp"
     "./src/atomsciflow/config/*.cpp"
     "./src/atomsciflow/plumed/*.cpp"
+    "./src/atomsciflow/post/*.cpp"
 )
 
 file(GLOB PROJECT_HEADER_FILES
@@ -150,6 +152,7 @@ file(GLOB PROJECT_HEADER_FILES
     "./src/atomsciflow/cp2k/io/*.h"
     "./src/atomsciflow/qe/*.h"
     "./src/atomsciflow/qe/io/*.h"
+    "./src/atomsciflow/qe/post/*.h"
     "./src/atomsciflow/qmcpack/*.h"
     "./src/atomsciflow/elk/*.h"
     "./src/atomsciflow/vasp/*.h"
@@ -169,13 +172,13 @@ file(GLOB PROJECT_HEADER_FILES
     "./src/atomsciflow/nwchem/*.h"
     "./src/atomsciflow/orca/*.h"
     "./src/atomsciflow/qchem/*.h"
-    "./src/atomsciflow/post/*.h"
     "./src/atomsciflow/cube_handle/*.h"
     "./src/atomsciflow/remote/*.h"
     "./src/atomsciflow/server/*.h"
     "./src/atomsciflow/cmd/*.h"
     "./src/atomsciflow/config/*.h"
     "./src/atomsciflow/plumed/*.h"
+    "./src/atomsciflow/post/*.h"
 )
 
 # set output path 

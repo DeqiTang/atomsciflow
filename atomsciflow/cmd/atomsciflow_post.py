@@ -28,12 +28,14 @@ import argparse
 
 from atomsciflow.cmd.cmd_utils import log_cmd_start, log_sub_cmd_start, log_sub_cmd_end
 from atomsciflow.cmd.atomsciflow_post_cp2k import add_cp2k_post_subparser, cp2k_post_processor
+from atomsciflow.cmd.atomsciflow_post_qe import add_qe_post_subparser, qe_post_processor
 
 def main():
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest="subcommand", title="subcommand", description="choose one and only one subcommand")
     
     add_cp2k_post_subparser(subparsers)
+    add_qe_post_subparser(subparsers)
     #
     args = parser.parse_args()
 
@@ -56,7 +58,9 @@ def main():
     if args.subcommand == "elk":
         pass
     if args.subcommand == "qe":
-        pass
+        log_sub_cmd_start(args.subcommand)
+        qe_post_processor(args)
+        log_sub_cmd_end(args.subcommand)
     if args.subcommand == "qmcpack":
         pass
     if args.subcommand == "siesta":

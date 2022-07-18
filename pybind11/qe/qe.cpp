@@ -7,6 +7,8 @@
 #include "atomsciflow/base/crystal.h"
 #include "atomsciflow/qe/pwscf.h"
 #include "atomsciflow/qe/io/params.h"
+#include "atomsciflow/qe/phonopy.h"
+#include "atomsciflow/qe/post/phonopy.h"
 
 namespace py = pybind11;
 
@@ -74,8 +76,41 @@ void add_class_pwscfmisc(py::module& m) {
         ;
 }
 
+void add_class_phonopy(py::module& m) {
+    py::class_<atomsciflow::qe::Phonopy, atomsciflow::qe::PwScf>(m, "Phonopy")
+        .def(py::init<>())
+        .def("get_xyz", &atomsciflow::qe::Phonopy::get_xyz)
+        .def("to_string", [](atomsciflow::qe::Phonopy& _this) {
+            return _this.to_string("");
+        })
+        .def("set_param", py::overload_cast<const std::string&, std::string, int>(&atomsciflow::qe::Phonopy::set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::string, double>(&atomsciflow::qe::Phonopy::set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::string, std::string>(&atomsciflow::qe::Phonopy::set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::string, std::vector<int>>(&atomsciflow::qe::Phonopy::set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::string, std::vector<double>>(&atomsciflow::qe::Phonopy::set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::string, std::vector<std::string>>(&atomsciflow::qe::Phonopy::set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::string, std::vector<std::vector<int>>>(&atomsciflow::qe::Phonopy::set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::string, std::vector<std::vector<double>>>(&atomsciflow::qe::Phonopy::set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::string, std::vector<std::vector<std::string>>>(&atomsciflow::qe::Phonopy::set_param))        
+        .def("run", &atomsciflow::qe::Phonopy::run)
+        .def("set_kpoints", &atomsciflow::qe::Phonopy::set_kpoints)
+        .def("set_occupations", &atomsciflow::qe::Phonopy::set_occupations)
+        .def_readwrite("namelists", &atomsciflow::qe::Phonopy::namelists)
+        .def_readwrite("misc", &atomsciflow::qe::Phonopy::misc)
+        .def_readwrite("job", &atomsciflow::qe::Phonopy::job)
+        ;
+}
+
 void add_qe_read_params(py::module& m) {
     m.def("read_params", &atomsciflow::qe::io::read_params);
+}
+
+void add_class_post_phonopy(py::module& m) {
+    py::class_<atomsciflow::qe::post::Phonopy>(m, "PostPhonopy")
+        .def(py::init<>())
+        .def("run", &atomsciflow::qe::post::Phonopy::run)
+        .def("set_kpath", &atomsciflow::qe::post::Phonopy::set_kpath)
+        ;
 }
 
 PYBIND11_MODULE(qe, m) {
@@ -87,5 +122,9 @@ PYBIND11_MODULE(qe, m) {
     add_class_pwscfmisc(m);
     add_class_pwscf(m);
 
+    add_class_phonopy(m);
+
     add_qe_read_params(m);
+
+    add_class_post_phonopy(m);
 }

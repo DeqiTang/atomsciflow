@@ -64,3 +64,7 @@ class VcOpt(PwScf):
         self.set_param("cell", "cell_dynamics", "bfgs")
         self.set_param("cell", "press_conv_thr", 0.5)
         self.set_param("cell", "cell_dofree", "all")
+
+class Phonopy(qe.Phonopy):
+    def __init__(self):
+        super().__init__()

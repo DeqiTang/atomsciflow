@@ -166,6 +166,7 @@ std::string PwScfMisc::to_string(std::string coordtype="angstrom") {
         if (true == this->ifstatic) {
             for (int k = 0; k < this->xyz.atoms.size(); k++) {
                 out += this->xyz.atoms[k].name;
+                out += "\t";
                 out += std::to_string(atoms_frac[k].x);
                 out += "\t";
                 out += std::to_string(atoms_frac[k].y);
@@ -176,6 +177,7 @@ std::string PwScfMisc::to_string(std::string coordtype="angstrom") {
         } else if (false == this->ifstatic) {
             for (int k = 0; k < this->xyz.atoms.size(); k++) {
                 out += this->xyz.atoms[k].name;
+                out += "\t";
                 out += std::to_string(atoms_frac[k].x);
                 out += "\t";
                 out += std::to_string(atoms_frac[k].y);
