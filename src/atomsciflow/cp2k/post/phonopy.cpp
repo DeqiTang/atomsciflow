@@ -155,7 +155,7 @@ void Phonopy::run(const std::string& directory) {
             )
             ;
     } else if (num_gen_supercells <= 9999) {
-        stream << boost::format("phonopy --cp2k -f ../%1%-{001..999} ../%1%-{1000..%2%}-forces-1_0.xyz\n") 
+        stream << boost::format("phonopy --cp2k -f ../%1%-{001..999}-forces-1_0.xyz ../%1%-{1000..%2%}-forces-1_0.xyz\n") 
             % project_prefix % boost::io::group(
                 std::setw(4), 
                 std::setfill('0'),
