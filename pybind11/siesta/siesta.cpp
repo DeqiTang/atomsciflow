@@ -10,6 +10,8 @@
 #include "atomsciflow/siesta/siesta.h"
 #include "atomsciflow/siesta/opt.h"
 #include "atomsciflow/siesta/io/params.h"
+#include "atomsciflow/siesta/phonopy.h"
+#include "atomsciflow/siesta/post/phonopy.h"
 
 namespace py = pybind11;
 
@@ -47,6 +49,33 @@ void add_siesta_read_params(py::module& m) {
     m.def("read_params", &atomsciflow::siesta::io::read_params);
 }
 
+void add_class_phonopy(py::module& m) {
+    py::class_<atomsciflow::siesta::Phonopy, atomsciflow::Siesta>(m, "Phonopy")
+        .def(py::init<>())
+        .def("to_string", &atomsciflow::siesta::Phonopy::to_string)
+        .def("set_param", py::overload_cast<std::string, int>(&atomsciflow::siesta::Phonopy::py_set_param))
+        .def("set_param", py::overload_cast<std::string, double>(&atomsciflow::siesta::Phonopy::py_set_param))
+        .def("set_param", py::overload_cast<std::string, std::string>(&atomsciflow::siesta::Phonopy::py_set_param))
+        .def("set_param", py::overload_cast<std::string, std::vector<int>>(&atomsciflow::siesta::Phonopy::py_set_param))
+        .def("set_param", py::overload_cast<std::string, std::vector<double>>(&atomsciflow::siesta::Phonopy::py_set_param))
+        .def("set_param", py::overload_cast<std::string, std::vector<std::string>>(&atomsciflow::siesta::Phonopy::py_set_param))
+        .def("set_param", py::overload_cast<std::string, std::vector<std::vector<int>>>(&atomsciflow::siesta::Phonopy::py_set_param))
+        .def("set_param", py::overload_cast<std::string, std::vector<std::vector<double>>>(&atomsciflow::siesta::Phonopy::py_set_param))
+        .def("set_param", py::overload_cast<std::string, std::vector<std::vector<std::string>>>(&atomsciflow::siesta::Phonopy::py_set_param))
+        .def("get_xyz", &atomsciflow::siesta::Phonopy::get_xyz)
+        .def("run", &atomsciflow::siesta::Phonopy::run)
+        .def_readwrite("job", &atomsciflow::siesta::Phonopy::job)
+        ;
+}
+
+void add_class_post_phonopy(py::module& m) {
+    py::class_<atomsciflow::siesta::post::Phonopy>(m, "PostPhonopy")
+        .def(py::init<>())
+        .def("run", &atomsciflow::siesta::post::Phonopy::run)
+        .def("set_kpath", &atomsciflow::siesta::post::Phonopy::set_kpath)
+        ;
+}
+
 PYBIND11_MODULE(siesta, m) {
     m.doc() = "siesta module";
     m.attr("__version__") = "0.0.0";
@@ -55,4 +84,7 @@ PYBIND11_MODULE(siesta, m) {
     add_class_siestaopt(m);
 
     add_siesta_read_params(m);
+
+    add_class_phonopy(m);
+    add_class_post_phonopy(m);
 }

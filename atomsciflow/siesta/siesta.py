@@ -70,3 +70,7 @@ class MD(Siesta):
         self.set_param("MD.TargetTemperature", "300 K")
         self.set_param("WriteCoorXmol", "true")
         self.set_param("WriteMDXmol", "true")
+
+class Phonopy(siesta.Phonopy):
+    def __init__(self):
+        super().__init__()

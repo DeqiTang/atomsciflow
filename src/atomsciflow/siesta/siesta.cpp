@@ -183,6 +183,10 @@ void Siesta::get_xyz(const std::string& xyzfile) {
     this->set_param("NumberOfSpecies", int(this->xyz.elements_set.size()));
     this->set_param("NumberOfAtoms", this->xyz.natom());
 
+    this->set_param("AtomicCoordinatesFormat", "Ang");
+    // this->set_param("AtomicCoordinatesFormat", "ScaledCartesian");
+    this->set_param("LatticeConstant", "1.0 Ang");
+
     this->new_block("ChemicalSpeciesLabel");
     for (const auto& item : elem_index_in_number_order) {
         this->blocks["ChemicalSpeciesLabel"]->data.push_back(

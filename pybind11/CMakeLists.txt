@@ -472,6 +472,7 @@ file(GLOB BINDING_SIESTA_SOURCES
     "./siesta/siesta.cpp"
     "../src/atomsciflow/siesta/*.cpp"
     "../src/atomsciflow/siesta/io/*.cpp"
+    "../src/atomsciflow/siesta/post/*.cpp"
 )
 add_library(siesta MODULE ${BINDING_SIESTA_SOURCES})
 target_link_libraries(siesta
@@ -487,6 +488,7 @@ target_link_libraries(siesta
     atomsciflow-remote
     atomsciflow-config
     atomsciflow-utils
+    atomsciflow-post
 )
 set_target_properties(siesta PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"
