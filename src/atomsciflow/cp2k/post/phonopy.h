@@ -25,13 +25,16 @@ SOFTWARE.
 #ifndef ATOMSCIFLOW_CP2K_POST_PHONOPY_H_
 #define ATOMSCIFLOW_CP2K_POST_PHONOPY_H_
 
-#include "atomsciflow/cp2k/post/post.h"
+#include "atomsciflow/post/post.h"
 #include "atomsciflow/base/xyz.h"
 #include "atomsciflow/base/kpath.h"
 
 namespace atomsciflow::cp2k::post {
 
-class Phonopy : public Post {
+namespace fs = boost::filesystem;
+namespace pt = boost::property_tree;
+
+class Phonopy : public atomsciflow::post::Post {
 public:
 
     Phonopy();

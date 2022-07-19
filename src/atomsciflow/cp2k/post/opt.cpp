@@ -40,7 +40,7 @@ namespace fs = boost::filesystem;
 namespace ba = boost::algorithm;
 
 Opt::Opt() {
-    this->set_run("cp2k-out", "cp2k.out");
+    this->set_run("program-out", "cp2k.out");
     this->set_run("output-json", "post-opt.json");
 
     this->add_rule(std::function<void(const std::string&)>{[&](const std::string& str) -> void {

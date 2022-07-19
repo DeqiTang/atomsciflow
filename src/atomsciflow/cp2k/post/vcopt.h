@@ -25,11 +25,14 @@ SOFTWARE.
 #ifndef ATOMSCIFLOW_CP2K_POST_VCOPT_H_
 #define ATOMSCIFLOW_CP2K_POST_VCOPT_H_
 
-#include "atomsciflow/cp2k/post/post.h"
+#include "atomsciflow/post/post.h"
 
 namespace atomsciflow::cp2k::post {
 
-class VcOpt : public Post {
+namespace fs = boost::filesystem;
+namespace pt = boost::property_tree;
+
+class VcOpt : public atomsciflow::post::Post {
 public:
 
     VcOpt();

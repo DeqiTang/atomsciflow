@@ -25,11 +25,14 @@ SOFTWARE.
 #ifndef ATOMSCIFLOW_CP2K_POST_PDOS_H_
 #define ATOMSCIFLOW_CP2K_POST_PDOS_H_
 
-#include "atomsciflow/cp2k/post/post.h"
+#include "atomsciflow/post/post.h"
 #include "atomsciflow/base/xyz.h"
 #include <armadillo>
 
 namespace atomsciflow::cp2k::post {
+
+namespace fs = boost::filesystem;
+namespace pt = boost::property_tree;
 
 class ElementPdos {
 public:
@@ -52,7 +55,7 @@ public:
     std::vector<std::string> orbitals;
 };
 
-class Pdos : public Post {
+class Pdos : public atomsciflow::post::Post {
 public:
 
     Pdos();

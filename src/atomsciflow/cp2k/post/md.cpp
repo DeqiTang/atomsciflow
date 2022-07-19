@@ -35,7 +35,7 @@ namespace atomsciflow::cp2k::post {
 namespace fs = boost::filesystem;
 
 MD::MD() {
-    this->set_run("md-out", "cp2k.out");
+    this->set_run("program-out", "cp2k.out");
     this->set_run("output-json", "post-md.json");
 
     this->add_rule(std::function<void(const std::string&)>{[&](const std::string& str) -> void {

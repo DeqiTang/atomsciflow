@@ -234,6 +234,7 @@ target_link_libraries(cp2k
     atomsciflow-remote
     atomsciflow-config
     atomsciflow-utils
+    atomsciflow-post
 )
 set_target_properties(cp2k PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"
