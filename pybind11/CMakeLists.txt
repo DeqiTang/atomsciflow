@@ -334,6 +334,7 @@ target_link_libraries(vasp
     atomsciflow-remote
     atomsciflow-config
     atomsciflow-utils
+    atomsciflow-post
     ${YAML_CPP_LIBRARIES}
     ${LIBSSH2_FOUND_LIBS}    
     OpenSSL::SSL

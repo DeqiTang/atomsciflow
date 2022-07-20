@@ -27,5 +27,6 @@ from atomsciflow.vasp.vasp import (
     Static, 
     Opt,
     VcOpt,
-    MD
+    MD,
+    Phonopy
 ) 

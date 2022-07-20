@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 Deqi Tang
+Copyright (c) 2022 Deqi Tang
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,43 +23,7 @@ SOFTWARE.
 """
 
 from atomsciflow.cpp import vasp
-from atomsciflow.cpp.server import JobScheduler
-from atomsciflow.cpp.config import ConfigManager
 
-class Vasp(vasp.Vasp):
-    def __init__(self):
-        super().__init__()
-
-class Static(Vasp):
-    def __init__(self):
-        super().__init__()
-        self.incar.set_runtype("static")
-        self.set_param("IBRION", -1)
-
-class Opt(Vasp):
-    def __init__(self):
-        super().__init__()
-        self.incar.set_runtype("opt")
-        self.set_param("EDIFFG", 1.0E-3)
-        self.set_param("IBRION", 1)
-        self.set_param("NSW", 100)
-
-class VcOpt(Vasp):
-    def __init__(self):
-        super().__init__()
-        self.set_param("EDIFFG", 1.0E-3)
-        self.set_param("IBRION", 1)
-        self.set_param("NSW", 100)
-        self.set_param("ISIF", 3)
-
-class MD(Vasp):
-    def __init__(self):
-        super().__init__()
-        self.incar.set_runtype("md")
-        self.set_param("IBRION", 0)
-        self.set_param("POTIM", 0.5)
-        self.set_param("NSW", 1000)
-
-class Phonopy(vasp.Phonopy):
+class Phonopy(vasp.PostPhonopy):
     def __init__(self):
         super().__init__()

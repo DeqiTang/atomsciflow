@@ -52,7 +52,7 @@ int main(int argc, char const* argv[]) {
     //
     po::options_description global("Global options");
     global.add_options()
-        ("subcommand", po::value<std::string>(), "command to execute")
+        ("subcommand", po::value<std::string>(), "subcommand to execute")
         ("subargs", po::value<std::vector<std::string> >(), "Arguments for command")
         ("help, h", "print out help information");
         
@@ -71,7 +71,7 @@ int main(int argc, char const* argv[]) {
     
     log_cmd_start("atomsciflow-post.x");
     
-    if (0 == vm.count("command")) { // or by vm.empty()
+    if (0 == vm.count("subcommand")) { // or by vm.empty()
         std::cout << "You didn't specify any subcommand!\n";
         std::exit(1);
     }

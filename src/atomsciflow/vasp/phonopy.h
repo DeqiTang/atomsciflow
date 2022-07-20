@@ -1,7 +1,7 @@
 /************************************************************************
 MIT License
 
-Copyright (c) 2021 Deqi Tang
+Copyright (c) 2022 Deqi Tang
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,39 +22,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ************************************************************************/
 
-/// @file src/atomsciflow/vasp/post/phonopy.h
-/// @author DeqiTang
-/// Mail: deqitang@gmail.com
-/// Created Time: Mon 28 Feb 2022 11:06:05 PM CST
+#ifndef ATOMSCIFLOW_VASP_PHONOPY_H_
+#define ATOMSCIFLOW_VASP_PHONOPY_H_
 
-#ifndef ATOMSCIFLOW_VASP_POST_PHONOPY_H_
-#define ATOMSCIFLOW_VASP_POST_PHONOPY_H_
+#include "atomsciflow/vasp/vasp.h"
 
-#include <yaml-cpp/yaml.h>
+namespace atomsciflow::vasp {
 
-#include "atomsciflow/post/post.h"
-#include "atomsciflow/base/crystal.h"
-#include "atomsciflow/base/xyz.h"
-#include "atomsciflow/base/kpath.h"
-
-namespace atomsciflow::vasp::post {
-
-class Phonopy : public atomsciflow::post::Post {
+class Phonopy : public Vasp {
 public:
+
     Phonopy();
-    ~Phonopy(); 
+    ~Phonopy();
 
     virtual void run(const std::string& directory);
-
-    void extract_data(const std::string& directory);
-    
-    void set_kpath(Kpath& kpath) {
-        this->kpath = kpath;
-    }
-
-    Kpath kpath;
 };
 
-} // namespace atomsciflow
+} //namespace atomsciflow::vasp
 
-#endif // ATOMSCIFLOW_VASP_POST_PHONOPY_H_
+#endif // ATOMSCIFLOW_VASP_PHONOPY_H_

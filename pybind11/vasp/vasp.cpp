@@ -10,6 +10,7 @@
 #include "atomsciflow/vasp/post/phonopy.h"
 #include "atomsciflow/server/job_scheduler.h"
 #include "atomsciflow/vasp/io/params.h"
+#include "atomsciflow/vasp/phonopy.h"
 
 namespace py = pybind11;
 
@@ -68,22 +69,43 @@ void add_class_vaspkpoints(py::module& m) {
         ;
 }
 
-void add_class_phonopypost(py::module& m) {
+void add_class_post_phonopy(py::module& m) {
     
-    py::class_<atomsciflow::PhonopyPost>(m, "PhonopyPost")
+    py::class_<atomsciflow::vasp::post::Phonopy>(m, "PostPhonopy")
         .def(py::init<>())
-        .def("get_kpath", &atomsciflow::PhonopyPost::get_kpath)
-        .def("get_xyz", py::overload_cast<std::string&>(&atomsciflow::PhonopyPost::get_xyz))
-        .def("get_xyz", py::overload_cast<atomsciflow::Xyz&>(&atomsciflow::PhonopyPost::get_xyz))
-        .def("process", &atomsciflow::PhonopyPost::process)
-        .def_readwrite("kpath", &atomsciflow::PhonopyPost::kpath)
-        .def_readwrite("supercell_n", &atomsciflow::PhonopyPost::supercell_n)
+        .def("run", &atomsciflow::vasp::post::Phonopy::run)
+        .def("set_kpath", &atomsciflow::vasp::post::Phonopy::set_kpath)
+        .def("extract_data", &atomsciflow::vasp::post::Phonopy::extract_data)
         ;
-
 }
 
 void add_vasp_read_params(py::module& m) {
     m.def("read_params", &atomsciflow::vasp::io::read_params);
+}
+
+void add_class_phonopy(py::module& m) {
+
+    py::class_<atomsciflow::vasp::Phonopy>(m, "Phonopy")
+        .def(py::init<>())
+        .def("get_xyz", &atomsciflow::vasp::Phonopy::get_xyz)
+        .def("set_param", py::overload_cast<std::string, int>(&atomsciflow::vasp::Phonopy::py_set_param))
+        .def("set_param", py::overload_cast<std::string, double>(&atomsciflow::vasp::Phonopy::py_set_param))
+        .def("set_param", py::overload_cast<std::string, std::string>(&atomsciflow::vasp::Phonopy::py_set_param))
+        .def("set_param", py::overload_cast<std::string, std::vector<int>>(&atomsciflow::vasp::Phonopy::py_set_param))
+        .def("set_param", py::overload_cast<std::string, std::vector<double>>(&atomsciflow::vasp::Phonopy::py_set_param))
+        .def("set_param", py::overload_cast<std::string, std::vector<std::string>>(&atomsciflow::vasp::Phonopy::py_set_param))
+        .def("set_param", py::overload_cast<std::string, std::vector<std::vector<int>>>(&atomsciflow::vasp::Phonopy::py_set_param))
+        .def("set_param", py::overload_cast<std::string, std::vector<std::vector<double>>>(&atomsciflow::vasp::Phonopy::py_set_param))
+        .def("set_param", py::overload_cast<std::string, std::vector<std::vector<std::string>>>(&atomsciflow::vasp::Phonopy::py_set_param))
+        .def("set_params", &atomsciflow::vasp::Phonopy::set_params)
+        .def("set_kpoints", &atomsciflow::vasp::Phonopy::set_kpoints)
+        .def("run", &atomsciflow::vasp::Phonopy::run)
+        .def_readwrite("job", &atomsciflow::vasp::Phonopy::job)
+        .def_readwrite("config", &atomsciflow::vasp::Phonopy::config)
+        .def_readwrite("incar", &atomsciflow::vasp::Phonopy::incar)
+        .def_readwrite("poscar", &atomsciflow::vasp::Phonopy::poscar)
+        .def_readwrite("kpoints", &atomsciflow::vasp::Phonopy::kpoints)
+        ;
 }
 
 PYBIND11_MODULE(vasp, m) {
@@ -94,8 +116,10 @@ PYBIND11_MODULE(vasp, m) {
     add_class_vaspincar(m);
     add_class_vaspposcar(m);
     add_class_vaspkpoints(m);
-    add_class_phonopypost(m);
+    add_class_post_phonopy(m);
 
     add_vasp_read_params(m);
+
+    add_class_phonopy(m);
 }
 

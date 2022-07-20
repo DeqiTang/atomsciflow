@@ -84,13 +84,10 @@ void atomsciflow_post_vasp(po::parsed_options& parsed, po::variables_map& vm) {
     }
 
     if (vm["runtype"].as<int>() == 7) {
-        auto task = atomsciflow::PhonopyPost();
-        task.supercell_n = vm["supercell-n"].as<std::vector<int>>();
-        task.get_kpath(atomsciflow::get_kpath(vm["kpath-manual"].as<std::vector<std::string>>(), vm["kpath-file"].as<std::string>()));
-        task.get_xyz(xyzfile);
-        task.process(vm["directory"].as<std::string>(), vm["tmux"].as<int>());
+        auto task = atomsciflow::vasp::post::Phonopy();
+        auto kpath = atomsciflow::get_kpath(vm["kpath-manual"].as<std::vector<std::string>>(), vm["kpath-file"].as<std::string>());
+        task.set_kpath(kpath);
+        task.run(vm["directory"].as<std::string>());
     }
 
 } 
-
-
