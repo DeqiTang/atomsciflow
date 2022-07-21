@@ -8,6 +8,8 @@
 
 #include "atomsciflow/abinit/abinit.h"
 #include "atomsciflow/abinit/io/params.h"
+#include "atomsciflow/abinit/phonopy.h"
+#include "atomsciflow/abinit/post/phonopy.h"
 
 namespace py = pybind11;
 
@@ -72,6 +74,46 @@ void add_abinit_read_params(py::module& m) {
     m.def("read_params", atomsciflow::abinit::io::read_params);
 }
 
+void add_class_phonopy(py::module& m) {
+
+    py::class_<atomsciflow::abinit::Phonopy, atomsciflow::Abinit>(m, "Phonopy")
+        .def(py::init<>())
+        .def("get_xyz", &atomsciflow::abinit::Phonopy::get_xyz)
+        .def("to_string", &atomsciflow::abinit::Phonopy::to_string)
+        .def("set_param", py::overload_cast<std::string, int>(&atomsciflow::abinit::Phonopy::py_set_param))
+        .def("set_param", py::overload_cast<std::string, double>(&atomsciflow::abinit::Phonopy::py_set_param))
+        .def("set_param", py::overload_cast<std::string, std::string>(&atomsciflow::abinit::Phonopy::py_set_param))
+        .def("set_param", py::overload_cast<std::string, std::vector<int>>(&atomsciflow::abinit::Phonopy::py_set_param))
+        .def("set_param", py::overload_cast<std::string, std::vector<double>>(&atomsciflow::abinit::Phonopy::py_set_param))
+        .def("set_param", py::overload_cast<std::string, std::vector<std::string>>(&atomsciflow::abinit::Phonopy::py_set_param))
+        .def("set_param", py::overload_cast<std::string, std::vector<std::vector<int>>>(&atomsciflow::abinit::Phonopy::py_set_param))
+        .def("set_param", py::overload_cast<std::string, std::vector<std::vector<double>>>(&atomsciflow::abinit::Phonopy::py_set_param))
+        .def("set_param", py::overload_cast<std::string, std::vector<std::vector<std::string>>>(&atomsciflow::abinit::Phonopy::py_set_param))
+        .def("set_params", py::overload_cast<std::map<std::string, int>&>(&atomsciflow::abinit::Phonopy::py_set_params))
+        .def("set_params", py::overload_cast<std::map<std::string, double>&>(&atomsciflow::abinit::Phonopy::py_set_params))
+        .def("set_params", py::overload_cast<std::map<std::string, std::string>&>(&atomsciflow::abinit::Phonopy::py_set_params))
+        .def("set_params", py::overload_cast<std::map<std::string, std::vector<int>>&>(&atomsciflow::abinit::Phonopy::py_set_params))
+        .def("set_params", py::overload_cast<std::map<std::string, std::vector<double>>&>(&atomsciflow::abinit::Phonopy::py_set_params))
+        .def("set_params", py::overload_cast<std::map<std::string, std::vector<std::string>>&>(&atomsciflow::abinit::Phonopy::py_set_params))
+        .def("set_params", py::overload_cast<std::map<std::string, std::vector<std::vector<int>>>&>(&atomsciflow::abinit::Phonopy::py_set_params))
+        .def("set_params", py::overload_cast<std::map<std::string, std::vector<std::vector<double>>>&>(&atomsciflow::abinit::Phonopy::py_set_params))
+        .def("set_params", py::overload_cast<std::map<std::string, std::vector<std::vector<std::string>>>&>(&atomsciflow::abinit::Phonopy::py_set_params))
+        .def("set_ndtset", &atomsciflow::abinit::Phonopy::set_ndtset)
+        .def("set_pot", &atomsciflow::abinit::Phonopy::set_pot)
+        .def("run", &atomsciflow::abinit::Phonopy::run)
+        .def_readwrite("datasets", &atomsciflow::abinit::Phonopy::datasets)
+        .def_readwrite("job", &atomsciflow::abinit::Phonopy::job)
+        ;
+}
+
+void add_class_post_phonopy(py::module& m) {
+    py::class_<atomsciflow::abinit::post::Phonopy>(m, "PostPhonopy")
+        .def(py::init<>())
+        .def("run", &atomsciflow::abinit::post::Phonopy::run)
+        .def("set_kpath", &atomsciflow::abinit::post::Phonopy::set_kpath)
+        ;
+}
+
 PYBIND11_MODULE(abinit, m) {
     m.doc() = "abinit module";
     
@@ -80,5 +122,8 @@ PYBIND11_MODULE(abinit, m) {
     add_class_abinit(m);
 
     add_abinit_read_params(m);
+
+    add_class_phonopy(m);
+    add_class_post_phonopy(m);
 }
 

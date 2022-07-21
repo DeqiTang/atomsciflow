@@ -34,7 +34,7 @@ def add_abinit_subparser(subparsers):
     add_calc_parser_common(subparser)
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "md", "dfpt-epd"],
+        choices=["static", "opt", "md", "phonopy", "dfpt-epd"],
         help="The calculation to do. The specified value is case insensitive")
 
     subparser.add_argument("--pot", type=str, default="ncpp",
@@ -65,6 +65,12 @@ def abinit_processor(args):
     elif args.calc.lower() == "md":
         from atomsciflow.abinit import MD
         job = MD()
+    elif args.calc.lower() == "phonopy":
+        from atomsciflow.abinit import Phonopy
+        job = Phonopy()
+        job.job.set_run("phonopy_dim_x", args.phonopy_dim[0])
+        job.job.set_run("phonopy_dim_y", args.phonopy_dim[1])
+        job.job.set_run("phonopy_dim_z", args.phonopy_dim[2])
     elif args.calc.lower() == "dfpt-epd":
         from atomsciflow.abinit import DfptElasticPiezoDielec
         job = DfptElasticPiezoDielec()
@@ -83,7 +89,10 @@ def abinit_processor(args):
         for item in custom_str.split(";"):
             if item == "":
                 continue
-            params[item.split("=")[0]] = item.split("=")[1]
+            if item.split("=")[1].count(",") > 0:
+                params[item.split("=")[0]] = [value for value in item.split("=")[1].split(",")]
+            else:
+                params[item.split("=")[0]] = item.split("=")[1]
     for item in params:
         if params[item] == None:
             continue

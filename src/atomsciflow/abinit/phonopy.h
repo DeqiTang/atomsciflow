@@ -1,7 +1,7 @@
-"""
+/************************************************************************
 MIT License
 
-Copyright (c) 2021 Deqi Tang
+Copyright (c) 2022 Deqi Tang
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,13 +20,24 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-"""
+************************************************************************/
 
-from atomsciflow.abinit.abinit import (
-    Abinit,
-    Static, 
-    Opt,
-    MD,
-    Phonopy,
-    DfptElasticPiezoDielec
-)
+#ifndef ATOMSCIFLOW_ABINIT_PHONOPY_H_
+#define ATOMSCIFLOW_ABINIT_PHONOPY_H_
+
+#include "atomsciflow/abinit/abinit.h"
+
+namespace atomsciflow::abinit {
+
+class Phonopy : public Abinit {
+public:
+
+    Phonopy();
+    ~Phonopy();
+
+    virtual void run(const std::string& directory);
+};
+
+} // namespace atomsciflow::abinit
+
+#endif // ATOMSCIFLOW_ABINIT_PHONOPY_H_

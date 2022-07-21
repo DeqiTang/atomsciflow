@@ -274,6 +274,7 @@ file(GLOB BINDING_ABINIT_SOURCES
     "./abinit/abinit.cpp"
     "../src/atomsciflow/abinit/*.cpp"
     "../src/atomsciflow/abinit/io/*.cpp"
+    "../src/atomsciflow/abinit/post/*.cpp"
 )
 add_library(abinit MODULE ${BINDING_ABINIT_SOURCES})
 target_link_libraries(abinit
@@ -289,6 +290,7 @@ target_link_libraries(abinit
     atomsciflow-remote
     atomsciflow-config
     atomsciflow-utils
+    atomsciflow-post
 )
 set_target_properties(abinit PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"

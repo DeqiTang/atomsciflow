@@ -84,3 +84,7 @@ class DfptElasticPiezoDielec(abinit.Abinit):
         self.set_param("rfatpol[3]", [1, self.datasets[0].system.xyz.natom()])
         self.set_param("rfdir[3]", [1, 1, 1])
         self.set_param("rfstrs[3]", 3)
+
+class Phonopy(abinit.Phonopy):
+    def __init__(self):
+        super().__init__()

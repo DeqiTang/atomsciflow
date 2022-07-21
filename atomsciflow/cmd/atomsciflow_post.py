@@ -31,6 +31,7 @@ from atomsciflow.cmd.atomsciflow_post_cp2k import add_cp2k_post_subparser, cp2k_
 from atomsciflow.cmd.atomsciflow_post_qe import add_qe_post_subparser, qe_post_processor
 from atomsciflow.cmd.atomsciflow_post_siesta import add_siesta_post_subparser, siesta_post_processor
 from atomsciflow.cmd.atomsciflow_post_vasp import add_vasp_post_subparser, vasp_post_processor
+from atomsciflow.cmd.atomsciflow_post_abinit import add_abinit_post_subparser, abinit_post_processor
 
 def main():
     parser = argparse.ArgumentParser()
@@ -40,6 +41,7 @@ def main():
     add_qe_post_subparser(subparsers)
     add_siesta_post_subparser(subparsers)
     add_vasp_post_subparser(subparsers)
+    add_abinit_post_subparser(subparsers)
     #
     args = parser.parse_args()
 
@@ -60,7 +62,9 @@ def main():
         cp2k_post_processor(args)
         log_sub_cmd_end(args.subcommand)
     if args.subcommand == "abinit":
-        pass
+        log_sub_cmd_start(args.subcommand)
+        abinit_post_processor(args)
+        log_sub_cmd_end(args.subcommand)
     if args.subcommand == "elk":
         pass
     if args.subcommand == "qe":
