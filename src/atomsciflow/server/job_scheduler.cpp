@@ -295,7 +295,8 @@ void JobScheduler::run(const std::string& directory) {
         if (fs::exists(directory)) {
             fs::remove_all(directory);
         }
-        fs::create_directory(directory);
+        // fs::create_directory(directory);
+        fs::create_directories(directory);
         fs::copy(run_params["xyz_file"], fs::path(directory));
 
         gen_llhpc((
