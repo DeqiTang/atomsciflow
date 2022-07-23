@@ -55,7 +55,10 @@ def qe_processor(args):
         for item in custom_str.split(";"):
             if item == "":
                 continue
-            params[item.split("=")[0]] = item.split("=")[1]
+            if item.split("=")[1].count(",") > 0:
+                params[item.split("=")[0]] = [value for value in item.split("=")[1].split(",")]
+            else:
+                params[item.split("=")[0]] = item.split("=")[1]
 
     print("working directory: %s" % args.directory)
     if args.calc.lower() == "static":
