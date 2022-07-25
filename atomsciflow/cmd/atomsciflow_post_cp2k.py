@@ -78,6 +78,7 @@ def cp2k_post_processor(args):
             kpath.read_file(args.kpath)
         job.set_kpath(kpath)
         job.run(args.directory)
+        job.extract_data(args.directory)
     else:
         print("The specified post-processing type is unfound!")
         sys.exit(1)

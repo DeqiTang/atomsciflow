@@ -32,6 +32,8 @@ SOFTWARE.
 #include <boost/algorithm/string.hpp>
 #include <yaml-cpp/yaml.h>
 
+#include "atomsciflow/post/utils.h"
+
 namespace atomsciflow::cp2k::post {
 
 namespace ba = boost::algorithm;
@@ -72,7 +74,7 @@ void Phonopy::run(const std::string& directory) {
     stream.open((fs::path(directory) / run_params["post-dir"] / "band.conf").string());
     stream << "PRIMIMTIVE_AXES = AUTO\n";
     stream << "GAMMA_CENTER = .TRUE.\n";
-    stream << "BAND_POINTS = 51\n"; // 101
+    stream << "BAND_POINTS = 11\n"; // 101
     stream << "BAND_CONNECTION = .TRUE.\n";
     stream << boost::format("DIM = %1% %2% %3%\n") % dim[0] % dim[1] % dim[2];
     stream << "BAND =";
@@ -180,6 +182,10 @@ void Phonopy::run(const std::string& directory) {
     cmd += "bash ";
     cmd += (fs::path(directory) / run_params["post-dir"] / "analysis.sh").string();
     std::system(cmd.c_str());
+}
+
+void Phonopy::extract_data(const std::string& directory) {
+    atomsciflow::post::extract_data_from_band_yaml((fs::path(directory) / run_params["post-dir"]).string());
 }
 
 } // namespace atomsciflow::cp2k::post

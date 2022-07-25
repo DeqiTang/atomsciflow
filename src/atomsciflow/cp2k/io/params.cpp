@@ -44,6 +44,15 @@ void read_params(Cp2k& cp2k, const std::string& filepath) {
     std::string tmp_str;
 
     for (const auto& item : lines) {
+        
+        // skip the empty lines
+        tmp_str = item;
+        boost::erase_all(tmp_str, " ");
+        boost::erase_all(tmp_str, "\t");
+        if (tmp_str == "") {
+            continue;
+        }
+
         boost::split(str_vec, item, boost::is_any_of("="));
         tmp_str = str_vec[0];
         boost::erase_all(tmp_str, " ");

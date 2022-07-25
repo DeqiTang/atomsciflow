@@ -217,6 +217,7 @@ void add_class_post_phonopy(py::module& m) {
         .def(py::init<>())
         .def("run", &atomsciflow::cp2k::post::Phonopy::run)
         .def("set_kpath", &atomsciflow::cp2k::post::Phonopy::set_kpath)
+        .def("extract_data", &atomsciflow::cp2k::post::Phonopy::extract_data)
         ;
 }
 

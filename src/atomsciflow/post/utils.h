@@ -22,35 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ************************************************************************/
 
-#ifndef ATOMSCIFLOW_CP2K_POST_PHONOPY_H_
-#define ATOMSCIFLOW_CP2K_POST_PHONOPY_H_
+#ifndef ATOMSCIFLOW_POST_UTILS_H_
+#define ATOMSCIFLOW_POST_UTILS_H_
 
-#include "atomsciflow/post/post.h"
-#include "atomsciflow/base/xyz.h"
-#include "atomsciflow/base/kpath.h"
+#include <string>
 
-namespace atomsciflow::cp2k::post {
+namespace atomsciflow::post {
 
-namespace fs = boost::filesystem;
-namespace pt = boost::property_tree;
+void extract_data_from_band_yaml(const std::string& directory);
 
-class Phonopy : public atomsciflow::post::Post {
-public:
+} // namespace atomsciflow::post
 
-    Phonopy();
-    ~Phonopy();
-
-    virtual void run(const std::string& directory);
-
-    void set_kpath(Kpath& kpath) {
-        this->kpath = kpath;
-    }
-
-    void extract_data(const std::string& directory);
-
-    Kpath kpath;
-};
-
-} // namespace atomsciflow::cp2k::post
-
-#endif // ATOMSCIFLOW_CP2K_POST_PHONOPY_H_
+#endif // ATOMSCIFLOW_POST_UTILS_H_
