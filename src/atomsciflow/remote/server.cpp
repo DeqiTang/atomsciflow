@@ -29,7 +29,9 @@ SOFTWARE.
 
 #include "atomsciflow/remote/server.h"
 
+#include <sstream>
 #include <boost/filesystem.hpp>
+#include <boost/format.hpp>
 
 namespace atomsciflow {
 
@@ -58,32 +60,29 @@ void server_handle(std::string directory, std::string jobfilebase, std::string s
     } else if (2 == auto_level) {
 
     } else if (3 == auto_level) {
-        std::string cmd = "";
+        std::ostringstream cmd;
         if ("pbs" == server) {
-            cmd += "qsub ";
-            cmd += (fs::path(directory) / jobfilebase).string() + ".pbs";
-            std::system(cmd.c_str());
+            cmd << boost::format("cd %1%; qsub %2%.pbs")
+                % fs::absolute(directory).string()
+                % jobfilebase;
         } else if ("llhpc" == server) {
-            cmd += "yhbatch ";
-            cmd += (fs::path(directory) / jobfilebase).string() + ".slurm";
-            std::system(cmd.c_str());
+            cmd << boost::format("cd %1%; yhbatch %2%.slurm")
+                % fs::absolute(directory).string()
+                % jobfilebase;            
         } else if ("lsf_sz" == server) {
-            cmd += "chmod 755 ";
-            cmd += (fs::path(directory) / jobfilebase).string() + ".lsf_sz";
-            cmd += "; bsub ";
-            cmd += (fs::path(directory) / jobfilebase).string() + ".lsf_sz";
-            std::system(cmd.c_str());
+            cmd << boost::format("cd %1%; chmod 755 %2%.lsf_sz; bsub %2%.lsf_sz")
+                % fs::absolute(directory).string()
+                % jobfilebase;                
         } else if ("lsf_sustc" == server) {
-            cmd += "chmod 755 ";
-            cmd += (fs::path(directory) / jobfilebase).string() + ".lsf_sustc";
-            cmd += "; bsub ";
-            cmd += (fs::path(directory) / jobfilebase).string() + ".lsf_sustc";
-            std::system(cmd.c_str());
+            cmd << boost::format("cd %1%; chmod 755 %2%.lsf_sustc; bsub %2%.lsf_sustc")
+                % fs::absolute(directory).string()
+                % jobfilebase;                   
         } else if ("cdcloud" == server) {
-            cmd += "sbatch < ";
-            cmd += (fs::path(directory) / jobfilebase).string() + ".slurm_cd";
-            std::system(cmd.c_str());
+            cmd << boost::format("cd %1%; sbatch < %2%.slurm_cd")
+                % fs::absolute(directory).string()
+                % jobfilebase;
         }
+        std::system(cmd.str().c_str());
     }
 }
 
