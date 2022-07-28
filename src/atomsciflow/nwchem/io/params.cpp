@@ -39,7 +39,8 @@ void read_params(NWChem& nwchem, const std::string& filepath) {
         lines.emplace_back(line);
     }
 
-    std::vector<std::string> str_vec;
+    std::vector<std::string> str_vec_1;
+    std::vector<std::string> str_vec_2;
     std::string tmp_str;
 
     for (const auto& item : lines) {
@@ -51,15 +52,31 @@ void read_params(NWChem& nwchem, const std::string& filepath) {
             continue;
         }
 
-        boost::split(str_vec, item, boost::is_any_of("="));
-        tmp_str = str_vec[0];
-        boost::erase_all(tmp_str, " ");
-        boost::erase_all(tmp_str, "\t");
-        
-        if (boost::starts_with(tmp_str, "#")) {
-            continue;
+        if (boost::contains(item, "+=")) {
+            boost::split(str_vec_1, item, boost::is_any_of("+="), boost::token_compress_on);
+            tmp_str = str_vec_1[0];
+            boost::erase_all(tmp_str, " ");
+            boost::erase_all(tmp_str, "\t");
+            
+            if (boost::starts_with(tmp_str, "#")) {
+                continue;
+            }
+            boost::split(str_vec_2, str_vec_1[1], boost::is_any_of(","), boost::token_compress_on);
+            for (const auto& keyword : str_vec_2) {
+                nwchem.add_keyword(tmp_str, keyword);
+            }
+        } else {
+            boost::split(str_vec_1, item, boost::is_any_of("="));
+            tmp_str = str_vec_1[0];
+            boost::erase_all(tmp_str, " ");
+            boost::erase_all(tmp_str, "\t");
+
+            if (boost::starts_with(tmp_str, "#")) {
+                continue;
+            }
+            boost::split(str_vec_2, str_vec_1[1], boost::is_any_of(","), boost::token_compress_on);
+            nwchem.set_keywords(tmp_str, str_vec_2);
         }
-        nwchem.add_keyword(tmp_str, str_vec[1]);
     }
 
     stream.close();

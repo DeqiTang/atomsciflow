@@ -51,15 +51,20 @@ def nwchem_processor(args):
 
     params = {}
 
+    params["add_keyword"] = {}
+    params["set_keywords"] = {}
     if args.custom != None:
         custom_str = args.custom.replace(" ", "") # remove all space
         for item in custom_str.split(";"):
             if item == "":
                 continue
-            if item.split("=")[1].count(",") > 0:
-                params[item.split("=")[0]] = [value for value in item.split("=")[1].split(",")]
+            if item.count("+=") > 0:
+                if item.split("+=")[1].count(",") > 0:
+                    params["add_keyword"][item.split("+=")[0]] = [value for value in item.split("+=")[1].split(",")]
+                else:
+                    params["add_keyword"][item.split("+=")[0]] = [item.split("+=")[1]]
             else:
-                params[item.split("=")[0]] = item.split("=")[1]
+                    params["set_keywords"][item.split("=")[0]] = [value for value in item.split("=")[1].split(",")]
 
     print("working directory: %s" % args.directory)
     if args.calc.lower() == "static":
@@ -80,8 +85,13 @@ def nwchem_processor(args):
     if args.custom_file != None:
         from atomsciflow.nwchem.io import read_params
         read_params(job, args.custom_file)
-    for item in params:
-        if params[item] == None:
+    for item in params["add_keyword"]:
+        if params["add_keyword"][item] == None:
             continue
-        job.add_keyword(item, params[item])       
+        for keyword in params["add_keyword"][item]:
+            job.add_keyword(item, keyword)
+    for item in params["set_keywords"]:
+        if params["set_keywords"][item] == None:
+            continue
+        job.set_keywords(item, params["set_keywords"][item])
     job.run(args.directory)
