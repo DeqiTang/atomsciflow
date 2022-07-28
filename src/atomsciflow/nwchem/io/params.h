@@ -1,7 +1,7 @@
 /************************************************************************
 MIT License
 
-Copyright (c) 2021 Deqi Tang
+Copyright (c) 2022 Deqi Tang
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,50 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ************************************************************************/
 
-/// @file src/atomsciflow/nwchem/directive.cpp
-/// @author DeqiTang
-/// Mail: deqitang@gmail.com 
-/// Created Time: Sat 26 Mar 2022 02:10:16 PM CST
+#ifndef ATOMSCIFLOW_NWCHEM_IO_PARAMS_H_
+#define ATOMSCIFLOW_NWCHEM_IO_PARAMS_H_
 
-#include "atomsciflow/nwchem/directive.h"
+#include "atomsciflow/nwchem/nwchem.h"
 
-#include <sstream>
-#include <boost/format.hpp>
+namespace atomsciflow::nwchem::io {
 
-namespace atomsciflow::nwchem {
+void read_params(NWChem& nwchem, const std::string& filepath);
 
-Directive::Directive() {
-    
-}
+} // namespace atomsciflow::nwchem::io
 
-Directive::Directive(const std::string& name) {
-    this->name = name;
-}
-
-Directive::~Directive() {
-    
-}
-
-std::string Directive::to_string() {
-    std::ostringstream out;
-    out << this->name << " ";
-    for (const auto& item : this->keywords) {
-        out << " " << item;
-    }
-    out << "\n";
-    if (false == this->simple ) {
-        for (const auto& row : this->fields) {
-            for (const auto& item : row) {
-                out << " " << item;
-            }
-            out << "\n";
-        }
-        for (const auto& directive : this->directives) {
-            out << directive.second->to_string();
-        }
-    out << "end\n";
-    }
-    return out.str();
-}
-
-} // namespace atomsciflow::directive
+#endif // ATOMSCIFLOW_NWCHEM_IO_PARAMS_H_

@@ -37,8 +37,14 @@ def add_nwchem_subparser(subparsers):
         choices=["static", "opt", "md"],
         help="The calculation to do. The specified value is case insensitive")
 
-    subparser.add_argument("--custom", type=str, default=None,
+    ag = subparser.add_argument_group(title="custom")
+
+    ag.add_argument("--custom", type=str, default=None,
         help="Specify parameters that are not provided directly in the command line argument, e.g. --custom \"print=low;start=nwchem-job\""
+    )
+    
+    ag.add_argument("--custom-file", type=str, default=None,
+        help="Specify the file containing the custom style nwchem params. The privilege of --custom-file is lower than --custom."
     )
 
 def nwchem_processor(args):
@@ -48,7 +54,12 @@ def nwchem_processor(args):
     if args.custom != None:
         custom_str = args.custom.replace(" ", "") # remove all space
         for item in custom_str.split(";"):
-            params[item.split("=")[0]] = item.split("=")[1]
+            if item == "":
+                continue
+            if item.split("=")[1].count(",") > 0:
+                params[item.split("=")[0]] = [value for value in item.split("=")[1].split(",")]
+            else:
+                params[item.split("=")[0]] = item.split("=")[1]
 
     print("working directory: %s" % args.directory)
     if args.calc.lower() == "static":
@@ -66,6 +77,9 @@ def nwchem_processor(args):
 
     job.get_xyz(args.xyz)
     set_calc_processor_common(job, args)
+    if args.custom_file != None:
+        from atomsciflow.nwchem.io import read_params
+        read_params(job, args.custom_file)
     for item in params:
         if params[item] == None:
             continue

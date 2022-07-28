@@ -1,7 +1,7 @@
 /************************************************************************
 MIT License
 
-Copyright (c) 2021 Deqi Tang
+Copyright (c) 2022 Deqi Tang
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,50 +22,47 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ************************************************************************/
 
-/// @file src/atomsciflow/nwchem/directive.cpp
-/// @author DeqiTang
-/// Mail: deqitang@gmail.com 
-/// Created Time: Sat 26 Mar 2022 02:10:16 PM CST
+#include "atomsciflow/nwchem/io/params.h"
 
-#include "atomsciflow/nwchem/directive.h"
+#include <fstream>
+#include <boost/algorithm/string.hpp>
 
-#include <sstream>
-#include <boost/format.hpp>
+namespace atomsciflow::nwchem::io {
 
-namespace atomsciflow::nwchem {
+void read_params(NWChem& nwchem, const std::string& filepath) {
+    std::ifstream stream;
+    stream.open(filepath);
+    std::string line;
+    std::vector<std::string> lines;
 
-Directive::Directive() {
-    
-}
-
-Directive::Directive(const std::string& name) {
-    this->name = name;
-}
-
-Directive::~Directive() {
-    
-}
-
-std::string Directive::to_string() {
-    std::ostringstream out;
-    out << this->name << " ";
-    for (const auto& item : this->keywords) {
-        out << " " << item;
+    while (std::getline(stream, line)) {
+        lines.emplace_back(line);
     }
-    out << "\n";
-    if (false == this->simple ) {
-        for (const auto& row : this->fields) {
-            for (const auto& item : row) {
-                out << " " << item;
-            }
-            out << "\n";
+
+    std::vector<std::string> str_vec;
+    std::string tmp_str;
+
+    for (const auto& item : lines) {
+        
+        tmp_str = item;
+        boost::erase_all(tmp_str, " ");
+        boost::erase_all(tmp_str, "\t");
+        if (tmp_str == "") {
+            continue;
         }
-        for (const auto& directive : this->directives) {
-            out << directive.second->to_string();
+
+        boost::split(str_vec, item, boost::is_any_of("="));
+        tmp_str = str_vec[0];
+        boost::erase_all(tmp_str, " ");
+        boost::erase_all(tmp_str, "\t");
+        
+        if (boost::starts_with(tmp_str, "#")) {
+            continue;
         }
-    out << "end\n";
+        nwchem.add_keyword(tmp_str, str_vec[1]);
     }
-    return out.str();
+
+    stream.close();
 }
 
-} // namespace atomsciflow::directive
+} // namespace atomsciflow::nwchem::io

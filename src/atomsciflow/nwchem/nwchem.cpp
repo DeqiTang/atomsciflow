@@ -41,8 +41,10 @@ namespace fs = boost::filesystem;
 
 NWChem::NWChem() {
     
-    add_keyword("Charge", 0);
+    add_keyword("charge", 0);
+    this->directives["charge"]->simple = true;
     add_keyword("title", "NWChem calculation");
+    this->directives["title"]->simple = true;
 
     job.set_run_default("llhpc");
     job.set_run_default("pbs");
@@ -64,6 +66,16 @@ std::string NWChem::to_string() {
     std::ostringstream out;
     for (const auto& item : this->directives) {
         if ("task" == item.first) {
+            continue;
+        }
+        if ("title" == item.first) {
+            out << "title \"";
+            auto length = item.second->keywords.size();
+            for (int i = 0; i < (length - 1); ++i) {
+                out << item.second->keywords[i] << " ";
+            }
+            out << item.second->keywords[length-1];
+            out << "\"\n";
             continue;
         }
         out << item.second->to_string() << "\n";
@@ -162,13 +174,18 @@ void NWChem::get_xyz(const std::string& filepath) {
     }
 }
 
+void NWChem::set_simple(const std::string& name, bool simple) {
+    this->directives[name]->simple = simple;
+}
+
 void NWChem::run(const std::string& directory) {    
     std::ostringstream step;
     step << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
     step << "cat > nwchem.nw<<EOF\n";
     step << this->to_string();
     step << "EOF\n";
-    step << "$CMD_HEAD " << job.run_params["cmd"] << "\n";
+    step << boost::format("$CMD_HEAD %1% nwchem.nw > nwchem.out\n")
+        % job.run_params["cmd"];
     job.steps.push_back(step.str());
     step.clear();
 

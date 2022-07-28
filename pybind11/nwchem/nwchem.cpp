@@ -5,13 +5,28 @@
 
 #include <iostream>
 #include <pybind11/pybind11.h>
-#include <pybind11/stl.h> // needed for automatical handling with STL 
+#include <pybind11/stl.h> // needed for automatical handling with STL
 
 #include "atomsciflow/base/atom.h"
 #include "atomsciflow/base/crystal.h"
+#include "atomsciflow/nwchem/directive.h"
 #include "atomsciflow/nwchem/nwchem.h"
+#include "atomsciflow/nwchem/io/params.h"
 
 namespace py = pybind11;
+
+void add_class_directive(py::module& m) {
+    py::class_<atomsciflow::nwchem::Directive>(m, "Directive")
+        .def(py::init<>())
+        .def("to_string", &atomsciflow::nwchem::Directive::to_string)
+        .def("set_keywords", &atomsciflow::nwchem::Directive::set_keyworkds)
+        .def_readwrite("name", &atomsciflow::nwchem::Directive::name)
+        .def_readwrite("keywords", &atomsciflow::nwchem::Directive::keywords)
+        .def_readwrite("simple", &atomsciflow::nwchem::Directive::simple)
+        .def_readwrite("fields", &atomsciflow::nwchem::Directive::fields)
+        .def_readwrite("directives", &atomsciflow::nwchem::Directive::directives)
+        ;
+}
 
 void add_class_nwchem(py::module& m) {
     py::class_<atomsciflow::NWChem>(m, "NWChem")
@@ -28,13 +43,22 @@ void add_class_nwchem(py::module& m) {
         .def("py_set_field", py::overload_cast<const std::string&, double, int, int>(&atomsciflow::NWChem::py_set_field))
         .def("py_set_field", py::overload_cast<const std::string&, std::string, int, int>(&atomsciflow::NWChem::py_set_field))
         .def("get_xyz", &atomsciflow::NWChem::get_xyz)
+        .def("set_simple", &atomsciflow::NWChem::set_simple)
         .def("run", &atomsciflow::NWChem::run)
         .def_readwrite("job", &atomsciflow::NWChem::job)
+        .def_readwrite("directives", &atomsciflow::NWChem::directives)
         ;
+}
+
+void add_nwchem_read_params(py::module& m) {
+    m.def("read_params", atomsciflow::nwchem::io::read_params);
 }
 
 PYBIND11_MODULE(nwchem, m) {
     m.doc() = "nwchem module";
     
+    add_class_directive(m); 
     add_class_nwchem(m);
+
+    add_nwchem_read_params(m);
 }

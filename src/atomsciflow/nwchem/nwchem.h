@@ -92,6 +92,8 @@ public:
     void py_set_field(const std::string& path, double field, int row, int col);
     void py_set_field(const std::string& path, std::string field, int row, int col);
 
+    void set_simple(const std::string& name, bool simple);
+
     virtual void run(const std::string& directory);
 
     std::map<std::string, std::shared_ptr<nwchem::Directive>> directives;

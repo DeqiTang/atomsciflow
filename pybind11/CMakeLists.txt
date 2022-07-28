@@ -527,6 +527,7 @@ set_target_properties(dftbplus PROPERTIES
 file(GLOB BINDING_NWCHEM_SOURCES
     "./nwchem/nwchem.cpp"
     "../src/atomsciflow/nwchem/*.cpp"
+    "../src/atomsciflow/nwchem/io/*.cpp"
 )
 add_library(nwchem MODULE ${BINDING_NWCHEM_SOURCES})
 target_link_libraries(nwchem
