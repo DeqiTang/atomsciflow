@@ -97,6 +97,7 @@ public:
         if (this->directives.find(path) == this->directives.end()) {
             this->new_directive(path);
         }
+        this->directives[path]->keywords.clear();
         for (const auto& item : keywords) {
             this->directives[path]->keywords.push_back(boost::lexical_cast<std::string>(item));
         }
