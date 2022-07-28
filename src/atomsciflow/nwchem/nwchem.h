@@ -92,6 +92,26 @@ public:
     void py_set_field(const std::string& path, double field, int row, int col);
     void py_set_field(const std::string& path, std::string field, int row, int col);
 
+    template <typename T>
+    void set_keywords(const std::string& path, const std::vector<T>& keywords) {
+        if (this->directives.find(path) == this->directives.end()) {
+            this->new_directive(path);
+        }
+        for (const auto& item : keywords) {
+            this->directives[path]->keywords.push_back(boost::lexical_cast<std::string>(item));
+        }
+    }
+
+    void py_set_keywords(const std::string& path, const std::vector<int>& keywords) {
+        this->set_keywords(path, keywords);
+    }
+    void py_set_keywords(const std::string& path, const std::vector<double>& keywords) {
+        this->set_keywords(path, keywords);
+    }
+    void py_set_keywords(const std::string& path, const std::vector<std::string>& keywords) {
+        this->set_keywords(path, keywords);
+    }
+
     void set_simple(const std::string& name, bool simple);
 
     virtual void run(const std::string& directory);
