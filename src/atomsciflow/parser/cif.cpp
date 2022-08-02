@@ -79,11 +79,11 @@ int read_cif_file(atomsciflow::Crystal* crystal, std::string filepath) {
             continue;
         }
         
-        std::cout << "line->" << lines[i] << " line_split(size)->" << line_split.size() << "first->" << line_split[0] << std::endl;
+        // std::cout << "line->" << lines[i] << " line_split(size)->" << line_split.size() << "first->" << line_split[0] << std::endl;
         
         if ("_cell_length_a" == line_split[0]) {
             a = std::atof(line_split[1].c_str());
-            std::cout << "_cell_length_a: " << i << " value: " << a <<  std::endl;
+            // std::cout << "_cell_length_a: " << i << " value: " << a <<  std::endl;
             continue;
         } else if ("_cell_length_b" == line_split[0]) {
             b = std::atof(line_split[1].c_str());
@@ -102,7 +102,7 @@ int read_cif_file(atomsciflow::Crystal* crystal, std::string filepath) {
             continue;
         } else if (lines[i].find("_atom_site_fract_x") != std::string::npos) {
             // not for sure about existing of \n
-            std::cout << "_atom_site_fract_x: at line -> " << i << std::endl;
+            // std::cout << "_atom_site_fract_x: at line -> " << i << std::endl;
             loop_atom_site_fract_x_i = i;
             continue;
         } else if (lines[i].find("_atom_site_fract_y") != std::string::npos) {
@@ -114,9 +114,9 @@ int read_cif_file(atomsciflow::Crystal* crystal, std::string filepath) {
         }        
     }
     
-    std::cout << "_atom_site_fract_x: " << loop_atom_site_fract_x_i << std::endl;
-    std::cout << "_atom_site_fract_y: " << loop_atom_site_fract_y_i << std::endl;
-    std::cout << "_atom_site_fract_z: " << loop_atom_site_fract_z_i << std::endl;
+    // std::cout << "_atom_site_fract_x: " << loop_atom_site_fract_x_i << std::endl;
+    // std::cout << "_atom_site_fract_y: " << loop_atom_site_fract_y_i << std::endl;
+    // std::cout << "_atom_site_fract_z: " << loop_atom_site_fract_z_i << std::endl;
     
     // get loop_ line number for atom coords
     for (i = loop_atom_site_fract_x_i; i >=0; i--) {
@@ -131,7 +131,7 @@ int read_cif_file(atomsciflow::Crystal* crystal, std::string filepath) {
     int ncol = 0;
     int loop_atom_block_truly_begin = 0;
     
-    std::cout << "loop_of_atom_i: " << loop_of_atom_i << std::endl;
+    // std::cout << "loop_of_atom_i: " << loop_of_atom_i << std::endl;
     
     for (i = (loop_of_atom_i + 1); i < n_lines; i++) {
         //std::vector<std::string> line_split{std::sregex_token_iterator(lines[i].begin(), lines[i].end(), whitespace, -1), std::sregex_token_iterator{}};
@@ -156,11 +156,11 @@ int read_cif_file(atomsciflow::Crystal* crystal, std::string filepath) {
         }
     }
     
-    std::cout << "col_x_i->" << col_x_i << "|" << "col_y_i->" << col_y_i << "|" << "col_z_i->" << col_z_i << "|" << "col_name_i->" << col_name_i << "|" << std::endl;
+    // std::cout << "col_x_i->" << col_x_i << "|" << "col_y_i->" << col_y_i << "|" << "col_z_i->" << col_z_i << "|" << "col_name_i->" << col_name_i << "|" << std::endl;
     
     std::string str_ = "_";
     
-    std::cout << "loop_atom_block_truly_begin: " << loop_atom_block_truly_begin << std::endl;
+    // std::cout << "loop_atom_block_truly_begin: " << loop_atom_block_truly_begin << std::endl;
     
     for (i = loop_atom_block_truly_begin; i < n_lines; i++) {
         //
@@ -179,7 +179,7 @@ int read_cif_file(atomsciflow::Crystal* crystal, std::string filepath) {
             // loop alreay end
             break;
         }
-        std::cout << line_split[0] << std::endl;
+        // std::cout << line_split[0] << std::endl;
         Atom atom;
             
         //std::cout << line_split[0] << line_split[1] ;
@@ -191,7 +191,7 @@ int read_cif_file(atomsciflow::Crystal* crystal, std::string filepath) {
         atoms_frac.push_back(atom);        
     }
     
-    std::cout << "cif file reading done" << std::endl;
+    // std::cout << "cif file reading done" << std::endl;
 
     // convert alpha, beta, gamma to arc
     alpha = alpha  / 180 * arma::datum::pi;
@@ -220,7 +220,7 @@ int read_cif_file(atomsciflow::Crystal* crystal, std::string filepath) {
     crystal->cell.push_back(arma::conv_to<std::vector<double>>::from(latcell.row(2)));
     
     // convert frac to cartesian
-    std::cout << "converting frac to cartesian" << std::endl;
+    // std::cout << "converting frac to cartesian" << std::endl;
     arma::mat convmat = arma::trans(latcell);
 
     arma::vec xyz_cart(3);
@@ -242,7 +242,7 @@ int read_cif_file(atomsciflow::Crystal* crystal, std::string filepath) {
         crystal->atoms.push_back(atm);
     }
     
-    std::cout << "cif parsing finished!" << std::endl;
+    // std::cout << "cif parsing finished!" << std::endl;
     
     return 0;
 }

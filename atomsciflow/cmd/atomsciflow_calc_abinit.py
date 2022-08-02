@@ -78,7 +78,6 @@ def abinit_processor(args):
         print("The specified calculation type is unfound!")
         sys.exit(1)
 
-    job.get_xyz(args.xyz)
     job.set_pot(args.pot)
     set_calc_processor_common(job, args)
     if args.custom_file != None:

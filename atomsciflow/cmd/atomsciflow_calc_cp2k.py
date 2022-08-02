@@ -115,7 +115,6 @@ def cp2k_processor(args):
         print("The specified calculation type is unfound!")
         sys.exit(1)
             
-    job.get_xyz(args.xyz)
     set_calc_processor_common(job, args)
     if args.custom_file != None:
         from atomsciflow.cp2k.io import read_params

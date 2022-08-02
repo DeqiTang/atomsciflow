@@ -75,6 +75,19 @@ def add_calc_parser_common(subparser):
     add_calc_parser_common_phonopy(subparser)
     add_calc_parser_common_kpoints(subparser)
 
+def set_calc_processor_common_structure(calc, args):
+    if args.xyz != None:
+        calc.get_xyz(args.xyz)
+    else:
+        import os
+        from atomsciflow.cpp import parser, base
+        crystal = base.Crystal()
+        parser.read_cif_file(crystal, args.cif)
+        xyz_file_path = os.path.abspath(args.cif) + ".xyz"
+        with open(xyz_file_path, "w") as fout:
+            fout.write(crystal.write_xyz_str())
+        calc.get_xyz(xyz_file_path)
+
 def set_calc_processor_common_phonopy(calc, args):
     calc.job.set_run("phonopy_dim_x", args.phonopy_dim[0])
     calc.job.set_run("phonopy_dim_y", args.phonopy_dim[1])
@@ -88,3 +101,4 @@ def set_calc_processor_common(calc, args):
     calc.job.set_run("ntask", args.ntask)
     calc.job.set_run("ppn", args.ppn)
     set_calc_processor_common_phonopy(calc, args)
+    set_calc_processor_common_structure(calc, args)

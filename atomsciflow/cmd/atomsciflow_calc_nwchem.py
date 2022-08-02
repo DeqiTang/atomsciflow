@@ -97,9 +97,7 @@ def nwchem_processor(args):
         print("The specified calculation type is unfound!")
         sys.exit(1)
 
-    if args.calc.lower() != "neb":
-        job.get_xyz(args.xyz)
-    else:
+    if args.calc.lower() == "neb":
         import os
         job.set_neb_images(
             [os.path.abspath(item) for item in args.neb_images], 
