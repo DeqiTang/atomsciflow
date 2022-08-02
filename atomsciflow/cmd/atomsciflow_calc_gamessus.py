@@ -32,26 +32,59 @@ def add_gamessus_subparser(subparsers):
         help="The Gamess-US calculator")
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "md"],
+        choices=["static", "opt", "md", "hessian"],
         help="The calculation to do. The specified value is case insensitive")
 
     add_calc_parser_common(subparser)
 
+    # custom
+    ag = subparser.add_argument_group(title="custom")
+    
+    ag.add_argument("--custom", type=str, default=None,
+        help="Specify parameters that are not provided directly in the command line argument, e.g. --custom \"contrl/scftyp=rhf;contrl/mult=1\""
+    )
+
+    ag.add_argument("--custom-file", type=str, default=None,
+        help="Specify the file containing the custom style gamessus params. The privilege of --custom-file is lower than --custom."
+    )
+
 def gamessus_processor(args):
+
+    params = {}
+    if args.custom != None:
+        custom_str = args.custom.replace(" ", "") # remove all space
+        for item in custom_str.split(";"):
+            if item == "":
+                continue
+            if item.split("=")[1].count(",") > 0:
+                params[item.split("=")[0]] = [value for value in item.split("=")[1].split(",")]
+            else:
+                params[item.split("=")[0]] = item.split("=")[1]
+
     print("working directory: %s" % args.directory)
     if args.calc.lower() == "static":
         from atomsciflow.gamessus import Static
         job = Static()
-        job.get_xyz(args.xyz)
-        set_calc_processor_common(job, args)
-        job.run(args.directory)
     elif args.calc.lower() == "opt":
         from atomsciflow.gamessus import Opt
         job = Opt()
-        job.get_xyz(args.xyz)
-        set_calc_processor_common(job, args)
-        job.run(args.directory)
+    elif args.calc.lower() == "md":
+        from atomsciflow.gamessus import MD
+        job = MD()
+    elif args.calc.lower() == "hessian":
+        from atomsciflow.gamessus import Hessian
+        job = Hessian()
     else:
         print("The specified calculation type is unfound!")
         sys.exit(1)
     
+    job.get_xyz(args.xyz)
+    set_calc_processor_common(job, args)
+    if args.custom_file != None:
+        from atomsciflow.gamessus.io import read_params
+        read_params(job, args.custom_file)
+    for item in params:
+        if params[item] == None:
+            continue
+        job.set_param(item, params[item]) 
+    job.run(args.directory)

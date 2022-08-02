@@ -26,5 +26,7 @@ from atomsciflow.elk.elk import (
     Elk,
     Static, 
     Opt,
-    MD
+    VcOpt,
+    Band,
+    Phonon
 )

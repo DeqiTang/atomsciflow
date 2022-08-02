@@ -42,6 +42,9 @@ namespace atomsciflow {
 namespace fs = boost::filesystem;
 
 int Xyz::read_xyz_file(std::string filepath) {
+    this->atoms.clear();
+    this->cell.clear();
+    
     this->file = fs::absolute(fs::path(filepath)).string();
     int i = 0;
     int j = 0;

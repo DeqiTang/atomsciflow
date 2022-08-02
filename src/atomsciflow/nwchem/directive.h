@@ -83,6 +83,7 @@ public:
     std::string name;
     std::vector<std::string> keywords;
     bool simple;
+    bool status;
     std::vector<std::vector<std::string>> fields;
     std::map<std::string, std::shared_ptr<Directive>> directives;
 };

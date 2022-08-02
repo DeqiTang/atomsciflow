@@ -32,6 +32,7 @@ SOFTWARE.
 
 #include <map>
 #include <string>
+#include <boost/algorithm/string.hpp>
 
 #include "atomsciflow/variable/group.h"
 #include "atomsciflow/base/xyz.h"
@@ -45,24 +46,33 @@ public:
     GamessUS();
     ~GamessUS();
 
-    void new_group(const std::string& name);
     std::string to_string();
     void get_xyz(const std::string& xyzfile);
 
-    void set_param(const std::string& group, std::string key, int value);
-    void set_param(const std::string& group, std::string key, double value);
-    void set_param(const std::string& group, std::string key, std::string value);
-    void set_param(const std::string& group, std::string key, std::vector<int> value);
-    void set_param(const std::string& group, std::string key, std::vector<double> value);
-    void set_param(const std::string& group, std::string key, std::vector<std::string> value);
-    void set_param(const std::string& group, std::string key, std::vector<std::vector<int>> value);
-    void set_param(const std::string& group, std::string key, std::vector<std::vector<double>> value);
-    void set_param(const std::string& group, std::string key, std::vector<std::vector<std::string>> value);
+    template<typename T>
+    void set_param(const std::string& path, T value) {
+        std::vector<std::string> str_vec;
+        boost::split(str_vec, path, boost::is_any_of("/"), boost::token_compress_on);
+
+        if (this->groups.find(str_vec[0]) == this->groups.end()) {
+            this->groups[str_vec[0]] = new VariableGroup{};
+        }
+        this->groups[str_vec[0]]->set_param(str_vec[1], value);
+    }
+
+    void py_set_param(const std::string& path, int value);
+    void py_set_param(const std::string& path, double value);
+    void py_set_param(const std::string& path, std::string value);
+    void py_set_param(const std::string& path, std::vector<int> value);
+    void py_set_param(const std::string& path, std::vector<double> value);
+    void py_set_param(const std::string& path, std::vector<std::string> value);
+    void py_set_param(const std::string& path, std::vector<std::vector<int>> value);
+    void py_set_param(const std::string& path, std::vector<std::vector<double>> value);
+    void py_set_param(const std::string& path, std::vector<std::vector<std::string>> value);
 
     virtual void run(const std::string& directory);
 
     std::map<std::string, VariableGroup*> groups;
-    //std::unordered_map<std::string, VariableGroup*> groups;
     Xyz xyz;
     JobScheduler job;
 };

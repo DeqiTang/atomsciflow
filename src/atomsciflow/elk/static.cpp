@@ -29,24 +29,19 @@ SOFTWARE.
 
 #include "atomsciflow/elk/static.h"
 
-namespace atomsciflow {
+namespace atomsciflow::elk {
 
-ElkStatic::ElkStatic() {
-    this->new_block("tasks");
-    this->new_block("avec");
-    this->new_block("scale1");
-    this->new_block("scale2");
-    this->new_block("scale3");
-    this->new_block("scale");
-    this->new_block("lmaxapw");
-    this->new_block("atoms");
-
-    this->blocks["tasks"]->set_block_value(0);
-    this->blocks["scale1"]->set_block_value(1.0);
+Static::Static() {
+    this->set_param("tasks", 0);
+    this->set_param("xctype", 20);
+    this->set_param("stype", 3);
+    this->set_param("mixtype", 3);
+    this->set_param("epspot", 1.0e-6);
+    this->set_param("epsengy", 1.0e-5);
 }
 
-ElkStatic::~ElkStatic() {
+Static::~Static() {
 
 }
 
-} // namespace atomsciflow
+} // namespace atomsciflow::elk

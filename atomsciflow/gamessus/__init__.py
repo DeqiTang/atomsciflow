@@ -25,5 +25,7 @@ SOFTWARE.
 from atomsciflow.gamessus.gamessus import (
     GamessUS,
     Static, 
-    Opt
+    Opt,
+    MD,
+    Hessian
 ) 

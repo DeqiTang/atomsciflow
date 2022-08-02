@@ -30,13 +30,15 @@ SOFTWARE.
 #ifndef ATOMSCIFLOW_ELK_ELK_H_
 #define ATOMSCIFLOW_ELK_ELK_H_
 
+#include <memory>
 #include <map>
 
 #include "atomsciflow/elk/block.h"
 #include "atomsciflow/base/xyz.h"
+#include "atomsciflow/base/kpath.h"
 #include "atomsciflow/server/job_scheduler.h"
 
-namespace atomsciflow {
+namespace atomsciflow::elk {
 
 class Elk {
 public:
@@ -44,30 +46,31 @@ public:
     Elk();
     ~Elk();
 
-    void new_block(const std::string& name);
     std::string to_string();
     void get_xyz(std::string xyzfile);
 
     template <typename T>
-    void set_param(const std::string& group, std::string key, T value);
+    void set_param(const std::string& path, T value);
 
-    void py_set_param(const std::string& group, std::string key, int value);
-    void py_set_param(const std::string& group, std::string key, double value);
-    void py_set_param(const std::string& group, std::string key, std::string value);
-    void py_set_param(const std::string& group, std::string key, std::vector<int> value);
-    void py_set_param(const std::string& group, std::string key, std::vector<double> value);
-    void py_set_param(const std::string& group, std::string key, std::vector<std::string> value);
-    void py_set_param(const std::string& group, std::string key, std::vector<std::vector<int>> value);
-    void py_set_param(const std::string& group, std::string key, std::vector<std::vector<double>> value);
-    void py_set_param(const std::string& group, std::string key, std::vector<std::vector<std::string>> value);
+    void py_set_param(const std::string& path, int value);
+    void py_set_param(const std::string& path, double value);
+    void py_set_param(const std::string& path, std::string value);
+    void py_set_param(const std::string& path, std::vector<int> value);
+    void py_set_param(const std::string& path, std::vector<double> value);
+    void py_set_param(const std::string& path, std::vector<std::string> value);
+    void py_set_param(const std::string& path, std::vector<std::vector<int>> value);
+    void py_set_param(const std::string& path, std::vector<std::vector<double>> value);
+    void py_set_param(const std::string& path, std::vector<std::vector<std::string>> value);
+
+    void set_kpath(const Kpath& kpath);
 
     virtual void run(const std::string& directory);
 
-    std::map<std::string, Block*> blocks;
+    std::map<std::string, std::shared_ptr<Block>> blocks;
     Xyz xyz;
     JobScheduler job;
 };
 
-} // namespace atomsciflow
+} // namespace atomsciflow::elk
 
 #endif // ATOMSCIFLOW_ELK_ELK_H_

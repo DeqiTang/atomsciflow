@@ -56,6 +56,7 @@ void atoms_cart_to_frac(std::vector<Atom>& atoms_frac, const std::vector<Atom>& 
         //frac_tmp = arma::dot(convmat, arma::vec(cart_tmp));
         frac_tmp = convmat * arma::vec(cart_tmp);
         Atom atom;
+        atom.name = atoms_cart[i].name;
         atom.x = frac_tmp[0];
         atom.y = frac_tmp[1];
         atom.z = frac_tmp[2];

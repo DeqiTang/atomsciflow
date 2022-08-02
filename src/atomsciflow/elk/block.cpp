@@ -29,37 +29,51 @@ SOFTWARE.
 
 #include "atomsciflow/elk/block.h"
 
-namespace atomsciflow {
+#include <sstream>
+#include <boost/format.hpp>
+
+namespace atomsciflow::elk {
 
 std::string Block::to_string() {
-    int n = 0;
-    std::string out = "";
-
-    out += this->block_var.to_string(n) + "\n";
+    std::ostringstream out;
+    
+    out << this->name << "\n";
 
     for (const auto& item : this->params) {
-        if (this->params[item.first].status == false) {
+        if (item.second.status == false) {
             continue;
         }
-        out += this->params[item.first].to_string(n) + "\n";
+
+        if (0 == item.second.value.size()) {
+            return item.second.key;
+        }
+        if (item.second.value.size() == 1) {
+            if (item.second.value[0].size() == 1) {
+                out << boost::format("  %1% : %2%\n\n") 
+                    % item.second.value[0][0] % item.second.key;
+            } else {
+                for (const auto& item : item.second.value[0]) {
+                    out << "  " << item;
+                }
+                out << " : " << item.second.key << "\n";
+            }
+        } else {
+            int i = 0;
+            for (const auto& row : item.second.value) {
+                for (const auto& val : row) {
+                    out << "  " << val;
+                }
+                if (i == 0) {
+                    out << " : " << item.second.key;
+                }
+                i++;
+                out << "\n";
+            }
+        }
     }
-    return out;
+    out << "\n";
+
+    return out.str();
 }
 
-template <typename T>
-void Block::set_block_value(T value) {
-    this->block_var.set("", value);
-}
-
-// explicit template instantiation
-template void Block::set_block_value<int>(int);
-template void Block::set_block_value<double>(double);
-template void Block::set_block_value<std::string>(std::string);
-template void Block::set_block_value<std::vector<int>>(std::vector<int>);
-template void Block::set_block_value<std::vector<double>>(std::vector<double>);
-template void Block::set_block_value<std::vector<std::string>>(std::vector<std::string>);
-template void Block::set_block_value<std::vector<std::vector<int>>>(std::vector<std::vector<int>>);
-template void Block::set_block_value<std::vector<std::vector<double>>>(std::vector<std::vector<double>>);
-template void Block::set_block_value<std::vector<std::vector<std::string>>>(std::vector<std::vector<std::string>>);
-
-} // namespace atomsciflow
+} // namespace atomsciflow::elk

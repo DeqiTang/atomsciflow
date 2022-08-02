@@ -62,7 +62,7 @@ void atomsciflow_calc_elk(po::parsed_options& parsed, po::variables_map& vm) {
     po::notify(vm);
 
     std::cout << "working directory: " << vm["directory"].as<std::string>() << std::endl;
-    auto task = new atomsciflow::ElkStatic{};
+    auto task = new atomsciflow::elk::Static{};
     task->get_xyz(vm["xyz"].as<std::string>());
     //std::cout << task->to_string() << "\n";
     task->run(vm["directory"].as<std::string>());

@@ -28,6 +28,17 @@ from atomsciflow.cpp.server import JobScheduler
 class Elk(elk.Elk):
     def __init__(self):
         super().__init__()
+        self.set_param("spinpol", ".true.")
+        self.set_param("epspot", 1.0e-6)
+        self.set_param("ngridk", [3, 3, 3])
+        self.set_param("mixtype", 3)
+        self.set_param("xctype", 20)
+        self.set_param("lmaxapw", 8)
+        self.set_param("xctype", 20)
+        self.set_param("stype", 3)
+        self.set_param("mixtype", 3)
+        self.set_param("epspot", 1.0e-6)
+        self.set_param("epsengy", 1.0e-5)
 
 class Static(Elk):
     def __init__(self):
@@ -36,7 +47,19 @@ class Static(Elk):
 class Opt(Elk):
     def __init__(self):
         super().__init__()
+        self.set_param("tasks", 2)
+        self.set_param("latvopt", 0)
 
-class MD(Elk):
+class VcOpt(Elk):
+    def __init__(self):
+        super().__init__()
+        self.set_param("tasks", 2)
+        self.set_param("latvopt", 1)
+
+class Band(Elk):
+    def __init__(self):
+        super().__init__()
+
+class Phonon(Elk):
     def __init__(self):
         super().__init__()

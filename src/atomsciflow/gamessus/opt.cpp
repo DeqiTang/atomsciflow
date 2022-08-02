@@ -32,26 +32,18 @@ SOFTWARE.
 namespace atomsciflow {
 
 GamessUSOpt::GamessUSOpt() {
-    this->new_group("contrl");
-    this->new_group("system");
-    this->new_group("basis");
-    this->new_group("statpt");
-    this->new_group("guess");
 
-    this->set_param("contrl", "scftyp", "UHF");
-    this->set_param("contrl", "coord", "unique");
-    this->set_param("contrl", "mult", 3);
-    this->set_param("contrl", "runtyp", "optimize");
-    this->set_param("contrl", "local", "boys");
+    this->set_param("contrl/scftyp", "UHF");
+    this->set_param("contrl/coord", "unique");
+    this->set_param("contrl/mult", 1);
+    this->set_param("contrl/runtyp", "optimize");
+    this->set_param("contrl/local", "boys");
 
-    this->set_param("system", "timlim", 1);
-    this->set_param("basis", "gbasis", "sto");
-    this->set_param("basis", "ngauss", 2);
+    this->set_param("system/timlim", 1);
+    this->set_param("basis/gbasis", "sto");
+    this->set_param("basis/ngauss", 2);
 
-    this->set_param("statpt", "optol", 1.0E-5);
-    this->set_param("statpt", "nwrods", 1);
-
-    this->set_param("guess", "guess", "huckel");
+    this->set_param("guess/guess", "huckel");
 
 }
 

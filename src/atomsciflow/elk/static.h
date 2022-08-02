@@ -32,15 +32,15 @@ SOFTWARE.
 
 #include "atomsciflow/elk/elk.h"
 
-namespace atomsciflow {
+namespace atomsciflow::elk {
 
-class ElkStatic : public Elk {
+class Static : public Elk {
 public:
 
-    ElkStatic();
-    ~ElkStatic();
+    Static();
+    ~Static();
 };
 
-} // namespace atomsciflow
+} // namespace atomsciflow::elk
 
 #endif // ATOMSCIFLOW_ELK_STATIC_H_

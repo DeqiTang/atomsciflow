@@ -12,42 +12,48 @@
 #include "atomsciflow/elk/elk.h"
 #include "atomsciflow/elk/static.h"
 #include "atomsciflow/elk/opt.h"
+#include "atomsciflow/elk/io/params.h"
 
 namespace py = pybind11;
 
 void add_class_elk(py::module& m) {
-    py::class_<atomsciflow::Elk>(m, "Elk")
+    py::class_<atomsciflow::elk::Elk>(m, "Elk")
         .def(py::init<>())
-        .def("get_xyz", &atomsciflow::Elk::get_xyz)
-        .def("to_string", &atomsciflow::Elk::to_string)
-        .def("set_param", py::overload_cast<const std::string&, std::string, int>(&atomsciflow::Elk::py_set_param))
-        .def("set_param", py::overload_cast<const std::string&, std::string, double>(&atomsciflow::Elk::py_set_param))
-        .def("set_param", py::overload_cast<const std::string&, std::string, std::string>(&atomsciflow::Elk::py_set_param))
-        .def("set_param", py::overload_cast<const std::string&, std::string, std::vector<int>>(&atomsciflow::Elk::py_set_param))
-        .def("set_param", py::overload_cast<const std::string&, std::string, std::vector<double>>(&atomsciflow::Elk::py_set_param))
-        .def("set_param", py::overload_cast<const std::string&, std::string, std::vector<std::string>>(&atomsciflow::Elk::py_set_param))
-        .def("set_param", py::overload_cast<const std::string&, std::string, std::vector<std::vector<int>>>(&atomsciflow::Elk::py_set_param))
-        .def("set_param", py::overload_cast<const std::string&, std::string, std::vector<std::vector<double>>>(&atomsciflow::Elk::py_set_param))
-        .def("set_param", py::overload_cast<const std::string&, std::string, std::vector<std::vector<std::string>>>(&atomsciflow::Elk::py_set_param))        
-        .def("run", &atomsciflow::Elk::run)
-        .def_readwrite("job", &atomsciflow::Elk::job)
+        .def("get_xyz", &atomsciflow::elk::Elk::get_xyz)
+        .def("to_string", &atomsciflow::elk::Elk::to_string)
+        .def("set_param", py::overload_cast<const std::string&, int>(&atomsciflow::elk::Elk::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, double>(&atomsciflow::elk::Elk::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::string>(&atomsciflow::elk::Elk::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::vector<int>>(&atomsciflow::elk::Elk::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::vector<double>>(&atomsciflow::elk::Elk::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::vector<std::string>>(&atomsciflow::elk::Elk::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::vector<std::vector<int>>>(&atomsciflow::elk::Elk::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::vector<std::vector<double>>>(&atomsciflow::elk::Elk::py_set_param))
+        .def("set_param", py::overload_cast<const std::string&, std::vector<std::vector<std::string>>>(&atomsciflow::elk::Elk::py_set_param))        
+        .def("set_kpath", &atomsciflow::elk::Elk::set_kpath)
+        .def("run", &atomsciflow::elk::Elk::run)
+        .def_readwrite("job", &atomsciflow::elk::Elk::job)
         ;
 }
 
 void add_class_elkstatic(py::module& m) {
-    py::class_<atomsciflow::ElkStatic>(m, "ElkStatic")
+    py::class_<atomsciflow::elk::Static>(m, "Static")
         .def(py::init<>())
-        .def("to_string", &atomsciflow::ElkStatic::to_string)
-        .def_readwrite("job", &atomsciflow::ElkStatic::job)
+        .def("to_string", &atomsciflow::elk::Static::to_string)
+        .def_readwrite("job", &atomsciflow::elk::Static::job)
         ;
 }
 
 void add_class_elkopt(py::module& m) {
-    py::class_<atomsciflow::ElkOpt>(m, "ElkOpt")
+    py::class_<atomsciflow::elk::Opt>(m, "Opt")
         .def(py::init<>())
-        .def("to_string", &atomsciflow::ElkOpt::to_string)
-        .def_readwrite("job", &atomsciflow::ElkOpt::job)
+        .def("to_string", &atomsciflow::elk::Opt::to_string)
+        .def_readwrite("job", &atomsciflow::elk::Opt::job)
         ;
+}
+
+void add_elk_read_params(py::module& m) {
+    m.def("read_params", &atomsciflow::elk::io::read_params);
 }
 
 PYBIND11_MODULE(elk, m) {
@@ -56,5 +62,7 @@ PYBIND11_MODULE(elk, m) {
     add_class_elk(m);
     add_class_elkstatic(m);
     add_class_elkopt(m);
+
+    add_elk_read_params(m);
 }
 

@@ -1,7 +1,7 @@
-/************************************************************************
+"""
 MIT License
 
-Copyright (c) 2021 Deqi Tang
+Copyright (c) 2022 Deqi Tang
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,28 +20,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-************************************************************************/
+"""
 
-/// @file src/atomsciflow/elk/block.h
-/// @author DeqiTang
-/// Mail: deqitang@gmail.com
-/// Created Time: Fri 11 Mar 2022 04:06:13 PM CST
-
-#ifndef ATOMSCIFLOW_ELK_BLOCK_H_
-#define ATOMSCIFLOW_ELK_BLOCK_H_
-
-#include "atomsciflow/variable/group.h"
-
-namespace atomsciflow::elk {
-
-class Block : public VariableGroup {
-public:
-
-    std::string to_string();
-
-    std::string name;
-};
-
-} // namespace atomsciflow::elk
-
-#endif // ATOMSCIFLOW_ELK_BLOCK_H_
+from atomsciflow.cpp.elk import read_params

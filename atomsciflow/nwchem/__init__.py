@@ -26,6 +26,8 @@ from atomsciflow.nwchem.nwchem import (
     NWChem,
     Static,
     Opt,
-    MD
+    MD,
+    Freq,
+    Neb
 )
 from atomsciflow.cpp.server import JobScheduler

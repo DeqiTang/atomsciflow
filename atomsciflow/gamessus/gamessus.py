@@ -36,5 +36,49 @@ class Static(gamessus.GamessUSStatic):
 class Opt(gamessus.GamessUSOpt):
     def __init__(self):
         super().__init__()
-        self.set_param("statpt", "nwrods", 1)
-        self.set_param("guess", "guess", "huckel")
+        self.set_param("guess/guess", "huckel")
+
+class MD(GamessUS):
+    def __init__(self):
+        super().__init__()
+
+        self.set_param("contrl/scftyp", "UHF")
+        self.set_param("contrl/coord", "unique")
+        self.set_param("contrl/mult", 1)
+        self.set_param("contrl/runtyp", "md")
+        self.set_param("contrl/local", "boys")
+
+        self.set_param("system/timlim", 1)
+        self.set_param("basis/gbasis", "sto")
+        self.set_param("basis/ngauss", 2)
+
+        self.set_param("guess/guess", "huckel")
+
+        self.set_param("md/mdint", "VVERLET")
+        self.set_param("md/dt", 5.0e-15)
+        self.set_param("md/nvtnh", 2)
+        self.set_param("md/read", ".false.")
+        self.set_param("md/mbt", ".true.")
+        self.set_param("md/mbr", ".true.")
+
+class Hessian(GamessUS):
+    def __init__(self):
+        super().__init__()
+
+        self.set_param("contrl/scftyp", "UHF")
+        self.set_param("contrl/coord", "unique")
+        self.set_param("contrl/mult", 1)
+        self.set_param("contrl/runtyp", "md")
+        self.set_param("contrl/local", "boys")
+
+        self.set_param("system/timlim", 1)
+        self.set_param("basis/gbasis", "sto")
+        self.set_param("basis/ngauss", 2)
+
+        self.set_param("guess/guess", "huckel")
+
+        self.set_param("force/vibsiz", "0.01")
+        self.set_param("force/temp", "298.15")
+        
+        self.set_param("cphf/polar", ".true.")
+

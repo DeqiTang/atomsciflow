@@ -374,6 +374,7 @@ set_target_properties(config PROPERTIES
 file(GLOB BINDING_GAMESSUS_SOURCES
     "./gamessus/gamessus.cpp"
     "../src/atomsciflow/gamessus/*.cpp"
+    "../src/atomsciflow/gamessus/io/*.cpp"
 )
 add_library(gamessus MODULE ${BINDING_GAMESSUS_SOURCES})
 target_link_libraries(gamessus
@@ -399,6 +400,7 @@ set_target_properties(gamessus PROPERTIES
 file(GLOB BINDING_ELK_SOURCES
     "./elk/elk.cpp"
     "../src/atomsciflow/elk/*.cpp"
+    "../src/atomsciflow/elk/io/*.cpp"
 )
 add_library(elk MODULE ${BINDING_ELK_SOURCES})
 target_link_libraries(elk

@@ -32,16 +32,16 @@ SOFTWARE.
 
 #include "atomsciflow/elk/elk.h"
 
-namespace atomsciflow {
+namespace atomsciflow::elk {
 
-class ElkOpt : public Elk {
+class Opt : public Elk {
 public:
 
-    ElkOpt();
-    ~ElkOpt();
+    Opt();
+    ~Opt();
 
 };
 
-} // namespace atomsciflow
+} // namespace atomsciflow::elk
 
 #endif // ATOMSCIFLOW_ELK_OPT_H_

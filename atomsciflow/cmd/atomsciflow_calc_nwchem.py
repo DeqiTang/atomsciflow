@@ -34,7 +34,7 @@ def add_nwchem_subparser(subparsers):
     add_calc_parser_common(subparser)
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "md"],
+        choices=["static", "opt", "md", "freq", "neb"],
         help="The calculation to do. The specified value is case insensitive")
 
     ag = subparser.add_argument_group(title="custom")
@@ -45,6 +45,17 @@ def add_nwchem_subparser(subparsers):
     
     ag.add_argument("--custom-file", type=str, default=None,
         help="Specify the file containing the custom style nwchem params. The privilege of --custom-file is lower than --custom."
+    )
+
+    ag = subparser.add_argument_group(title="neb")
+
+    ag.add_argument("--neb-images", type=str, nargs="+",
+        help="Specify the structure images to do neb calculation."
+    )
+
+    ag.add_argument("--neb-images-mode", type=int, default=0,
+        choices=[0, 1, 2],
+        help="Specify the mode of input for structure images to do neb calculation"
     )
 
 def nwchem_processor(args):
@@ -76,11 +87,24 @@ def nwchem_processor(args):
     elif args.calc.lower() == "md":
         from atomsciflow.nwchem import MD
         job = MD()
+    elif args.calc.lower() == "freq":
+        from atomsciflow.nwchem import Freq
+        job = Freq()
+    elif args.calc.lower() == "neb":
+        from atomsciflow.nwchem import Neb
+        job = Neb()
     else:
         print("The specified calculation type is unfound!")
         sys.exit(1)
 
-    job.get_xyz(args.xyz)
+    if args.calc.lower() != "neb":
+        job.get_xyz(args.xyz)
+    else:
+        import os
+        job.set_neb_images(
+            [os.path.abspath(item) for item in args.neb_images], 
+            mode=args.neb_images_mode
+        )
     set_calc_processor_common(job, args)
     if args.custom_file != None:
         from atomsciflow.nwchem.io import read_params

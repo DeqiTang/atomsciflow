@@ -24,7 +24,7 @@ SOFTWARE.
 
 def add_calc_parser_common_structure(subparser):
 
-    ag = subparser.add_mutually_exclusive_group(required=True)
+    ag = subparser.add_mutually_exclusive_group()
 
     ag.add_argument("--xyz", type=str, default=None,
         help="Specify the xyz structure file")
