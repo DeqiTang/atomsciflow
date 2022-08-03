@@ -54,13 +54,6 @@ Octopus::Octopus() {
     // set_param("UnitsInput", "eV_Angstrom");
     set_param("UnitsOutput", "eV_Angstrom");
 
-    job.set_run_default("llhpc");
-    job.set_run_default("pbs");
-    job.set_run_default("bash");
-    job.set_run_default("lsf_sz");
-    job.set_run_default("lsf_sustc");
-    job.set_run_default("cdcloud");
-
     job.set_run("cmd", "$ASF_CMD_OCTOPUS");
     job.set_run("input", "inp");
     job.set_run("script_name_head", "octopus-run");
@@ -131,7 +124,9 @@ void Octopus::py_set_param(const std::string& key, std::vector<std::vector<std::
 }
 
 void Octopus::new_block(const std::string& name) {
-    this->blocks[name] = std::make_shared<octopus::Block>(name);
+    if (this->blocks.find(name) == this->blocks.end()) {
+        this->blocks[name] = std::make_shared<octopus::Block>(name);
+    }
 }
 
 void Octopus::get_xyz(const std::string& xyzfile) {
@@ -140,62 +135,32 @@ void Octopus::get_xyz(const std::string& xyzfile) {
 
     auto element_map = get_element_number_map();
 
-    new_block("Species");
+    int i = 0;
     for (const auto& item : xyz.elements_set) {
-        std::ostringstream tmp;
-        tmp << "\'" << item << "\'" << " | "
-            << "species_pseudo" << " | "
-            << "set" << " | "
-            << "standard" << " | "
-            << "mass" << " | "
-            << element_map[item].mass;
-        this->blocks["Species"]->data.push_back(
-            tmp.str()
-        );
+        set_block_data("Species", (boost::format("\'%1%\'") % item).str(), i, 0);
+        set_block_data("Species", "species_pseudo", i, 1);
+        set_block_data("Species", "set", i, 2);
+        set_block_data("Species", "standard", i, 3);
+        set_block_data("Species", "mass", i, 4);
+        set_block_data("Species", element_map[item].mass, i, 5);
+        i++;
     }
 
-    new_block("LatticeVectors");
-    for (const auto& item : xyz.cell) {
-        std::ostringstream tmp;
-        tmp.setf(std::ios::fixed);
-        tmp << std::setprecision(9) << std::setw(12)
-            << item[0] << " | "
-            << std::setprecision(9) << std::setw(12)
-            << item[1] << " | "
-            << std::setprecision(9) << std::setw(12)
-            << item[2];
-        this->blocks["LatticeVectors"]->data.push_back(
-            tmp.str()
-        );        
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            set_block_data("LatticeVectors", (boost::format("%1$10.8f") % xyz.cell[i][j]).str(), i, j);
+        }
     }
-    new_block("LatticeParameters");
-    std::ostringstream tmp;
-    tmp.setf(std::ios::fixed);
-    tmp << std::setprecision(9) << std::setw(6)
-        << 1 << " | "
-        << std::setprecision(9) << std::setw(6)
-        << 1 << " | "
-        << std::setprecision(9) << std::setw(6)
-        << 1;
-    this->blocks["LatticeParameters"]->data.push_back(
-        tmp.str()
-    );
 
-    this->new_block("Coordinates");
-    for (const auto& item : xyz.atoms) {
-        std::ostringstream tmp;
-        tmp.setf(std::ios::fixed);
-        tmp << std::setw(5)
-            << "\'" << item.name << "\'" << " | "
-            << std::setprecision(9) << std::setw(15)
-            << item.x << " | "
-            << std::setprecision(9) << std::setw(15)
-            << item.y << " | "
-            << std::setprecision(9) << std::setw(15)
-            << item.z;
-        this->blocks["Coordinates"]->data.push_back(
-            tmp.str()
-        );
+    set_block_data("LatticeParameters", 1, 0, 0);
+    set_block_data("LatticeParameters", 1, 0, 1);
+    set_block_data("LatticeParameters", 1, 0, 2);
+
+    for (int i = 0; i < xyz.atoms.size(); i++) {
+        set_block_data("Coordinates", (boost::format("\'%1%\'") % xyz.atoms[i].name).str(), i, 0);
+        set_block_data("Coordinates", (boost::format("%1$10.8f") % xyz.atoms[i].x).str(), i, 1);
+        set_block_data("Coordinates", (boost::format("%1$10.8f") % xyz.atoms[i].y).str(), i, 2);
+        set_block_data("Coordinates", (boost::format("%1$10.8f") % xyz.atoms[i].z).str(), i, 3);
     }
 }
 

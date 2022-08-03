@@ -32,6 +32,8 @@ SOFTWARE.
 
 #include <memory>
 #include <map>
+#include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include "atomsciflow/variable/group.h"
 #include "atomsciflow/octopus/block.h"
@@ -64,6 +66,36 @@ public:
     void new_block(const std::string& name);
 
     void get_xyz(const std::string& xyzfile);
+
+    template <typename T>
+    void set_block_data(const std::string& name, T value, int i_row, int i_col) {
+        this->new_block(name);
+        set_block_data_size(name, i_row + 1, i_col + 1);
+        this->blocks[name]->data[i_row][i_col] = boost::lexical_cast<std::string>(value);
+    }
+
+    void set_block_data_size(const std::string& name, int num_row, int num_col) {
+        this->new_block(name);
+
+        if (blocks[name]->data.size() < num_row) {
+            blocks[name]->data.resize(num_row);
+        }
+        for (auto& item : blocks[name]->data) {
+            if (item.size() < num_col) {
+                item.resize(num_col);
+            }
+        }
+    }
+
+    void py_set_block_data(const std::string& name, int value, int row, int col) {
+        this->set_block_data(name, value, row, col);
+    }
+    void py_set_block_data(const std::string& name, double value, int row, int col) {
+        this->set_block_data(name, value, row, col);
+    }
+    void py_set_block_data(const std::string& name, std::string value, int row, int col) {
+        this->set_block_data(name, value, row, col);
+    }
 
     virtual void run(const std::string& directory);
 

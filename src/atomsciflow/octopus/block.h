@@ -44,7 +44,7 @@ public:
     std::string to_string();
 
     std::string name;
-    std::vector<std::string> data;
+    std::vector<std::vector<std::string>> data;
 
 };
 

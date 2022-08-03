@@ -45,8 +45,17 @@ Block::Block(const std::string& name) {
 std::string Block::to_string() {
     std::ostringstream out;
     out << "% " << this->name << "\n";
-    for (const auto& item : this->data) {
-        out << item << "\n";
+
+    for (auto& row : this->data) {
+        int i = 0;
+        for (auto& val : row) {
+            out << boost::format(" %1% ") % val;
+            if (i != (row.size() - 1)) {
+                out << "|";
+            }
+            i++;
+        }
+        out << "\n";
     }
 
     out << "%\n";
