@@ -11,8 +11,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-10.15, macos-11]
-        python_version: ["3.7", "3.8", "3.9", "3.10"]
+        os: [macos-latest, macos-12]
+        python_version: ["3.8", "3.9", "3.10"]
     steps:
       - name: Install dependencies using brew
         id: install-using-brew

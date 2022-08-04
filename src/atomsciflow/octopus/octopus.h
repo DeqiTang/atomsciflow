@@ -74,6 +74,26 @@ public:
         this->blocks[name]->data[i_row][i_col] = boost::lexical_cast<std::string>(value);
     }
 
+    template <typename T>
+    void set_block_data(const std::string& name, std::vector<T> value, int i_row) {
+        this->new_block(name);
+        set_block_data_size(name, i_row + 1, value.size());
+        for (int j = 0; j < value.size(); j++) {
+            this->blocks[name]->data[i_row][j] = boost::lexical_cast<std::string>(value[j]);
+        }
+    }
+
+    template <typename T>
+    void set_block_data(const std::string& name, std::vector<std::vector<T>> value) {
+        this->new_block(name);
+        set_block_data_size(name, value.size(), value[0].size());
+        for (int i = 0; i < value.size(); i++) {
+            for (int j = 0; j < value[i].size(); j++) {
+                this->blocks[name]->data[i][j] = boost::lexical_cast<std::string>(value[i][j]);
+            }
+        }
+    }
+
     void set_block_data_size(const std::string& name, int num_row, int num_col) {
         this->new_block(name);
 
@@ -95,6 +115,24 @@ public:
     }
     void py_set_block_data(const std::string& name, std::string value, int row, int col) {
         this->set_block_data(name, value, row, col);
+    }
+    void py_set_block_data(const std::string& name, std::vector<int> value, int i_row) {
+        this->set_block_data(name, value, i_row);
+    }
+    void py_set_block_data(const std::string& name, std::vector<double> value, int i_row) {
+        this->set_block_data(name, value, i_row);
+    }
+    void py_set_block_data(const std::string& name, std::vector<std::string> value, int i_row) {
+        this->set_block_data(name, value, i_row);
+    }
+    void py_set_block_data(const std::string& name, std::vector<std::vector<int>> value) {
+        this->set_block_data(name, value);
+    }
+    void py_set_block_data(const std::string& name, std::vector<std::vector<double>> value) {
+        this->set_block_data(name, value);
+    }
+    void py_set_block_data(const std::string& name, std::vector<std::vector<std::string>> value) {
+        this->set_block_data(name, value);
     }
 
     virtual void run(const std::string& directory);

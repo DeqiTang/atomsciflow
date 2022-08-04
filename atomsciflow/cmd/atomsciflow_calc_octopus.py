@@ -52,15 +52,6 @@ def octopus_processor(args):
 
     params = {}
 
-    if args.custom != None:
-        custom_str = args.custom.replace(" ", "") # remove all space
-        for item in custom_str.split(";"):
-            if item == "":
-                continue
-            if item.split("=")[1].count(",") > 0:
-                params[item.split("=")[0]] = [value for value in item.split("=")[1].split(",")]
-            else:
-                params[item.split("=")[0]] = item.split("=")[1]
 
     print("working directory: %s" % args.directory)
     if args.calc.lower() == "static":
@@ -77,8 +68,30 @@ def octopus_processor(args):
     if args.custom_file != None:
         from atomsciflow.octopus.io import read_params
         read_params(job, args.custom_file)  
-    for item in params:
-        if params[item] == None:
-            continue
-        job.set_param(item, params[item])
+    if args.custom != None:
+        custom_str = args.custom.replace(" ", "") # remove all space
+        for item in custom_str.split(";"):
+            if item == "":
+                continue
+            if item.count(":=") > 0:
+                if item.split(":=")[1].count("|") > 0:
+                    i = 0
+                    for row in item.split(":=")[1].split("|"):
+                        job.set_block_data(
+                            item.split(":=")[0],
+                            row.split(","),
+                            i
+                        )
+                        i = i +1
+                else:
+                    job.set_block_data(
+                        item.split(":=")[0],
+                        item.split(":=")[1].split(","),
+                        0
+                    )
+            else:
+                job.set_param(
+                    item.split("=")[0],
+                    [value for value in item.split("=")[1].split(",")]
+                )
     job.run(args.directory)
