@@ -37,6 +37,7 @@ void add_class_qmcpack(py::module& m) {
         .def("to_string", &atomsciflow::Qmcpack::to_string)
         .def("run", &atomsciflow::Qmcpack::run)
         .def_readwrite("input", &atomsciflow::Qmcpack::input)
+        .def_readwrite("job", &atomsciflow::Qmcpack::job)
         ;
 }
 

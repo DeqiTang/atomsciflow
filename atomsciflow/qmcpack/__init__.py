@@ -27,5 +27,5 @@ from atomsciflow.qmcpack.qmcpack import (
     Static,
     Opt
 )
-from atomsciflow.cpp.qmcpack Input
+from atomsciflow.cpp.qmcpack import Input
 from atomsciflow.cpp.server import JobScheduler
