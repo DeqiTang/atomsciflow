@@ -35,6 +35,7 @@ SOFTWARE.
 #include "atomsciflow/base/crystal.h"
 #include "atomsciflow/octopus/octopus.h"
 #include "atomsciflow/octopus/io/params.h"
+#include "atomsciflow/octopus/post/opt.h"
 
 namespace py = pybind11;
 
@@ -72,10 +73,19 @@ void add_octopus_read_params(py::module& m) {
     m.def("read_params", &atomsciflow::octopus::io::read_params);
 }
 
+void add_class_post_opt(py::module& m) {
+    py::class_<atomsciflow::octopus::post::Opt>(m, "PostOpt")
+        .def(py::init<>())
+        .def("run", &atomsciflow::octopus::post::Opt::run)
+        ;
+}
+
 PYBIND11_MODULE(octopus, m) {
     m.doc() = "octopus module";
     
     add_class_octopus(m);
     
     add_octopus_read_params(m);
+
+    add_class_post_opt(m);
 }

@@ -32,6 +32,7 @@ from atomsciflow.cmd.atomsciflow_post_qe import add_qe_post_subparser, qe_post_p
 from atomsciflow.cmd.atomsciflow_post_siesta import add_siesta_post_subparser, siesta_post_processor
 from atomsciflow.cmd.atomsciflow_post_vasp import add_vasp_post_subparser, vasp_post_processor
 from atomsciflow.cmd.atomsciflow_post_abinit import add_abinit_post_subparser, abinit_post_processor
+from atomsciflow.cmd.atomsciflow_post_octopus import add_octopus_post_subparser, octopus_post_processor
 
 def main():
     parser = argparse.ArgumentParser()
@@ -42,6 +43,7 @@ def main():
     add_siesta_post_subparser(subparsers)
     add_vasp_post_subparser(subparsers)
     add_abinit_post_subparser(subparsers)
+    add_octopus_post_subparser(subparsers)
     #
     args = parser.parse_args()
 
@@ -80,7 +82,9 @@ def main():
     if args.subcommand == "dalton":
         pass                                     
     if args.subcommand == "octopus":
-        pass                                     
+        log_sub_cmd_start(args.subcommand)
+        octopus_post_processor(args)
+        log_sub_cmd_end(args.subcommand)                                
     if args.subcommand == "nwchem":
         pass                                       
     if args.subcommand == "orca":

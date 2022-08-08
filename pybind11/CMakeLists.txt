@@ -657,6 +657,7 @@ file(GLOB BINDING_OCTOPUS_SOURCES
     "./octopus/octopus.cpp"
     "../src/atomsciflow/octopus/*.cpp"
     "../src/atomsciflow/octopus/io/*.cpp"
+    "../src/atomsciflow/octopus/post/*.cpp"
 )
 #add_library(octopus MODULE ${BINDING_OCTOPUS_SOURCES})
 add_library(octopus MODULE ${BINDING_OCTOPUS_SOURCES})
@@ -668,6 +669,7 @@ target_link_libraries(octopus
     atomsciflow-remote
     atomsciflow-config
     atomsciflow-utils
+    atomsciflow-post
     ${LIBSSH2_FOUND_LIBS}
     OpenSSL::SSL
     OpenSSL::Crypto

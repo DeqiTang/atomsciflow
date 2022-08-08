@@ -171,7 +171,7 @@ void Octopus::run(const std::string& directory) {
     step << boost::format("cat >%1%<<EOF\n") % job.run_params["input"];
     step << this->to_string();
     step << "EOF\n";
-    step << "$CMD_HEAD " << job.run_params["cmd"] << "\n";
+    step << boost::format("$CMD_HEAD %1% > octopus.out\n") % job.run_params["cmd"];
     job.steps.push_back(step.str());
     step.clear();
 
