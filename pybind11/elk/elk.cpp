@@ -13,6 +13,7 @@
 #include "atomsciflow/elk/static.h"
 #include "atomsciflow/elk/opt.h"
 #include "atomsciflow/elk/io/params.h"
+#include "atomsciflow/elk/post/opt.h"
 
 namespace py = pybind11;
 
@@ -56,6 +57,13 @@ void add_elk_read_params(py::module& m) {
     m.def("read_params", &atomsciflow::elk::io::read_params);
 }
 
+void add_class_post_opt(py::module& m) {
+    py::class_<atomsciflow::elk::post::Opt>(m, "PostOpt")
+        .def(py::init<>())
+        .def("run", &atomsciflow::elk::post::Opt::run)
+        ;
+}
+
 PYBIND11_MODULE(elk, m) {
     m.doc() = "elk module";
     
@@ -64,5 +72,7 @@ PYBIND11_MODULE(elk, m) {
     add_class_elkopt(m);
 
     add_elk_read_params(m);
+
+    add_class_post_opt(m);
 }
 

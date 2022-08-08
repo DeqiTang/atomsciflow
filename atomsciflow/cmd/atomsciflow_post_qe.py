@@ -43,7 +43,9 @@ def qe_post_processor(args):
     if args.calc.lower() == "static":
         pass
     elif args.calc.lower() == "opt":
-        pass
+        from atomsciflow.qe.post import Opt
+        job = Opt()
+        job.run(args.directory)
     elif args.calc.lower() == "md":
         pass
     elif args.calc.lower() == "phonopy":

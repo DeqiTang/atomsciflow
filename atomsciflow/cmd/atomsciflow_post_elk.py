@@ -22,12 +22,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from atomsciflow.cpp import qe
+def add_elk_post_subparser(subparsers):
+    subparser = subparsers.add_parser("elk", 
+        help="The Elk post-processor")
 
-class Phonopy(qe.PostPhonopy):
-    def __init__(self):
-        super().__init__()
+    subparser.add_argument("-d", "--directory", type=str, default="atomsciflow-calc-running-dir",
+        help="The working directory where calculation is happening")
 
-class Opt(qe.PostOpt):
-    def __init__(self):
-        super().__init__()
+    subparser.add_argument("-c", "--calc", type=str, default="static",
+        choices=["static", "opt"],
+        help="The calculation to do. The specified value is case insensitive")
+
+def elk_post_processor(args):
+    print("working directory: %s" % args.directory)
+    if args.calc.lower() == "static":
+        pass
+    elif args.calc.lower() == "opt":
+        from atomsciflow.elk.post import Opt
+        job = Opt()
+        job.run(args.directory)
+    else:
+        print("The specified post-processing type is unfound!")
+        sys.exit(1)
+    

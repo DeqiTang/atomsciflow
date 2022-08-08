@@ -401,6 +401,7 @@ file(GLOB BINDING_ELK_SOURCES
     "./elk/elk.cpp"
     "../src/atomsciflow/elk/*.cpp"
     "../src/atomsciflow/elk/io/*.cpp"
+    "../src/atomsciflow/elk/post/*.cpp"
 )
 add_library(elk MODULE ${BINDING_ELK_SOURCES})
 target_link_libraries(elk
@@ -416,6 +417,7 @@ target_link_libraries(elk
     atomsciflow-remote
     atomsciflow-config
     atomsciflow-utils
+    atomsciflow-post
 )
 set_target_properties(elk PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"

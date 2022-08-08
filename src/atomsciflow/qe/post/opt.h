@@ -1,4 +1,4 @@
-"""
+/************************************************************************
 MIT License
 
 Copyright (c) 2022 Deqi Tang
@@ -20,14 +20,28 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-"""
+************************************************************************/
 
-from atomsciflow.cpp import qe
+#ifndef ATOMSCIFLOW_QE_POST_OPT_H_
+#define ATOMSCIFLOW_QE_POST_OPT_H_
 
-class Phonopy(qe.PostPhonopy):
-    def __init__(self):
-        super().__init__()
+#include "atomsciflow/post/post.h"
 
-class Opt(qe.PostOpt):
-    def __init__(self):
-        super().__init__()
+namespace atomsciflow::qe::post {
+
+namespace pt = boost::property_tree;
+
+class Opt : public atomsciflow::post::Post {
+public:
+
+    Opt();
+    ~Opt() {
+
+    }
+
+    virtual void run(const std::string& directory);
+};
+
+} // namespace atomsciflow::qe::post
+
+#endif // ATOMSCIFLOW_QE_POST_OPT_H_

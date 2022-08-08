@@ -9,6 +9,7 @@
 #include "atomsciflow/qe/io/params.h"
 #include "atomsciflow/qe/phonopy.h"
 #include "atomsciflow/qe/post/phonopy.h"
+#include "atomsciflow/qe/post/opt.h"
 
 namespace py = pybind11;
 
@@ -113,6 +114,13 @@ void add_class_post_phonopy(py::module& m) {
         ;
 }
 
+void add_class_post_opt(py::module& m) {
+    py::class_<atomsciflow::qe::post::Opt>(m, "PostOpt")
+        .def(py::init<>())
+        .def("run", &atomsciflow::qe::post::Opt::run)
+        ;
+}
+
 PYBIND11_MODULE(qe, m) {
     m.doc() = "qe module";
     m.attr("__version__") = "0.0.1";
@@ -127,4 +135,5 @@ PYBIND11_MODULE(qe, m) {
     add_qe_read_params(m);
 
     add_class_post_phonopy(m);
+    add_class_post_opt(m);
 }

@@ -22,12 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from atomsciflow.cpp import qe
+from atomsciflow.cpp import elk
 
-class Phonopy(qe.PostPhonopy):
-    def __init__(self):
-        super().__init__()
-
-class Opt(qe.PostOpt):
+class Opt(elk.PostOpt):
     def __init__(self):
         super().__init__()
