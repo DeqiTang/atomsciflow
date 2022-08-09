@@ -13,6 +13,7 @@
 #include "atomsciflow/gamessus/static.h"
 #include "atomsciflow/gamessus/opt.h"
 #include "atomsciflow/gamessus/io/params.h"
+#include "atomsciflow/gamessus/post/opt.h"
 
 namespace py = pybind11;
 
@@ -84,6 +85,13 @@ void add_gamessus_read_params(py::module& m) {
     m.def("read_params", &atomsciflow::gamessus::io::read_params);
 }
 
+void add_class_post_opt(py::module& m) {
+    py::class_<atomsciflow::gamessus::post::Opt>(m, "PostOpt")
+        .def(py::init<>())
+        .def("run", &atomsciflow::gamessus::post::Opt::run)
+        ;
+}
+
 PYBIND11_MODULE(gamessus, m) {
     m.doc() = "gamessus module";
     
@@ -92,4 +100,5 @@ PYBIND11_MODULE(gamessus, m) {
     add_class_gamessus_opt(m);
 
     add_gamessus_read_params(m);
+    add_class_post_opt(m);
 }

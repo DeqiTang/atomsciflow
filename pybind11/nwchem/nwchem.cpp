@@ -12,6 +12,7 @@
 #include "atomsciflow/nwchem/directive.h"
 #include "atomsciflow/nwchem/nwchem.h"
 #include "atomsciflow/nwchem/io/params.h"
+#include "atomsciflow/nwchem/post/opt.h"
 
 namespace py = pybind11;
 
@@ -60,6 +61,13 @@ void add_nwchem_read_params(py::module& m) {
     m.def("read_params", atomsciflow::nwchem::io::read_params);
 }
 
+void add_class_post_opt(py::module& m) {
+    py::class_<atomsciflow::nwchem::post::Opt>(m, "PostOpt")
+        .def(py::init<>())
+        .def("run", &atomsciflow::nwchem::post::Opt::run)
+        ;
+}
+
 PYBIND11_MODULE(nwchem, m) {
     m.doc() = "nwchem module";
     
@@ -67,4 +75,5 @@ PYBIND11_MODULE(nwchem, m) {
     add_class_nwchem(m);
 
     add_nwchem_read_params(m);
+    add_class_post_opt(m);
 }

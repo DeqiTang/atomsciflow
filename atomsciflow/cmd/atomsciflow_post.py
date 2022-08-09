@@ -34,6 +34,8 @@ from atomsciflow.cmd.atomsciflow_post_vasp import add_vasp_post_subparser, vasp_
 from atomsciflow.cmd.atomsciflow_post_abinit import add_abinit_post_subparser, abinit_post_processor
 from atomsciflow.cmd.atomsciflow_post_octopus import add_octopus_post_subparser, octopus_post_processor
 from atomsciflow.cmd.atomsciflow_post_elk import add_elk_post_subparser, elk_post_processor
+from atomsciflow.cmd.atomsciflow_post_nwchem import add_nwchem_post_subparser, nwchem_post_processor
+from atomsciflow.cmd.atomsciflow_post_gamessus import add_gamessus_post_subparser, gamessus_post_processor
 
 def main():
     parser = argparse.ArgumentParser()
@@ -46,6 +48,8 @@ def main():
     add_abinit_post_subparser(subparsers)
     add_octopus_post_subparser(subparsers)
     add_elk_post_subparser(subparsers)
+    add_nwchem_post_subparser(subparsers)
+    add_gamessus_post_subparser(subparsers)
     #
     args = parser.parse_args()
 
@@ -56,7 +60,9 @@ def main():
     log_cmd_start("atomsciflow-post")
 
     if args.subcommand == "gamessus":
-        pass
+        log_sub_cmd_start(args.subcommand)
+        gamessus_post_processor(args)
+        log_sub_cmd_end(args.subcommand)  
     if args.subcommand == "vasp":
         log_sub_cmd_start(args.subcommand)
         vasp_post_processor(args)
@@ -90,7 +96,9 @@ def main():
         octopus_post_processor(args)
         log_sub_cmd_end(args.subcommand)                                
     if args.subcommand == "nwchem":
-        pass                                       
+        log_sub_cmd_start(args.subcommand)
+        nwchem_post_processor(args)
+        log_sub_cmd_end(args.subcommand)                                  
     if args.subcommand == "orca":
         pass                                      
     if args.subcommand == "gaussian":

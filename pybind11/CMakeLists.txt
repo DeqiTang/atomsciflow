@@ -375,6 +375,7 @@ file(GLOB BINDING_GAMESSUS_SOURCES
     "./gamessus/gamessus.cpp"
     "../src/atomsciflow/gamessus/*.cpp"
     "../src/atomsciflow/gamessus/io/*.cpp"
+    "../src/atomsciflow/gamessus/post/*.cpp"
 )
 add_library(gamessus MODULE ${BINDING_GAMESSUS_SOURCES})
 target_link_libraries(gamessus
@@ -390,6 +391,7 @@ target_link_libraries(gamessus
     atomsciflow-remote
     atomsciflow-config
     atomsciflow-utils
+    atomsciflow-post
 )
 set_target_properties(gamessus PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"
@@ -532,6 +534,7 @@ file(GLOB BINDING_NWCHEM_SOURCES
     "./nwchem/nwchem.cpp"
     "../src/atomsciflow/nwchem/*.cpp"
     "../src/atomsciflow/nwchem/io/*.cpp"
+    "../src/atomsciflow/nwchem/post/*.cpp"
 )
 add_library(nwchem MODULE ${BINDING_NWCHEM_SOURCES})
 target_link_libraries(nwchem
@@ -547,6 +550,7 @@ target_link_libraries(nwchem
     atomsciflow-remote
     atomsciflow-config
     atomsciflow-utils
+    atomsciflow-post
 )
 set_target_properties(nwchem PROPERTIES 
     PREFIX "${PYTHON_MODULE_PREFIX}"
