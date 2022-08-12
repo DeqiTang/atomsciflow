@@ -36,6 +36,7 @@ SOFTWARE.
 #include "atomsciflow/octopus/octopus.h"
 #include "atomsciflow/octopus/io/params.h"
 #include "atomsciflow/octopus/post/opt.h"
+#include "atomsciflow/octopus/post/band.h"
 
 namespace py = pybind11;
 
@@ -63,6 +64,8 @@ void add_class_octopus(py::module& m) {
         .def("set_block_data", py::overload_cast<const std::string&, std::vector<std::vector<double>>>(&atomsciflow::Octopus::py_set_block_data))
         .def("set_block_data", py::overload_cast<const std::string&, std::vector<std::vector<std::string>>>(&atomsciflow::Octopus::py_set_block_data))
         .def("set_block_data_size", &atomsciflow::Octopus::set_block_data_size)
+        .def("set_status", &atomsciflow::Octopus::set_status)
+        .def("set_block_status", &atomsciflow::Octopus::set_block_status)
         .def("get_xyz", &atomsciflow::Octopus::get_xyz)
         .def("run", &atomsciflow::Octopus::run)
         .def_readwrite("job", &atomsciflow::Octopus::job)
@@ -80,6 +83,14 @@ void add_class_post_opt(py::module& m) {
         ;
 }
 
+void add_class_post_band(py::module& m) {
+    py::class_<atomsciflow::octopus::post::Band>(m, "PostBand")
+        .def(py::init<>())
+        .def("run", &atomsciflow::octopus::post::Band::run)
+        .def("set_kpath", &atomsciflow::octopus::post::Band::set_kpath)
+        ;
+}
+
 PYBIND11_MODULE(octopus, m) {
     m.doc() = "octopus module";
     
@@ -88,4 +99,5 @@ PYBIND11_MODULE(octopus, m) {
     add_octopus_read_params(m);
 
     add_class_post_opt(m);
+    add_class_post_band(m);
 }

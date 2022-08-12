@@ -268,7 +268,7 @@ void PwScf::run(const std::string& directory) {
         step << "fi\n";
         step << "done\n";
     }
-    step << boost::format("$CMD_HEAD %1% < %2% > %3%\n") % job.run_params["cmd"] % job.run_params["input"] % job.run_params["output"];
+    step << boost::format("$CMD_HEAD %1% < %2% | tee %3%\n") % job.run_params["cmd"] % job.run_params["input"] % job.run_params["output"];
     job.steps.push_back(step.str());
     step.clear();
 

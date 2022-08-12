@@ -35,14 +35,19 @@ SOFTWARE.
 namespace atomsciflow::octopus {
 
 Block::Block() {
-
+    this->status = true;
 }
 
 Block::Block(const std::string& name) {
     this->name = name;
+    this->status = true;
 }
 
 std::string Block::to_string() {
+    if (this->status == false) {
+        return "";
+    }
+    
     std::ostringstream out;
     out << "% " << this->name << "\n";
 

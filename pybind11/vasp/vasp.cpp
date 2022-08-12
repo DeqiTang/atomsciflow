@@ -8,6 +8,7 @@
 #include "atomsciflow/vasp/vasp.h"
 #include "atomsciflow/vasp/static.h"
 #include "atomsciflow/vasp/post/phonopy.h"
+#include "atomsciflow/vasp/post/bands.h"
 #include "atomsciflow/server/job_scheduler.h"
 #include "atomsciflow/vasp/io/params.h"
 #include "atomsciflow/vasp/phonopy.h"
@@ -58,6 +59,7 @@ void add_class_vaspposcar(py::module& m) {
         .def(py::init<>())
         .def("to_string", &atomsciflow::VaspPoscar::to_string)
         .def("get_xyz", &atomsciflow::VaspPoscar::get_xyz)
+        .def_readwrite("elem_natom_in_number_order", &atomsciflow::VaspPoscar::elem_natom_in_number_order)
         ;
 }
 
@@ -108,6 +110,14 @@ void add_class_phonopy(py::module& m) {
         ;
 }
 
+void add_class_post_band(py::module& m) {
+    py::class_<atomsciflow::vasp::post::Bands>(m, "PostBand")
+        .def(py::init<>())
+        .def("set_kpath", &atomsciflow::vasp::post::Bands::set_kpath)
+        .def("run", &atomsciflow::vasp::post::Bands::run)
+        ;
+}
+
 PYBIND11_MODULE(vasp, m) {
     m.doc() = "vasp module";
     m.attr("__version__") = "0.0.1";
@@ -121,5 +131,5 @@ PYBIND11_MODULE(vasp, m) {
     add_vasp_read_params(m);
 
     add_class_phonopy(m);
+    add_class_post_band(m);
 }
-

@@ -1,7 +1,7 @@
-"""
+/************************************************************************
 MIT License
 
-Copyright (c) 2021 Deqi Tang
+Copyright (c) 2022 Deqi Tang
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,14 +20,27 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-"""
+************************************************************************/
 
-from atomsciflow.vasp.vasp import (
-    Vasp,
-    Static, 
-    Opt,
-    VcOpt,
-    MD,
-    Phonopy,
-    Band
-) 
+#include <iostream>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h> // needed for automatical handling with STL 
+
+#include "atomsciflow/post/post.h"
+
+namespace py = pybind11;
+
+void add_class_post(py::module& m) {
+    py::class_<atomsciflow::post::Post>(m, "Post")
+        .def(py::init<>())
+        .def("add_rule", &atomsciflow::post::Post::add_rule)
+        .def("run", &atomsciflow::post::Post::run)
+        .def_readwrite("run_params", &atomsciflow::post::Post::run_params)
+        ;
+}
+
+PYBIND11_MODULE(post, m) {
+    m.doc() = "post module";
+    
+    add_class_post(m);
+}

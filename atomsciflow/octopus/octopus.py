@@ -37,3 +37,42 @@ class Opt(Octopus):
     def __init__(self):
         super().__init__()
         self.set_param("CalculationMode", "go")
+
+class Band(Octopus):
+    def __init__(self):
+        super().__init__()
+
+    def set_kpath(self, kpath):
+        self.kpath = kpath
+
+    def _set_kpath(self):
+        for i in range(len(self.kpath.links) - 1):
+            self.set_block_data("KPointsPath", self.kpath.links[i], 0, i)
+        for i in range(len(self.kpath.coords)):
+            self.set_block_data("KPointsPath", self.kpath.coords[i], i+1)
+
+    def run(self, directory):
+        self.set_status("Radius", False)
+        
+        step = ""
+        self.set_param("CalculationMode", "gs")        
+        step += "cd ${ABSOLUTE_WORK_DIR}\n"
+        step += "cat >%s<<EOF\n" % self.job.run_params["input"]
+        step += self.to_string()
+        step += "EOF\n"
+        step += "$CMD_HEAD %s > octopus-gs.out\n" % self.job.run_params["cmd"]
+        self.job.append_step(step)
+
+        step = ""
+        self.set_param("CalculationMode", "unocc")
+        self.set_param("ExtraStates", 10)
+        self.set_param("ExtraStatesToConverge", 5)
+        self._set_kpath()
+        self.set_block_status("KPointsGrid", False)
+        step += "cat >%s<<EOF\n" % self.job.run_params["input"]
+        step += self.to_string()
+        step += "EOF\n"
+        step += "$CMD_HEAD %s > octopus-unocc.out\n" % self.job.run_params["cmd"]
+        self.job.append_step(step)
+
+        self.job.run(directory)

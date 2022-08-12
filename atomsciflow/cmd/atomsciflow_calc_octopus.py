@@ -34,7 +34,7 @@ def add_octopus_subparser(subparsers):
     add_calc_parser_common(subparser)
     
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "md"],
+        choices=["static", "opt", "md", "band"],
         help="The calculation to do. The specified value is case insensitive")
 
     # custom
@@ -52,7 +52,6 @@ def octopus_processor(args):
 
     params = {}
 
-
     print("working directory: %s" % args.directory)
     if args.calc.lower() == "static":
         from atomsciflow.octopus import Static
@@ -60,6 +59,16 @@ def octopus_processor(args):
     elif args.calc.lower() == "opt":
         from atomsciflow.octopus import Opt
         job = Opt()
+    elif args.calc.lower() == "band":
+        from atomsciflow.octopus import Band
+        job = Band()
+        from atomsciflow.cpp.base import Kpath
+        kpath = Kpath()
+        if args.kpath.count(";") != 0:
+            kpath.read(args.kpath)
+        else:
+            kpath.read_file(args.kpath)
+        job.set_kpath(kpath)        
     else:
         print("The specified calculation type is unfound!")
         sys.exit(1)

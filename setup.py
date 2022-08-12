@@ -257,7 +257,7 @@ setup(
     include_package_data = True,
     platforms = "any",
     python_requires = ">=3.0",
-    install_requires = ["pybind11", "numpy", "scipy", "matplotlib"],
+    install_requires = ["pybind11", "numpy", "scipy"],
     cmdclass = {
         'clean': CleanCommand,
         'build_ext': CustomBuildExt

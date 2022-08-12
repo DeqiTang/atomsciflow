@@ -802,6 +802,22 @@ set_target_properties(plumed PROPERTIES
 )
 #pybind11_add_module(plumed MODULE ${BINDING_PLUMED_SOURCES})
 
+file(GLOB BINDING_POST_SOURCES
+    "./post/*.cpp"
+)
+add_library(post MODULE ${BINDING_POST_SOURCES})
+target_link_libraries(post
+    PRIVATE pybind11::module
+    ${YAML_CPP_LIBRARIES}
+    ${Boost_LIBRARIES}
+    atomsciflow-post
+)
+set_target_properties(post PROPERTIES
+    PREFIX "${PYTHON_MODULE_PREFIX}"
+    SUFFIX "${PYTHON_MODULE_EXTENSION}"
+)
+#pybind11_add_module(post MODULE ${BINDING_POST_SOURCES})
+
 # scikit-build
 if(SKBUILD)
     install(TARGETS utils DESTINATION .)
@@ -832,6 +848,7 @@ if(SKBUILD)
     install(TARGETS xtb DESTINATION .)
     install(TARGETS server DESTINATION .)
     install(TARGETS plumed DESTINATION .)
+    install(TARGETS post DESTINATION .)
 endif()
 
 

@@ -36,34 +36,42 @@ SOFTWARE.
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/algorithm/string.hpp>
 
+#include "atomsciflow/post/post.h"
 #include "atomsciflow/base/kpath.h"
 
-namespace atomsciflow {
+namespace atomsciflow::vasp::post {
 
 namespace pt = boost::property_tree;
 namespace ba = boost::algorithm;
 
 /**
- * @class PostBands
+ * @class Bands
  *
  */
-class PostBands {
+class Bands : public atomsciflow::post::Post {
 public:
-    void get_efermi(std::string vasprun);
-    void get_kpath_and_vasprun(Kpath kpath, std::string vasprun);
-    void get_xcoord_k();
-    void get_eigenval();
-    void _plot_band_gnuplot(std::vector<double>& bandrange, std::vector<double>& xrange, std::vector<double>& yrange);
-    void process(std::string directory, std::vector<double>& bandrange, std::vector<double>& xrange, std::vector<double>& yrange);
 
-    pt::ptree vasprun_root;
+    Bands();
+    ~Bands() {
+
+    }
+
+    void set_kpath(Kpath& kpath) {
+        this->kpath = kpath;
+    }
+
+    virtual void run(const std::string& directory);
+
+    pt::ptree vasprun;
     Kpath kpath;
-    std::vector<double> locs;
-    std::vector<std::string> labels_for_gnuplot;
-    std::vector<double> xcoord_k;
-    double efermi;
+    std::vector<double> kcoords_1d;
+    double fermi_energy;
+    std::map<std::string, std::vector<std::map<std::string, std::vector<double>>>> eigenvalues;
+
+private:
+    void _extract_data_from_vasprun_xml();
 };
 
-} // namespace atomsciflow
+} // namespace atomsciflow::vasp::post
 
 #endif // ATOMSCIFLOW_VASP_POST_BANDS_H_

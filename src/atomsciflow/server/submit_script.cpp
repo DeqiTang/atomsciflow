@@ -158,7 +158,7 @@ std::string submit_header_cdcloud(std::map<std::string, std::string>& params) {
     out += (boost::format("#SBATCH -e %1%\n") % params["stderr"]).str();
     out += "#\n";
     out += "export I_MPI_PMI_LIBRARY=/opt/gridview/slurm/lib/libpmi.so\n";
-    out += "export FORT_BUFFERED=1\n";
+    // out += "export FORT_BUFFERED=1\n"; // may arouse error for running of quantum espresso 
 
     out += (boost::format("ABSOLUTE_WORK_DIR=%1%\n") % params["absolute_work_dir"]).str();
     out += "\n";

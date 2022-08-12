@@ -221,7 +221,7 @@ std::string PwScfMisc::to_string_kpoints() {
         out += "K_POINTS gamma\n";
     } else if ("crystal_b" == this->kpoints_option) {
         out += (boost::format("K_POINTS %1%\n") % this->kpoints_option).str();
-        out += std::to_string(this->crystal_b.coords.size());
+        out += std::to_string(this->crystal_b.coords.size()) + "\n";
         for (int i = 0; i < this->crystal_b.coords.size(); i ++) {
             out += std::to_string(this->crystal_b.coords[i][0]);
             out += " ";

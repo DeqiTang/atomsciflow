@@ -27,3 +27,7 @@ from atomsciflow.cpp import vasp
 class Phonopy(vasp.PostPhonopy):
     def __init__(self):
         super().__init__()
+
+class Band(vasp.PostBand):
+    def __init__(self):
+        super().__init__()

@@ -25,6 +25,7 @@ SOFTWARE.
 from atomsciflow.octopus.octopus import (
     Octopus,
     Static, 
-    Opt
+    Opt,
+    Band
 )
 from atomsciflow.cpp.server import JobScheduler

@@ -45,7 +45,7 @@ public:
 
     std::string name;
     std::vector<std::vector<std::string>> data;
-
+    bool status;
 };
 
 } // namespace atomsciflow::octopus

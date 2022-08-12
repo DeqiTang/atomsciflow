@@ -68,19 +68,19 @@ std::string VaspIncar::to_string() {
         } else if (grouping.ions_incharge.find(item.first) != grouping.ions_incharge.end()) {
             ions += vasp_variable_to_string(this->params[item.first]) + "\n";    
         } else if (grouping.write_incharge.find(item.first) != grouping.write_incharge.end()) {
-            write += vasp_variable_to_string(this->params[item.first]);
+            write += vasp_variable_to_string(this->params[item.first]) + "\n";
         } else if (grouping.dipolecorrection_incharge.find(item.first) != grouping.dipolecorrection_incharge.end()) {
-            dipolecorrection += vasp_variable_to_string(this->params[item.first]);
+            dipolecorrection += vasp_variable_to_string(this->params[item.first]) + "\n";
         } else if (grouping.xc_incharge.find(item.first) != grouping.xc_incharge.end()) {
-            xc += vasp_variable_to_string(this->params[item.first]);
+            xc += vasp_variable_to_string(this->params[item.first]) + "\n";
         } else if (grouping.lr_incharge.find(item.first) != grouping.lr_incharge.end()) {
-            lr += vasp_variable_to_string(this->params[item.first]);
+            lr += vasp_variable_to_string(this->params[item.first]) + "\n";
         } else if (grouping.orbitalmagnet_incharge.find(item.first) != grouping.orbitalmagnet_incharge.end()) {
-            orbitalmagnet += vasp_variable_to_string(this->params[item.first]);
+            orbitalmagnet += vasp_variable_to_string(this->params[item.first]) + "\n";
         } else if (grouping.neb_incharge.find(item.first) != grouping.neb_incharge.end()) {
-            neb += vasp_variable_to_string(this->params[item.first]);
+            neb += vasp_variable_to_string(this->params[item.first]) + "\n";
         } else {
-            misc += vasp_variable_to_string(this->params[item.first]);
+            misc += vasp_variable_to_string(this->params[item.first]) + "\n";
         }
     }
     std::set<std::string> tmp_set;

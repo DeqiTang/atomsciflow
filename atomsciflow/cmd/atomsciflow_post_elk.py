@@ -30,8 +30,13 @@ def add_elk_post_subparser(subparsers):
         help="The working directory where calculation is happening")
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt"],
+        choices=["static", "opt", "band"],
         help="The calculation to do. The specified value is case insensitive")
+
+    ag = subparser.add_argument_group(title="kpoints")
+
+    ag.add_argument("--kpath", type=str, default=None,
+        help="Specify the kpath, either from a file or command line string, e.g. --kpath kpath.txt or --kpath \"0 0 0 GAMMA 5;0.5 0 0 x |\"")
 
 def elk_post_processor(args):
     print("working directory: %s" % args.directory)
@@ -40,8 +45,18 @@ def elk_post_processor(args):
     elif args.calc.lower() == "opt":
         from atomsciflow.elk.post import Opt
         job = Opt()
-        job.run(args.directory)
+    elif args.calc.lower() == "band":
+        from atomsciflow.elk.post import Band
+        job = Band()
+        from atomsciflow.cpp.base import Kpath
+        kpath = Kpath()
+        if args.kpath.count(";") != 0:
+            kpath.read(args.kpath)
+        else:
+            kpath.read_file(args.kpath)
+        job.set_kpath(kpath)        
     else:
         print("The specified post-processing type is unfound!")
         sys.exit(1)
     
+    job.run(args.directory)

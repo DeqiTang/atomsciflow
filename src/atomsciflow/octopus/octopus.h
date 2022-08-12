@@ -135,6 +135,15 @@ public:
         this->set_block_data(name, value);
     }
 
+    void set_status(const std::string& key, bool status) {
+        this->non_block->set_status(key, status);
+    }
+    
+    void set_block_status(const std::string& name, bool status) {
+        this->new_block(name);
+        this->blocks[name]->status = status;
+    }
+
     virtual void run(const std::string& directory);
 
     std::shared_ptr<VariableGroup> non_block;

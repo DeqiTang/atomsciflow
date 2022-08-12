@@ -46,6 +46,7 @@ void add_class_pwscf(py::module& m) {
         .def_readwrite("namelists", &atomsciflow::qe::PwScf::namelists)
         .def_readwrite("misc", &atomsciflow::qe::PwScf::misc)
         .def_readwrite("job", &atomsciflow::qe::PwScf::job)
+        .def_readwrite("config", &atomsciflow::qe::PwScf::config)
         ;
 }
 

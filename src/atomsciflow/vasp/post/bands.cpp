@@ -31,235 +31,211 @@ SOFTWARE.
 
 #include <armadillo>
 #include <boost/lexical_cast.hpp>
+#include <boost/filesystem.hpp>
 
-namespace atomsciflow {
+namespace atomsciflow::vasp::post {
 
-/// \brief PostBands::get_efermi
-/// \param vasprun
-/// Extract fermi energy from the vasprun.xml of either scf
-/// or nscf output.
-void PostBands::get_efermi(std::string vasprun="vasprun.xml") {
-    pt::ptree vasprun_root;
-    pt::read_xml(vasprun, vasprun_root);
-    this->efermi = vasprun_root.get<double>("calculation.dos.i");
+namespace fs = boost::filesystem;
+
+Bands::Bands() {
+    this->set_run("program-out", "OUTCAR");
+    this->set_run("output-json", "post-band.json");
 }
 
-void PostBands::get_kpath_and_vasprun(Kpath kpath, std::string vasprun) {
+void Bands::_extract_data_from_vasprun_xml() {
 
-    pt::read_xml(vasprun, this->vasprun_root);
-
-    this->kpath = kpath;
-
-    this->get_xcoord_k();
-    this->get_eigenval();
-
-    this->locs.emplace_back(this->xcoord_k[0]);
-    for (int i = 1; i < this->xcoord_k.size() - 1; i++) {
-        if (this->xcoord_k[i] == this->xcoord_k[i-1]) {
-            this->locs.emplace_back(this->xcoord_k[i]);
-        }
-    }
-    this->locs.emplace_back(this->xcoord_k[-1]);
-
-    this->labels_for_gnuplot.emplace_back(
-        ba::to_upper_copy(this->kpath.labels[0]) != "GAMMA" ? ba::to_upper_copy(this->kpath.labels[0]) : "{/symbol G}"
-    );
-    for (int i = 1; i < this->kpath.coords.size(); i++) {
-        if (this->kpath.links[i-1] != 0) {
-            this->labels_for_gnuplot.emplace_back(
-                ba::to_upper_copy(this->kpath.labels[i]) != "GAMMA" ? this->kpath.labels[i] : "{/symbol G}"
-            );
-        } else {
-            this->labels_for_gnuplot[-1] = this->labels_for_gnuplot[-1] + " | " + ba::to_upper_copy(this->kpath.labels[i]);
-        }
-    }
-}
-
-void PostBands::get_xcoord_k() {
-    std::vector<std::vector<double>> cell;
-    std::vector<double> vec;
-    std::string tmp_str;
     std::vector<std::string> str_vec;
-    std::vector<pt::ptree::value_type> pt_vec;
-    std::vector<pt::ptree::value_type> pt_vec_1;
-    std::vector<pt::ptree::value_type> pt_vec_2;
 
-    vec.clear();
-    pt_vec.clear();
-    pt_vec_1.clear();
-    pt_vec_2.clear();
-    for (const auto& item : this->vasprun_root.get_child("modeling").get_child("structure") ) {
-        pt_vec.emplace_back(item);
+    // extract the eigenvalues from vasprun.xml
+    for (auto& spin : vasprun.get_child("modeling.calculation.eigenvalues.array.set")) {
+        if (spin.first == "<xmlattr>") {
+            continue;
+        }
+        std::string spin_label = boost::replace_all_copy(spin.second.get<std::string>("<xmlattr>.comment"), " ", "-");
+        std::vector<std::map<std::string, std::vector<double>>> eigen_of_spin;
+        for (auto& kpoint : spin.second) {
+            if (kpoint.first == "<xmlattr>") {
+                continue;
+            }
+            std::map<std::string, std::vector<double>> eigen;
+            std::vector<double> energy;
+            std::vector<double> occupation;
+            for (auto& item : kpoint.second) {
+                if (item.first == "<xmlattr>") {
+                    continue;
+                }
+                boost::split(str_vec, item.second.data(), boost::is_any_of(" "), boost::token_compress_on);
+                energy.push_back(boost::lexical_cast<double>(str_vec[1]));
+                occupation.push_back(boost::lexical_cast<double>(str_vec[2]));
+            }
+            eigen["energy"] = energy;
+            eigen["occupation"] = occupation;
+            eigen_of_spin.push_back(eigen);
+            this->eigenvalues[spin_label] = eigen_of_spin;
+        }
     }
-    for (const auto& item : pt_vec[-1].second.get_child("crystal").get_child("varray")) {
-        pt_vec_1.emplace_back(item);
-    }
-    for (const auto& item : pt_vec_1[0].second.get_child("v") ) {
-        pt_vec_2.emplace_back(item);
-    }
-    tmp_str = pt_vec_2[0].second.get_value<std::string>();
-    boost::split(str_vec, tmp_str, boost::is_space());
-    vec.emplace_back(boost::lexical_cast<double>(str_vec[0]));
-    vec.emplace_back(boost::lexical_cast<double>(str_vec[1]));
-    vec.emplace_back(boost::lexical_cast<double>(str_vec[2]));
-    cell.push_back(vec);
 
-    vec.clear();
-    pt_vec.clear();
-    pt_vec_1.clear();
-    pt_vec_2.clear();
-    for (const auto& item : this->vasprun_root.get_child("modeling").get_child("structure") ) {
-        pt_vec.emplace_back(item);
-    }
-    for (const auto& item : pt_vec[-1].second.get_child("crystal").get_child("varray")) {
-        pt_vec_1.emplace_back(item);
-    }
-    for (const auto& item : pt_vec_1[0].second.get_child("v") ) {
-        pt_vec_2.emplace_back(item);
-    }
-    tmp_str = pt_vec_2[1].second.get_value<std::string>();
-    boost::split(str_vec, tmp_str, boost::is_space());
-    vec.emplace_back(boost::lexical_cast<double>(str_vec[0]));
-    vec.emplace_back(boost::lexical_cast<double>(str_vec[1]));
-    vec.emplace_back(boost::lexical_cast<double>(str_vec[2]));
-    cell.push_back(vec);
+    // calculate the kcoords_1d
+    std::vector<std::vector<double>> cell;
 
-    vec.clear();
-    pt_vec.clear();
-    pt_vec_1.clear();
-    pt_vec_2.clear();
-    for (const auto& item : this->vasprun_root.get_child("modeling").get_child("structure") ) {
-        pt_vec.emplace_back(item);
+    for (auto& item1: vasprun.get_child("modeling")) {
+        if (item1.first == "<xmlattr>") {
+            continue;
+        }
+        if (item1.first == "structure" && item1.second.get<std::string>("<xmlattr>.name") == "finalpos") {
+            for (auto& item2 : item1.second.get_child("crystal")) {
+                if (item2.first == "<xmlattr>") {
+                    continue;
+                }
+                if (item2.first == "varray" && item2.second.get<std::string>("<xmlattr>.name") == "basis") {
+                    for (auto& item3 : item2.second) {
+                        if (item3.first == "<xmlattr>") {
+                            continue;
+                        }
+                        std::vector<double> vec;
+                        boost::split(str_vec, item3.second.data(), boost::is_any_of(" "), boost::token_compress_on);
+                        vec.push_back(boost::lexical_cast<double>(str_vec[1]));
+                        vec.push_back(boost::lexical_cast<double>(str_vec[2]));
+                        vec.push_back(boost::lexical_cast<double>(str_vec[3]));
+                        cell.push_back(vec);
+                    }
+                    break;
+                }
+            }
+            break;
+        }
     }
-    for (const auto& item : pt_vec[-1].second.get_child("crystal").get_child("varray")) {
-        pt_vec_1.emplace_back(item);
-    }
-    for (const auto& item : pt_vec_1[0].second.get_child("v") ) {
-        pt_vec_2.emplace_back(item);
-    }
-    tmp_str = pt_vec_2[2].second.get_value<std::string>();
-    boost::split(str_vec, tmp_str, boost::is_space());
-    vec.emplace_back(boost::lexical_cast<double>(str_vec[0]));
-    vec.emplace_back(boost::lexical_cast<double>(str_vec[1]));
-    vec.emplace_back(boost::lexical_cast<double>(str_vec[2]));
-    cell.push_back(vec);
 
-    double a1 = arma::norm(arma::conv_to<arma::vec>::from(cell[0]));
-    double a2 = arma::norm(arma::conv_to<arma::vec>::from(cell[1]));
-    double a3 = arma::norm(arma::conv_to<arma::vec>::from(cell[2]));
-
-    std::vector<std::vector<double>> cell_b_vasp;
-
-    vec.clear();
-    pt_vec.clear();
-    pt_vec_1.clear();
-    pt_vec_2.clear();
-    for (const auto& item : this->vasprun_root.get_child("modeling").get_child("structure") ) {
-        pt_vec.emplace_back(item);
-    }
-    for (const auto& item : pt_vec[-1].second.get_child("crystal").get_child("varray")) {
-        pt_vec_1.emplace_back(item);
-    }
-    for (const auto& item : pt_vec_1[1].second.get_child("v") ) {
-        pt_vec_2.emplace_back(item);
-    }
-    tmp_str = pt_vec_2[0].second.get_value<std::string>();
-    boost::split(str_vec, tmp_str, boost::is_space());
-    vec.emplace_back(boost::lexical_cast<double>(str_vec[0]));
-    vec.emplace_back(boost::lexical_cast<double>(str_vec[1]));
-    vec.emplace_back(boost::lexical_cast<double>(str_vec[2]));
-    cell_b_vasp.push_back(vec);
-
-    vec.clear();
-    pt_vec.clear();
-    pt_vec_1.clear();
-    pt_vec_2.clear();
-    for (const auto& item : this->vasprun_root.get_child("modeling").get_child("structure") ) {
-        pt_vec.emplace_back(item);
-    }
-    for (const auto& item : pt_vec[-1].second.get_child("crystal").get_child("varray")) {
-        pt_vec_1.emplace_back(item);
-    }
-    for (const auto& item : pt_vec_1[1].second.get_child("v") ) {
-        pt_vec_2.emplace_back(item);
-    }
-    tmp_str = pt_vec_2[1].second.get_value<std::string>();
-    boost::split(str_vec, tmp_str, boost::is_space());
-    vec.emplace_back(boost::lexical_cast<double>(str_vec[0]));
-    vec.emplace_back(boost::lexical_cast<double>(str_vec[1]));
-    vec.emplace_back(boost::lexical_cast<double>(str_vec[2]));
-    cell_b_vasp.push_back(vec);
-
-    vec.clear();
-    pt_vec.clear();
-    pt_vec_1.clear();
-    pt_vec_2.clear();
-    for (const auto& item : this->vasprun_root.get_child("modeling").get_child("structure") ) {
-        pt_vec.emplace_back(item);
-    }
-    for (const auto& item : pt_vec[-1].second.get_child("crystal").get_child("varray")) {
-        pt_vec_1.emplace_back(item);
-    }
-    for (const auto& item : pt_vec_1[1].second.get_child("v") ) {
-        pt_vec_2.emplace_back(item);
-    }
-    tmp_str = pt_vec_2[2].second.get_value<std::string>();
-    boost::split(str_vec, tmp_str, boost::is_space());
-    vec.emplace_back(boost::lexical_cast<double>(str_vec[0]));
-    vec.emplace_back(boost::lexical_cast<double>(str_vec[1]));
-    vec.emplace_back(boost::lexical_cast<double>(str_vec[2]));
-    cell_b_vasp.push_back(vec);
-
-    arma::mat latcell(3, 3);
+    arma::mat latcell;
+    latcell.set_size(3, 3);
     latcell.row(0) = arma::conv_to<arma::rowvec>::from(cell[0]);
     latcell.row(1) = arma::conv_to<arma::rowvec>::from(cell[1]);
     latcell.row(2) = arma::conv_to<arma::rowvec>::from(cell[2]);
 
-    double V = arma::dot(latcell.row(0), arma::cross(latcell.row(1), latcell.row(2)));
-    arma::vec b1_vec = arma::cross(latcell.row(1), latcell.row(2)) * 2 * arma::datum::pi / V;
-    arma::vec b2_vec = arma::cross(latcell.row(2), latcell.row(0)) * 2 * arma::datum::pi / V;
-    arma::vec b3_vec = arma::cross(latcell.row(0), latcell.row(1)) * 2 * arma::datum::pi / V;
+    double volume = arma::dot(latcell.row(0), arma::cross(latcell.row(1), latcell.row(2)));
 
-    double b1 = arma::norm(b1_vec);
-    double b2 = arma::norm(b2_vec);
-    double b3 = arma::norm(b3_vec);
+    arma::mat cell_k;
+    cell_k.set_size(3, 3);
+    cell_k.row(0) = arma::cross(latcell.row(1), latcell.row(2)) * 2 * arma::datum::pi / volume;
+    cell_k.row(1) = arma::cross(latcell.row(2), latcell.row(0)) * 2 * arma::datum::pi / volume;
+    cell_k.row(2) = arma::cross(latcell.row(0), latcell.row(1)) * 2 * arma::datum::pi / volume;
 
-    std::cout << "cell a:";
-    std::cout << cell[0][0] << " " << cell[0][1] << " " << cell[0][2] << "\n";
-    std::cout << cell[1][0] << " " << cell[1][1] << " " << cell[1][2] << "\n";
-    std::cout << cell[2][0] << " " << cell[2][1] << " " << cell[2][2] << "\n";
-    std::cout << "cell b:\n";
-    std::cout << b1_vec[0] << " " << b1_vec[1] << " " << b1_vec[2] << "\n";
-    std::cout << b2_vec[0] << " " << b2_vec[1] << " " << b2_vec[2] << "\n";
-    std::cout << b3_vec[0] << " " << b3_vec[1] << " " << b3_vec[2] << "\n";
-
-    this->xcoord_k.push_back(0.0000000);
-    for (int i = 0; i < this->kpath.coords.size(); i++) {
+    this->kcoords_1d.push_back(0.0000000);
+    for (int i = 1; i < this->kpath.coords.size(); i++) {
         if (this->kpath.links[i-1] != 0) {
-            auto vec1 = this->kpath.coords[i-1][0] * b1_vec + this->kpath.coords[i-1][1] * b2_vec + this->kpath.coords[i-1][2] * b3_vec;
-            auto vec2 = this->kpath.coords[i][0] * b1_vec + this->kpath.coords[i][1] * b2_vec + this->kpath.coords[i][2] * b3_vec;
-            double distance_in_b = arma::norm(vec2-vec1);
-            double step = distance_in_b / (this->kpath.links[i-1] - 1);
-
-            for (int j = 0; j < this->kpath.links[i-1]-1; j ++) {
-                this->xcoord_k.push_back(this->xcoord_k[-1]+step);
+            arma::rowvec point2 = this->kpath.coords[i][0] * cell_k.row(0) + this->kpath.coords[i][1] * cell_k.row(1) + this->kpath.coords[i][2] * cell_k.row(2);
+            arma::rowvec point1 = this->kpath.coords[i-1][0] * cell_k.row(0) + this->kpath.coords[i-1][1] * cell_k.row(1) + this->kpath.coords[i-1][2] * cell_k.row(2);
+            double distance_in_k_space = arma::norm(point2 - point1);
+            double step = distance_in_k_space / (this->kpath.links[i-1] - 1);
+            for (int j = 0; j < this->kpath.links[i-1]-1; j++) {
+                this->kcoords_1d.push_back(this->kcoords_1d[this->kcoords_1d.size()-1] + step);
             }
             if (i == this->kpath.coords.size() - 1) {
                 continue;
             } else {
-                this->xcoord_k.push_back(this->xcoord_k[-1]);
+                this->kcoords_1d.push_back(this->kcoords_1d[this->kcoords_1d.size()-1]);
             }
         }
+    }    
+
+    // get the fermi energy from vasprun.xml
+    this->fermi_energy = this->vasprun.get<double>("modeling.calculation.dos.i");
+}
+
+void Bands::run(const std::string& directory) {
+    Post::run(directory);
+
+    pt::read_xml((fs::path(directory) / "vasprun.xml").string(), this->vasprun);
+    this->_extract_data_from_vasprun_xml();
+
+    std::vector<double> xtics_locs;
+    std::vector<std::string> xticx_labels;
+    xtics_locs.emplace_back(this->kcoords_1d[0]);
+    for (int i = 1; i < this->kcoords_1d.size() - 1; i++) {
+        if ((this->kcoords_1d[i] - kcoords_1d[i-1]) < 1.0e-5) {
+            xtics_locs.emplace_back(kcoords_1d[i]);
+        }
     }
+    xtics_locs.emplace_back(kcoords_1d[kcoords_1d.size()-1]);
+
+    xticx_labels.emplace_back(
+        ba::to_upper_copy(this->kpath.labels[0]) != "GAMMA" ? ba::to_upper_copy(this->kpath.labels[0]) : "{/symbol G}"
+    );
+    for (int i = 1; i < this->kpath.coords.size(); i++) {
+        if (this->kpath.links[i-1] != 0) {
+            xticx_labels.emplace_back(
+                ba::to_upper_copy(this->kpath.labels[i]) != "GAMMA" ? this->kpath.labels[i] : "{/symbol G}"
+            );
+        } else {
+            xticx_labels[xticx_labels.size()-1] = xticx_labels[xticx_labels.size()-1] + " | " + ba::to_upper_copy(this->kpath.labels[i]);
+        }
+    }
+
+    std::ofstream out;
+    for (auto& spin : this->eigenvalues) {
+        out.open((fs::path(directory) / (boost::format("post.dir/band-%1%.data") % spin.first).str()).string());
+        out << boost::format("#kpoint eigenvalue-of-nbands:->%1% and the fermi energy is %2%\n") 
+            % spin.second[0]["energy"].size()
+            % this->fermi_energy;
+        for (int i = 0; i < spin.second.size(); i++) {
+            out << this->kcoords_1d[i];
+            for (int j = 0; j < spin.second[i]["energy"].size(); j++) {
+                out << " " << spin.second[i]["energy"][j];
+            }
+            out << "\n";
+        }
+        out.close();
+    }
+
+    out.open((fs::path(directory) / "post.dir/band.gnuplot").string());
+    out << "set terminal png\n";
+    out << "unset key\n";
+    out << "set parametric\n";
+    out << "set title 'Band structure' font ',15'\n";
+    out << "set ylabel 'Energy (eV)' font ',15'\n";
+    out << "set ytics font ',15'\n";
+    out << "set xtics font ',15'\n";
+    out << "set border linewidth 3\n";
+    out << "set autoscale\n";
+    // set a linestyle 1 to be the style for band lines
+    out << "set style line 1 linecolor rgb \'black\' linetype 1 pointtype 1 linewidth 3\n";
+    // set a linestyle 2 to be the style for the vertical high-symmetry kpoint line and horizontal fermi level line
+    out << "set style line 2 linecolor rgb \'black\' linetype 1 pointtype 2 linewidth 0.5\n";
+    
+    out << "set xtics(";
+    for (int i = 0; i < xticx_labels.size()-1; i++) {
+        out << boost::format("\'%1%\' %2%, ") % xticx_labels[i] % xtics_locs[i];
+    }
+    out << boost::format("\'%1%\' %2%)\n") % xticx_labels[xticx_labels.size()-1] % xtics_locs[xtics_locs.size()-1];
+    
+    for (auto& x : xtics_locs) {
+        out << boost::format("set arrow from %1%, graph 0 to %1%, graph 1 nohead linestyle 2\n") % x;
+    }
+    out << boost::format("set arrow from 0, 0 to %1%, 0 nohead linestyle 2\n") % xtics_locs[xtics_locs.size()-1];
+    
+    for (auto& spin : this->eigenvalues) {
+        out << boost::format("set output 'band-%1%.png'\n") % spin.first;
+        // the * in "for [j=2:*]" together with column(j) might not work for low version of gunuplot
+        // out << boost::format("plot for [j=2:*] \'band-%1%.data\' using 1:(column(j) - %2%) w l notitle linestyle 1\n") 
+            // % spin.first % this->fermi_energy;
+        out << boost::format("plot for [j=2:%1%] \'band-%2%.data\' using 1:(column(j) - %3%) w l notitle linestyle 1\n") 
+            % int(spin.second[0]["energy"].size() + 1)
+            % spin.first % this->fermi_energy;
+    }
+    out.close();
+
+    out.open((fs::path(directory) / run_params["post-dir"] / "analysis.sh").string());
+    out << "#!/bin/bash\n\n"
+        << "#\n"
+        << boost::format("cd %1%\n") % (fs::absolute(fs::path(directory)) / run_params["post-dir"]).string()
+        << "\n"
+        << "gnuplot band.gnuplot\n";
+    out.close();
+
+    std::string cmd = "";
+    cmd += "bash ";
+    cmd += (fs::path(directory) / run_params["post-dir"] / "analysis.sh").string();
+    std::system(cmd.c_str());
 }
 
-void PostBands::get_eigenval() {
-}
-
-void PostBands::_plot_band_gnuplot(std::vector<double>& bandrange, std::vector<double>& xrange, std::vector<double>& yrange) {
-}
-
-void PostBands::process(std::string directory, std::vector<double>& bandrange, std::vector<double>& xrange, std::vector<double>& yrange) {
-}
-
-} // namespace atomsciflow
+} // namespace atomsciflow::vasp::post

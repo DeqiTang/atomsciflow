@@ -29,3 +29,6 @@ class Opt(octopus.PostOpt):
     def __init__(self):
         super().__init__()
 
+class Band(octopus.PostBand):
+    def __init__(self):
+        super().__init__()

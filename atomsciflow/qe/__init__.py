@@ -27,5 +27,6 @@ from atomsciflow.qe.pwscf import (
     Static, 
     Opt,
     VcOpt,
-    Phonopy
+    Phonopy,
+    Band
 )
