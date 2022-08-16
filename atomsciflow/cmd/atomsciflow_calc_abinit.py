@@ -34,7 +34,7 @@ def add_abinit_subparser(subparsers):
     add_calc_parser_common(subparser)
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "md", "phonopy", "dfpt-epd"],
+        choices=["static", "opt", "md", "phonopy", "dfpt-epd", "band"],
         help="The calculation to do. The specified value is case insensitive")
 
     subparser.add_argument("--pot", type=str, default="ncpp",
@@ -74,6 +74,16 @@ def abinit_processor(args):
     elif args.calc.lower() == "dfpt-epd":
         from atomsciflow.abinit import DfptElasticPiezoDielec
         job = DfptElasticPiezoDielec()
+    elif args.calc.lower() == "band":
+        from atomsciflow.abinit import Band
+        job = Band()
+        from atomsciflow.cpp.base import Kpath
+        kpath = Kpath()
+        if args.kpath.count(";") != 0:
+            kpath.read(args.kpath)
+        else:
+            kpath.read_file(args.kpath)
+        job.set_kpath(kpath)        
     else:
         print("The specified calculation type is unfound!")
         sys.exit(1)
@@ -84,7 +94,7 @@ def abinit_processor(args):
         from atomsciflow.abinit.io import read_params
         read_params(job, args.custom_file)
     if args.custom != None:
-        custom_str = args.custom.replace(" ", "") # remove all space
+        custom_str = args.custom.replace(" ", "")
         for item in custom_str.split(";"):
             if item == "":
                 continue

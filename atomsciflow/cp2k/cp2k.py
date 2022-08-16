@@ -110,11 +110,27 @@ class MetaMDPlumed(Cp2k):
         self.set_param("motion/free_energy/metadyn/use_plumed", ".TRUE.")
         self.set_param("motion/free_energy/metadyn/plumed_input_file", "./plumed.dat")
 
-        self.plumed.add_action("d:distance")
-        self.plumed.add_action(":print")
-        self.plumed.actions["d:distance"].add_keyword("atoms=1,2")
-        self.plumed.actions[":print"].add_keyword("arg=d")
-        self.plumed.actions[":print"].add_keyword("file=colvar")
+        self.plumed.set_param("d1:distance/atoms", [1, 2])
+        self.plumed.set_param(":print/arg", "d1")
+        self.plumed.set_param(":print/file", "colvar.data")
+
+    def run(self, directory):
+        step = ""
+        step += "cd ${ABSOLUTE_WORK_DIR}\n"
+        step += "cat >%s<<EOF\n" % self.job.run_params["input"]
+        step += self.to_string()
+        step += "EOF\n"
+        step += "cat >plumed.dat<<EOF\n"
+        step += self.plumed.to_string()
+        step += "EOF\n"
+        step += "$CMD_HEAD %s -in %s | tee %s  \n" % (
+            self.job.run_params["cmd"],
+            self.job.run_params["input"],
+            self.job.run_params["output"]
+        )
+        self.job.append_step(step)
+
+        self.job.run(directory)
 
 class Neb(Cp2k):
     def __init__(self):

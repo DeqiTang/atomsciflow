@@ -61,13 +61,6 @@ Siesta::Siesta() {
     set_param("SolutionMethod", "diagon");
     set_param("MeshCutOff", "300 Ry");
 
-    job.set_run_default("llhpc");
-    job.set_run_default("pbs");
-    job.set_run_default("bash");
-    job.set_run_default("lsf_sz");
-    job.set_run_default("lsf_sustc");
-    job.set_run_default("cdcloud");
-
     job.set_run("input", "siesta.fdf");
     job.set_run("output", "siesta.out");
     job.set_run("cmd", "$ASF_CMD_SIESTA");
@@ -247,6 +240,35 @@ void Siesta::get_xyz(const std::string& xyzfile) {
             tmp.str()
         );         
     }    
+}
+
+void Siesta::set_bandlines(Kpath& kpath) {
+    set_param("BandLinesScale", "ReciprocalLatticeVectors");
+    set_param("WriteKbands", "false");
+    set_param("WriteBands", "false");
+
+    this->new_block("BandLines");
+    std::ostringstream line;
+    line << boost::format("%1% %2% %3% %4% %5%")
+        % 1
+        % kpath.coords[0][0]
+        % kpath.coords[0][1]
+        % kpath.coords[0][2]
+        % kpath.labels[0];
+    this->blocks["BandLines"]->data.push_back(line.str());
+
+    for (int i = 1; i < kpath.links.size(); i++) {
+        line.clear();
+        line.str("");
+        line << boost::format("%1% %2% %3% %4% %5%")
+            % (kpath.links[i-1] == 0 ? 1 : kpath.links[i-1])
+            % kpath.coords[i][0]
+            % kpath.coords[i][1]
+            % kpath.coords[i][2]
+            % kpath.labels[i];
+
+        this->blocks["BandLines"]->data.push_back(line.str());
+    }
 }
 
 void Siesta::run(const std::string& directory) {

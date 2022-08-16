@@ -74,3 +74,7 @@ class MD(Siesta):
 class Phonopy(siesta.Phonopy):
     def __init__(self):
         super().__init__()
+
+class Band(Siesta):
+    def __init__(self):
+        super().__init__()

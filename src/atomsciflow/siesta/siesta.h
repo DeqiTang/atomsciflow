@@ -37,6 +37,7 @@ SOFTWARE.
 #include "atomsciflow/siesta/block.h"
 #include "atomsciflow/siesta/incharge.h"
 #include "atomsciflow/base/xyz.h"
+#include "atomsciflow/base/kpath.h"
 #include "atomsciflow/server/job_scheduler.h"
 #include "atomsciflow/config/config_manager.h"
 
@@ -64,6 +65,8 @@ public:
     void new_block(const std::string& name);
 
     void get_xyz(const std::string& xyzfile);
+
+    void set_bandlines(Kpath& kpath);
 
     virtual void run(const std::string& directory);
 

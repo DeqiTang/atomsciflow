@@ -34,7 +34,7 @@ def add_cp2k_subparser(subparsers):
     add_calc_parser_common(subparser)
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "band", "opt", "vcopt", "vib", "md", "metamd", "phonopy", "neb"],
+        choices=["static", "band", "opt", "vcopt", "vib", "md", "metamd", "phonopy", "neb", "metamdplumed"],
         help="The calculation to do. The specified value is case insensitive")
 
     # neb calculation
@@ -53,6 +53,13 @@ def add_cp2k_subparser(subparsers):
 
     ag.add_argument("--custom-file", type=str, default=None,
         help="Specify the file containing the custom style cp2k params. The privilege of --custom-file is lower than --custom."
+    )
+
+    # plumed parameters
+    ag = subparser.add_argument_group(title="plumed")
+    
+    ag.add_argument("--plumed-custom", type=str, default=None,
+        help="Specify plumed parameters."
     )
 
 def cp2k_processor(args):
@@ -123,4 +130,20 @@ def cp2k_processor(args):
         if params[item] == None:
             continue
         job.set_param(item, params[item])
+    if args.plumed_custom == None:
+        pass
+    else:
+        for item in args.plumed_custom.split(";"):
+            if item.isspace() or item == "":
+                continue
+            if item.split("=")[1].count(",") > 0:
+                job.plumed.set_param(
+                    item.split("=")[0].replace(" ", ""),
+                    [value for value in item.split("=")[1].split(",")]
+                )
+            else:
+                job.plumed.set_param(
+                    item.split("=")[0].replace(" ", ""),
+                    item.split("=")[1]
+                )
     job.run(args.directory)

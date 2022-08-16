@@ -66,6 +66,10 @@ public:
         }
     }
 
+    void use_tol(std::string tol, double value) {
+        this->electrons->use_tol(tol, value);
+    }    
+
     void set_params(std::map<std::string, std::string>& params);
     void set_n(int n);
     void set_kpoints(std::map<std::string, std::string>& kpoints);

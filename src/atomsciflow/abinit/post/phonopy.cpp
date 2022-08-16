@@ -37,7 +37,8 @@ namespace ba = boost::algorithm;
 namespace fs = boost::filesystem;
 
 Phonopy::Phonopy() {
-
+    this->set_run("program-out", "abinit.abo");
+    this->set_run("output-json", "post-phonopy.json");
 }
 
 Phonopy::~Phonopy() {
@@ -105,7 +106,7 @@ void Phonopy::run(const std::string& directory) {
         stream << " $\\Gamma$";
     } else {
         stream << boost::format(" $%1%$") % kpath.labels[kpath.labels.size()-1];
-    }   
+    }
     stream << "\n";
     stream.close();
 
@@ -143,7 +144,7 @@ void Phonopy::run(const std::string& directory) {
     stream << "# generate the FORCE_SETS\n";
     int num_gen_supercells = *std::max_element(supercells_index_int.begin(), supercells_index_int.end());
     if (num_gen_supercells <= 999) {
-        stream << boost::format("phonopy -f ../run-supercell-{001..%1%}/abinit.out\n") 
+        stream << boost::format("phonopy -f ../run-supercell-{001..%1%}/abinit.abo\n") 
             % boost::io::group(
                 std::setw(3), 
                 std::setfill('0'),
@@ -151,7 +152,7 @@ void Phonopy::run(const std::string& directory) {
             )
             ;
     } else if (num_gen_supercells <= 9999) {
-        stream << boost::format("phonopy -f ../run-supercell-{001..999}/abinit.out ../run-supercell-{1000..%1%}/abinit.out\n") 
+        stream << boost::format("phonopy -f ../run-supercell-{001..999}/abinit.abo ../run-supercell-{1000..%1%}/abinit.abo\n") 
             % boost::io::group(
                 std::setw(4), 
                 std::setfill('0'),
@@ -161,13 +162,13 @@ void Phonopy::run(const std::string& directory) {
     }
     
     stream << "# plot the phonon dos\n"
-        << "phonopy --abinit -p ./mesh.conf -c ../abinit.in -s\n"
+        << "phonopy --abinit -p ./mesh.conf -c ../abinit.abi -s\n"
         << "# calclate thermal properties with specified sampling mesh\n"
-        << "phonopy --abinit -t ./mesh.conf -c ../abinit.in -s\n"
+        << "phonopy --abinit -t ./mesh.conf -c ../abinit.abi -s\n"
         << "# calculate projected phonon dos\n"
-        << "phonopy --abinit -p ./pdos.conf -c ../abinit.in -s\n"
+        << "phonopy --abinit -p ./pdos.conf -c ../abinit.abi -s\n"
         << "# calculate phonon band\n"
-        << "phonopy --abinit -p ./band.conf -c ../abinit.in -s\n"
+        << "phonopy --abinit -p ./band.conf -c ../abinit.abi -s\n"
         // << "phonopy-bandplot --gnuplot band.yaml"
         ;
     stream.close();

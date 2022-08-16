@@ -30,6 +30,13 @@ class Abinit(abinit.Abinit):
     def __init__(self):
         super().__init__()
 
+        self.set_param("ecut", 15)
+        self.set_param("occopt", 3)
+        self.set_param("nstep", 100)
+        self.set_param("diemac", 2.0)
+        self.set_param("ixc", 11)
+        self.use_tol("tolvrs", 1.0e-18, 0)
+
 class Static(Abinit):
     def __init__(self):
         super().__init__()
@@ -63,7 +70,8 @@ class DfptElasticPiezoDielec(abinit.Abinit):
         self.set_param("ngkpt[1]", [1, 1, 1])
 
         self.set_param("tolwfr[2]", 1.0e-22)
-        self.set_param("getwfc[2]", -1)
+        self.set_param("prtden[2]", 1)
+        self.set_param("getwfk[2]", -1)
         self.set_param("kptopt[2]", 2)
         self.set_param("ngkpt[2]", [1, 1, 1])
         self.set_param("iscf[2]", -3)
@@ -88,3 +96,37 @@ class DfptElasticPiezoDielec(abinit.Abinit):
 class Phonopy(abinit.Phonopy):
     def __init__(self):
         super().__init__()
+
+class Band(Abinit):
+    def __init__(self):
+        super().__init__()
+
+        self.set_ndtset(2)
+
+        self.set_param("iscf[0]", 7)
+        self.set_param("prtden[0]", 1)
+        self.set_param("[0]", 1.0e-8)
+        self.set_param("kptopt[0]", 1)
+        self.set_param("ngkpt[0]", [3, 3, 3])
+        self.use_tol("tolvrs", 1.0e-8, 0)
+
+        self.set_param("iscf[1]", 7)
+        self.set_param("prtden[1]", 1)
+        self.set_param("ngkpt[1]", [3, 3, 3])
+        self.use_tol("tolvrs", 1.0e-8, 1)
+
+        self.set_param("iscf[2]", -2)
+        self.set_param("getwfk[2]", 1)
+        self.set_param("getden[2]", 1)
+        self.use_tol("tolwfr", 1.0e-12, 2)
+
+    def set_kpath(self, kpath):
+        self.set_param("kptbounds[2]", kpath.coords)
+        self.set_param("kptopt[2]", -(len(kpath.coords) - 1))
+        ndivk = []
+        for i in range(len(kpath.links)-1):
+            if kpath.links[i] != 0:
+                ndivk.append(kpath.links[i])
+            else:
+                ndivk.append(1)
+        self.set_param("ndivk[2]", ndivk)

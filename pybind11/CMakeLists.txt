@@ -793,6 +793,7 @@ file(GLOB BINDING_PLUMED_SOURCES
 add_library(plumed MODULE ${BINDING_PLUMED_SOURCES})
 target_link_libraries(plumed
     PRIVATE pybind11::module
+    atomsciflow-variable
     ${YAML_CPP_LIBRARIES}
     ${Boost_LIBRARIES}
 )

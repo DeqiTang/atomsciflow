@@ -29,6 +29,7 @@ void add_class_siesta(py::module& m) {
         .def("set_param", py::overload_cast<std::string, std::vector<std::vector<double>>>(&atomsciflow::Siesta::py_set_param))
         .def("set_param", py::overload_cast<std::string, std::vector<std::vector<std::string>>>(&atomsciflow::Siesta::py_set_param))
         .def("get_xyz", &atomsciflow::Siesta::get_xyz)
+        .def("set_bandlines", &atomsciflow::Siesta::set_bandlines)
         .def("run", &atomsciflow::Siesta::run)
         .def_readwrite("job", &atomsciflow::Siesta::job)
         ;

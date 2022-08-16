@@ -45,21 +45,18 @@ Phonopy::~Phonopy() {
 void Phonopy::run(const std::string& directory) {
     std::ostringstream step;
     step << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
-    step << "cat > " << this->files.main_in << "<<EOF\n";
+    step << "cat > " << "abinit.abi" << "<<EOF\n";
     // when using the default this->datasets[0]->system->coordtype = "cartesian";,
     // the space group of the structure could not be parsed correctly by phonopy. 
     // So, we use "reduced" here.
     this->datasets[0]->system->coordtype = "reduced";
     step << this->to_string();
     step << "EOF\n";
-    step << "cat > " << this->files.name << "<<EOF\n";
-    step << this->files.to_string(*this->datasets[0]->system);
-    step << "EOF\n";
     step << "cp";
     for (const auto& item : this->datasets[0]->system->xyz.elements_set) {
-        if (this->files.pseudo_ext == ".psp8") {
+        if (this->pseudo_ext == ".psp8") {
             step << " " << (fs::path(config.get_pseudo_pot_dir()["abinit"]) / "pbe_s_sr/" / (item + ".psp8")).string();
-        } else if (this->files.pseudo_ext == ".GGA_PBE-JTH.xml") {
+        } else if (this->pseudo_ext == ".GGA_PBE-JTH.xml") {
             step << " " << (fs::path(config.get_pseudo_pot_dir()["abinit"]) / "JTH-PBE-atomicdata-1.1/ATOMICDATA/" / (item + ".GGA_PBE-JTH.xml")).string();
         } else {
             step << " " << (fs::path(config.get_pseudo_pot_dir()["abinit"]) / "pbe_s_sr/" / (item + ".psp8")).string();
@@ -71,7 +68,7 @@ void Phonopy::run(const std::string& directory) {
     step.clear();
 
     step << boost::format("phonopy --abinit -c %1% -d --dim=\'%2% %3% %4%\'\n")
-        % this->files.main_in
+        % "abinit.abi"
         % job.run_params["phonopy_dim_x"]
         % job.run_params["phonopy_dim_y"]
         % job.run_params["phonopy_dim_z"]
@@ -81,7 +78,7 @@ void Phonopy::run(const std::string& directory) {
     step.clear();
 
     step << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
-    step << "cat > abinit-input-part-1.in<<EOF\n";
+    step << "cat > abinit-input-part-1.abi<<EOF\n";
     step << "ndtset ";
     step << std::to_string(this->ndtset);
     step << "\n";
@@ -105,9 +102,8 @@ void Phonopy::run(const std::string& directory) {
     step << boost::format("for item in supercell-*.in\n");
     step << "do\n";
     step << "mkdir run-${item/.in/}\n";
-    step << "cat abinit-input-part-1.in ${item} > run-${item/.in/}/abinit.in\n";
-    step << boost::format("cp *%1% run-${item/.in/}/\n") % this->files.pseudo_ext;
-    step << "cp abinit.files run-${item/.in/}/\n";
+    step << "cat abinit-input-part-1.abi ${item} > run-${item/.in/}/abinit.abi\n";
+    step << boost::format("cp *%1% run-${item/.in/}/\n") % this->pseudo_ext;
     step << "done\n";
     job.steps.push_back(step.str());
     step.str("");
@@ -116,7 +112,7 @@ void Phonopy::run(const std::string& directory) {
     step << boost::format("for item in run-supercell-*\n");
     step << "do\n";
     step << "cd ${item}\n";
-    step << boost::format("$CMD_HEAD %1% < abinit.files\n")
+    step << boost::format("$CMD_HEAD %1% abinit.abi\n")
         % job.run_params["cmd"];
     step << "cd ../\n";
     step << "done\n";

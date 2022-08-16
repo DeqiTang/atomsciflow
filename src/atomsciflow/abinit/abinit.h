@@ -82,10 +82,13 @@ public:
     void py_set_params(std::map<std::string, std::vector<std::vector<std::string>>>& params);
 
     void set_kpoints(std::map<std::string, std::string>& kpoints, int ndtset);
-    void set_pseudos(const std::string& directory);
     void set_pot(const std::string& pot);
     std::string to_string();
     void set_ndtset(int ndtset);
+
+    void use_tol(std::string tol, double value, int dataset_i) {
+        this->datasets[dataset_i]->use_tol(tol, value);
+    }
 
     virtual void run(const std::string& directory);
 
@@ -96,8 +99,7 @@ public:
     int ndtset;
 
     std::vector<AbinitInput*> datasets;
-    AbinitFiles files;
-    std::string pseudo_input_str;
+    std::string pseudo_ext;
     JobScheduler job;
     ConfigManager config;
 };

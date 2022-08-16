@@ -76,7 +76,8 @@ public:
     JobScheduler job;
     Xyz xyz;
 
-    std::shared_ptr<plumed::Plumed> plumed;
+    // std::shared_ptr<plumed::Plumed> plumed;
+    plumed::Plumed* plumed;
 
 private:
     std::shared_ptr<Cp2kSection>& set_subsys();

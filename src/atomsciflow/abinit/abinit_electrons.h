@@ -99,7 +99,7 @@ public:
 
         this->status = true;
 
-        this->basic_setting();
+        // this->basic_setting();
     }
 
     ~AbinitElectrons() {

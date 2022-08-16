@@ -42,7 +42,7 @@ AbinitIons::AbinitIons() {
     incharge.insert("tolmxf");
     incharge.insert("dilatmx");
     status = true;
-    this->basic_setting("opt");
+    // this->basic_setting("opt");
 }
 
 std::string AbinitIons::to_string(int n = 0) {

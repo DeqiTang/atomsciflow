@@ -149,7 +149,7 @@ void Bands::run(const std::string& directory) {
     this->_extract_data_from_vasprun_xml();
 
     std::vector<double> xtics_locs;
-    std::vector<std::string> xticx_labels;
+    std::vector<std::string> xtics_labels;
     xtics_locs.emplace_back(this->kcoords_1d[0]);
     for (int i = 1; i < this->kcoords_1d.size() - 1; i++) {
         if ((this->kcoords_1d[i] - kcoords_1d[i-1]) < 1.0e-5) {
@@ -158,16 +158,16 @@ void Bands::run(const std::string& directory) {
     }
     xtics_locs.emplace_back(kcoords_1d[kcoords_1d.size()-1]);
 
-    xticx_labels.emplace_back(
+    xtics_labels.emplace_back(
         ba::to_upper_copy(this->kpath.labels[0]) != "GAMMA" ? ba::to_upper_copy(this->kpath.labels[0]) : "{/symbol G}"
     );
     for (int i = 1; i < this->kpath.coords.size(); i++) {
         if (this->kpath.links[i-1] != 0) {
-            xticx_labels.emplace_back(
+            xtics_labels.emplace_back(
                 ba::to_upper_copy(this->kpath.labels[i]) != "GAMMA" ? this->kpath.labels[i] : "{/symbol G}"
             );
         } else {
-            xticx_labels[xticx_labels.size()-1] = xticx_labels[xticx_labels.size()-1] + " | " + ba::to_upper_copy(this->kpath.labels[i]);
+            xtics_labels[xtics_labels.size()-1] = xtics_labels[xtics_labels.size()-1] + " | " + (ba::to_upper_copy(this->kpath.labels[i]) != "GAMMA" ? this->kpath.labels[i] : "{/symbol G}");
         }
     }
 
@@ -203,10 +203,10 @@ void Bands::run(const std::string& directory) {
     out << "set style line 2 linecolor rgb \'black\' linetype 1 pointtype 2 linewidth 0.5\n";
     
     out << "set xtics(";
-    for (int i = 0; i < xticx_labels.size()-1; i++) {
-        out << boost::format("\'%1%\' %2%, ") % xticx_labels[i] % xtics_locs[i];
+    for (int i = 0; i < xtics_labels.size()-1; i++) {
+        out << boost::format("\'%1%\' %2%, ") % xtics_labels[i] % xtics_locs[i];
     }
-    out << boost::format("\'%1%\' %2%)\n") % xticx_labels[xticx_labels.size()-1] % xtics_locs[xtics_locs.size()-1];
+    out << boost::format("\'%1%\' %2%)\n") % xtics_labels[xtics_labels.size()-1] % xtics_locs[xtics_locs.size()-1];
     
     for (auto& x : xtics_locs) {
         out << boost::format("set arrow from %1%, graph 0 to %1%, graph 1 nohead linestyle 2\n") % x;

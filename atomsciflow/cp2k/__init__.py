@@ -30,6 +30,7 @@ from atomsciflow.cp2k.cp2k import (
     Vib,
     MD,
     MetaMD,
+    MetaMDPlumed,
     Neb
 )
 

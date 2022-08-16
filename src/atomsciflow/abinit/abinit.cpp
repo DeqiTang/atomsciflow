@@ -50,9 +50,15 @@ Abinit::Abinit() {
         i++;
     }
     this->datasets[0]->electrons->basic_setting();
-    this->pseudo_input_str = "";
     this->set_pot("ncpp");
 
+    this->set_param("ecut", 15);
+    this->set_param("occopt", 3);
+    this->set_param("nstep", 100);
+    this->set_param("diemac", 2.0);
+    this->set_param("ixc", 11);
+    this->use_tol("tolvrs", 1.0e-18, 0);
+    
     job.set_run("cmd", "$ASF_CMD_ABINIT");
     job.set_run("script_name_head", "abinit-run");
 }
@@ -77,6 +83,21 @@ Abinit::~Abinit() {
 void Abinit::get_xyz(const std::string& xyzfile) {
     this->datasets[0]->system->get_xyz(xyzfile);
     job.set_run("xyz_file", fs::absolute(xyzfile).string());
+
+    this->set_param("pp_dirpath[0]", "\"./\"");
+    std::ostringstream pseudos;
+    pseudos << "\"";
+    int i = 0;
+    for (const auto& element : this->datasets[0]->system->xyz.elements_set) {
+        if (i == 0) {
+            pseudos << element << this->pseudo_ext;
+        } else {
+            pseudos << ", " << element << this->pseudo_ext;
+        }
+        i++;
+    }
+    pseudos << "\"";
+    this->set_param("pseudos[0]", pseudos.str());
 }
 
 /**
@@ -207,27 +228,13 @@ void Abinit::set_kpoints(std::map<std::string, std::string>& kpoints, int ndtset
     this->datasets[ndtset]->set_kpoints(kpoints);
 }
 
-void Abinit::set_pseudos(const std::string& directory) {
-    std::ostringstream out;
-    out << "pp_dirpath \"" << directory << "\"\n";
-    out << "pseudos \"";
-    for (const auto& element : this->datasets[0]->system->xyz.elements_set) {
-        //out << " " << element << "," << element << ".psp8";
-        out << " " << element << "," << element << ".GGA_PBE-JTH.xml";
-    }
-    // remove the last unwanted extra comma
-    this->pseudo_input_str = out.str();
-    this->pseudo_input_str = this->pseudo_input_str.substr(this->pseudo_input_str.size() - 1);
-    this->pseudo_input_str += "\"\n";
-}
-
 void Abinit::set_pot(const std::string& pot) {
     if (boost::to_lower_copy(pot) == "ncpp") {
-        this->files.set_pseudo_ext(".psp8");
+        this->pseudo_ext = ".psp8";
     } else if (boost::to_lower_copy(pot) == "paw") {
-        this->files.set_pseudo_ext(".GGA_PBE-JTH.xml");
+        this->pseudo_ext = ".GGA_PBE-JTH.xml";
     } else {
-        this->files.set_pseudo_ext(".psp8");
+        this->pseudo_ext = ".psp8";
     }
 }
 
@@ -249,8 +256,6 @@ std::string Abinit::to_string() {
         out += "\n";
         out += this->datasets[i]->to_string();
     }
-
-    out += this->pseudo_input_str;
 
     return out;
 }
@@ -274,24 +279,21 @@ void Abinit::set_ndtset(int ndtset = 0) {
 void Abinit::run(const std::string& directory) {
     std::ostringstream step;
     step << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
-    step << "cat > " << this->files.main_in << "<<EOF\n";
+    step << "cat >abinit.abi<<EOF\n";
     step << this->to_string();
-    step << "EOF\n";
-    step << "cat > " << this->files.name << "<<EOF\n";
-    step << this->files.to_string(*this->datasets[0]->system);
     step << "EOF\n";
     step << "cp";
     for (const auto& item : this->datasets[0]->system->xyz.elements_set) {
-        if (this->files.pseudo_ext == ".psp8") {
+        if (this->pseudo_ext == ".psp8") {
             step << " " << (fs::path(config.get_pseudo_pot_dir()["abinit"]) / "pbe_s_sr/" / (item + ".psp8")).string();
-        } else if (this->files.pseudo_ext == ".GGA_PBE-JTH.xml") {
+        } else if (this->pseudo_ext == ".GGA_PBE-JTH.xml") {
             step << " " << (fs::path(config.get_pseudo_pot_dir()["abinit"]) / "JTH-PBE-atomicdata-1.1/ATOMICDATA/" / (item + ".GGA_PBE-JTH.xml")).string();
         } else {
             step << " " << (fs::path(config.get_pseudo_pot_dir()["abinit"]) / "pbe_s_sr/" / (item + ".psp8")).string();
         }
     }
     step << " ./\n";
-    step << "$CMD_HEAD " << this->job.run_params["cmd"] << " < " << this->files.name << "\n";
+    step << boost::format("$CMD_HEAD %1% abinit.abi\n") % this->job.run_params["cmd"];
     job.steps.push_back(step.str());
     step.clear();
 

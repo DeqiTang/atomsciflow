@@ -34,7 +34,7 @@ def add_siesta_subparser(subparsers):
     add_calc_parser_common(subparser)
     
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "vcopt", "md", "phonopy"],
+        choices=["static", "opt", "vcopt", "md", "phonopy", "band"],
         help="The calculation to do. The specified value is case insensitive")
 
     # custom
@@ -79,6 +79,16 @@ def siesta_processor(args):
         job.job.set_run("phonopy_dim_x", args.phonopy_dim[0])
         job.job.set_run("phonopy_dim_y", args.phonopy_dim[1])
         job.job.set_run("phonopy_dim_z", args.phonopy_dim[2])
+    elif args.calc.lower() == "band":
+        from atomsciflow.siesta import Band
+        job = Band()
+        from atomsciflow.cpp.base import Kpath
+        kpath = Kpath()
+        if args.kpath.count(";") != 0:
+            kpath.read(args.kpath)
+        else:
+            kpath.read_file(args.kpath)
+        job.set_bandlines(kpath)
     else:
         print("The specified calculation type is unfound!")
         sys.exit(1)

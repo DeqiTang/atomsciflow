@@ -94,11 +94,12 @@ Cp2k::Cp2k() {
 
     job.set_run("script_name_head", "cp2k-run");
 
-    this->plumed = std::make_shared<plumed::Plumed>();
+    // this->plumed = std::make_shared<plumed::Plumed>();
+    this->plumed = new plumed::Plumed{};
 }
 
 Cp2k::~Cp2k() {
-
+    delete this->plumed;
 }
 
 /**
