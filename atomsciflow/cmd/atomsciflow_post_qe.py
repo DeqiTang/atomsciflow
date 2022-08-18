@@ -30,7 +30,7 @@ def add_qe_post_subparser(subparsers):
         help="The working directory where calculation is happening")
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "md", "phonopy", "band"],
+        choices=["static", "opt", "md", "phonopy", "band", "dos"],
         help="The calculation to do. The specified value is case insensitive")
         
     ag = subparser.add_argument_group(title="kpoints")
@@ -68,6 +68,9 @@ def qe_post_processor(args):
         else:
             kpath.read_file(args.kpath)
         job.set_kpath(kpath)
+    elif args.calc.lower() == "dos":
+        from atomsciflow.qe.post import Dos
+        job = Dos()        
     else:
         print("The specified post-processing type is unfound!")
         sys.exit(1)

@@ -63,3 +63,7 @@ class Band(Elk):
 class Phonon(Elk):
     def __init__(self):
         super().__init__()
+
+class Dos(Elk):
+    def __init__(self):
+        super().__init__()

@@ -30,7 +30,7 @@ def add_abinit_post_subparser(subparsers):
         help="The working directory where calculation is happening")
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "md", "phonopy", "dfpt-epd", "band"],
+        choices=["static", "opt", "md", "phonopy", "dfpt-epd", "band", "dos"],
         help="The calculation to do. The specified value is case insensitive")
         
     ag = subparser.add_argument_group(title="kpoints")
@@ -75,6 +75,17 @@ def abinit_post_processor(args):
             if item.endswith(".xyz"):
                 xyz.read_xyz_file(os.path.join(args.directory, item))        
         job.set_cell(xyz.cell)
+        job.run(args.directory)
+    elif args.calc.lower() == "dos":
+        from atomsciflow.abinit.post import Dos
+        job = Dos()
+        from atomsciflow.cpp.base import Xyz
+        import os
+        xyz = Xyz()
+        for item in os.listdir(args.directory):
+            if item.endswith(".xyz"):
+                xyz.read_xyz_file(os.path.join(args.directory, item))
+        job.set_xyz(xyz)        
         job.run(args.directory)
     else:
         print("The specified post-processing type is unfound!")

@@ -34,6 +34,7 @@ void add_class_post(py::module& m) {
     py::class_<atomsciflow::post::Post>(m, "Post")
         .def(py::init<>())
         .def("add_rule", &atomsciflow::post::Post::add_rule)
+        .def("set_run", &atomsciflow::post::Post::set_run)
         .def("run", &atomsciflow::post::Post::run)
         .def_readwrite("run_params", &atomsciflow::post::Post::run_params)
         ;

@@ -32,7 +32,7 @@ def add_qe_subparser(subparsers):
         help="The Quantum Espresso calculator")
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "vcopt", "md", "phonopy", "band"],
+        choices=["static", "opt", "vcopt", "md", "phonopy", "band", "dos"],
         help="The calculation to do. The specified value is case insensitive")
 
     add_calc_parser_common(subparser)
@@ -86,6 +86,9 @@ def qe_processor(args):
         else:
             kpath.read_file(args.kpath)
         job.set_kpath(kpath)
+    elif args.calc.lower() == "dos":
+        from atomsciflow.qe import Dos
+        job = Dos()
     else:
         print("The specified calculation type is unfound!")
         sys.exit(1)

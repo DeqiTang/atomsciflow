@@ -24,7 +24,7 @@ SOFTWARE.
 
 from atomsciflow.cpp import qe
 from atomsciflow.cpp.qe import PwScfMisc
-from atomsciflow.cpp.base import Xyz
+from atomsciflow.cpp.base import Xyz, Kpath
 from atomsciflow.cpp.server import JobScheduler
 from atomsciflow.cpp.config import ConfigManager
 
@@ -145,6 +145,74 @@ class Band(PwScf):
         step += "/\n"
         step += "EOF\n"
         step += "$CMD_HEAD $ASF_CMD_QE_BANDSX < bands.in | tee bands.out\n"
+        self.job.append_step(step)
+
+        self.job.run(directory)
+
+class Dos(PwScf):
+    def __init__(self):
+        super().__init__()
+
+    def run(self, directory):
+        import os
+        self.set_param("control", "wf_collect", ".true.")
+
+        step = ""
+        step += "cd ${ABSOLUTE_WORK_DIR}\n"
+        for item in self.misc.xyz.elements_set:
+            step += "# pseudopotential file for element: " + item + "\n"
+            step += "for item in %s/*\n" % os.path.join(self.config.get_pseudo_pot_dir()["qe"], "SSSP_efficiency_pseudos")
+            step += "do\n"
+            if len(item) == 1:
+                step += "if [[ ${item} =~ /[%s|%s][.|_] ]]\n" % (item.upper(), item.lower())
+            else:
+                step += "if [[ ${item} =~ /[%s|%s][%s|%s][.|_] ]]\n" % (
+                    item[0].upper(), 
+                    item[0].lower(), 
+                    item[1].upper(), 
+                    item[1].lower()
+                )
+            step += "then\n"
+            step += "cp ${item} ${ABSOLUTE_WORK_DIR}/\n"
+            step += "fi\n"
+            step += "done\n"
+        self.job.append_step(step)
+
+        # scf
+        step = ""
+        self.set_param("control", "calculation", "scf")
+        self.set_kpoints("automatic", [3, 3, 3, 0, 0, 0], Kpath())
+        step += "cat >pw-scf.in<<EOF\n"
+        step += self.to_string()
+        step += "EOF\n"
+        step += "$CMD_HEAD %s < pw-scf.in | tee pw-scf.out\n" % (
+            self.job.run_params["cmd"],
+        )
+        self.job.append_step(step)
+
+        # nscf
+        step = ""
+        self.set_param("control", "calculation", "nscf")
+        self.set_kpoints("automatic", [5, 5, 5, 0, 0, 0], Kpath())
+        step += "cat >pw-nscf.in<<EOF\n"
+        step += self.to_string()
+        step += "EOF\n"
+        step += "$CMD_HEAD %s < pw-nscf.in | tee pw-nscf.out\n" % (
+            self.job.run_params["cmd"],
+        )
+        self.job.append_step(step)
+
+        # projwfc
+        step = ""
+        step += "cat >projwfc.in<<EOF\n"
+        step += "&PROJWFC\n"
+        # step += "prefix = \'pwscf\'\n"
+        # step += "outdir = \'./tmp\'\n"
+        step += "ngauss = 0\n"
+        step += "degauss = 0.01\n"
+        step += "/\n"
+        step += "EOF\n"
+        step += "$CMD_HEAD $ASF_CMD_QE_PROJWFCX < projwfc.in | tee projwfc.out\n"
         self.job.append_step(step)
 
         self.job.run(directory)

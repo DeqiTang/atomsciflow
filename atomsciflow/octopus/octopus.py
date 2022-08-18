@@ -76,3 +76,11 @@ class Band(Octopus):
         self.job.append_step(step)
 
         self.job.run(directory)
+
+class Dos(Octopus):
+    def __init__(self):
+        super().__init__()
+
+        self.set_status("Radius", False)
+        self.set_param("CalculationMode", "gs")
+        self.set_block_data("Output", "dos", 0, 0)

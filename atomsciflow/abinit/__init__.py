@@ -29,5 +29,6 @@ from atomsciflow.abinit.abinit import (
     MD,
     Phonopy,
     DfptElasticPiezoDielec,
-    Band
+    Band,
+    Dos
 )

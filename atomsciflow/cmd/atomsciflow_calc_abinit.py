@@ -34,7 +34,7 @@ def add_abinit_subparser(subparsers):
     add_calc_parser_common(subparser)
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "md", "phonopy", "dfpt-epd", "band"],
+        choices=["static", "opt", "md", "phonopy", "dfpt-epd", "band", "dos"],
         help="The calculation to do. The specified value is case insensitive")
 
     subparser.add_argument("--pot", type=str, default="ncpp",
@@ -83,7 +83,10 @@ def abinit_processor(args):
             kpath.read(args.kpath)
         else:
             kpath.read_file(args.kpath)
-        job.set_kpath(kpath)        
+        job.set_kpath(kpath)
+    elif args.calc.lower() == "dos":
+        from atomsciflow.abinit import Dos
+        job = Dos()
     else:
         print("The specified calculation type is unfound!")
         sys.exit(1)

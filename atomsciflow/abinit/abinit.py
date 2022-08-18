@@ -130,3 +130,28 @@ class Band(Abinit):
             else:
                 ndivk.append(1)
         self.set_param("ndivk[2]", ndivk)
+
+class Dos(Abinit):
+    def __init__(self):
+        super().__init__()
+
+        self.set_ndtset(2)
+
+        self.set_param("iscf[0]", 7)
+        self.set_param("prtden[0]", 1)
+        self.set_param("[0]", 1.0e-8)
+        self.set_param("kptopt[0]", 1)
+        self.set_param("ngkpt[0]", [3, 3, 3])
+        self.use_tol("tolvrs", 1.0e-8, 0)
+
+        self.set_param("iscf[1]", 7)
+        self.set_param("prtden[1]", 1)
+        self.set_param("ngkpt[1]", [3, 3, 3])
+        self.use_tol("tolvrs", 1.0e-8, 1)
+
+        self.set_param("iscf[2]", -3)
+        self.set_param("prtdos[2]", 3)
+        self.set_param("prtdosm[2]", 1)
+        self.set_param("getwfk[2]", 1)
+        self.set_param("getden[2]", 1)
+        self.use_tol("tolvrs", 1.0e-8, 2)

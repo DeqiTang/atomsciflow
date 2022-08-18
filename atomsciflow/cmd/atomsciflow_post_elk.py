@@ -30,7 +30,7 @@ def add_elk_post_subparser(subparsers):
         help="The working directory where calculation is happening")
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "band"],
+        choices=["static", "opt", "band", "dos"],
         help="The calculation to do. The specified value is case insensitive")
 
     ag = subparser.add_argument_group(title="kpoints")
@@ -55,6 +55,9 @@ def elk_post_processor(args):
         else:
             kpath.read_file(args.kpath)
         job.set_kpath(kpath)        
+    elif args.calc.lower() == "dos":
+        from atomsciflow.elk.post import Dos
+        job = Dos()
     else:
         print("The specified post-processing type is unfound!")
         sys.exit(1)

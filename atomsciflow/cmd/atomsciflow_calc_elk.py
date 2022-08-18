@@ -32,7 +32,7 @@ def add_elk_subparser(subparsers):
         help="The Elk calculator")
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "vcopt", "band", "phonon"],
+        choices=["static", "opt", "vcopt", "band", "phonon", "dos"],
         help="The calculation to do. The specified value is case insensitive")
 
     add_calc_parser_common(subparser)
@@ -90,6 +90,9 @@ def elk_processor(args):
         else:
             kpath.read_file(args.kpath)
         job.set_kpath(kpath)
+    elif args.calc.lower() == "dos":
+        from atomsciflow.elk import Dos
+        job = Dos()
     else:
         print("The specified calculation type is unfound!")
         sys.exit(1)

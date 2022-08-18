@@ -28,5 +28,6 @@ from atomsciflow.elk.elk import (
     Opt,
     VcOpt,
     Band,
-    Phonon
+    Phonon,
+    Dos
 )
