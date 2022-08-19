@@ -12,6 +12,7 @@
 #include "atomsciflow/siesta/io/params.h"
 #include "atomsciflow/siesta/phonopy.h"
 #include "atomsciflow/siesta/post/phonopy.h"
+#include "atomsciflow/siesta/post/dos.h"
 
 namespace py = pybind11;
 
@@ -28,6 +29,18 @@ void add_class_siesta(py::module& m) {
         .def("set_param", py::overload_cast<std::string, std::vector<std::vector<int>>>(&atomsciflow::Siesta::py_set_param))
         .def("set_param", py::overload_cast<std::string, std::vector<std::vector<double>>>(&atomsciflow::Siesta::py_set_param))
         .def("set_param", py::overload_cast<std::string, std::vector<std::vector<std::string>>>(&atomsciflow::Siesta::py_set_param))
+        .def("set_block_data", py::overload_cast<const std::string&, int, int, int>(&atomsciflow::Siesta::py_set_block_data))
+        .def("set_block_data", py::overload_cast<const std::string&, double, int, int>(&atomsciflow::Siesta::py_set_block_data))
+        .def("set_block_data", py::overload_cast<const std::string&, std::string, int, int>(&atomsciflow::Siesta::py_set_block_data))
+        .def("set_block_data", py::overload_cast<const std::string&, std::vector<int>, int>(&atomsciflow::Siesta::py_set_block_data))
+        .def("set_block_data", py::overload_cast<const std::string&, std::vector<double>, int>(&atomsciflow::Siesta::py_set_block_data))
+        .def("set_block_data", py::overload_cast<const std::string&, std::vector<std::string>, int>(&atomsciflow::Siesta::py_set_block_data))
+        .def("set_block_data", py::overload_cast<const std::string&, std::vector<std::vector<int>>>(&atomsciflow::Siesta::py_set_block_data))
+        .def("set_block_data", py::overload_cast<const std::string&, std::vector<std::vector<double>>>(&atomsciflow::Siesta::py_set_block_data))
+        .def("set_block_data", py::overload_cast<const std::string&, std::vector<std::vector<std::string>>>(&atomsciflow::Siesta::py_set_block_data))
+        .def("set_block_data_size", &atomsciflow::Siesta::set_block_data_size)
+        .def("set_status", &atomsciflow::Siesta::set_status)
+        .def("set_block_status", &atomsciflow::Siesta::set_block_status)
         .def("get_xyz", &atomsciflow::Siesta::get_xyz)
         .def("set_bandlines", &atomsciflow::Siesta::set_bandlines)
         .def("run", &atomsciflow::Siesta::run)
@@ -77,6 +90,13 @@ void add_class_post_phonopy(py::module& m) {
         ;
 }
 
+void add_class_post_dos(py::module& m) {
+    py::class_<atomsciflow::siesta::post::Dos>(m, "PostDos")
+        .def(py::init<>())
+        .def("run", &atomsciflow::siesta::post::Dos::run)
+        ;
+}
+
 PYBIND11_MODULE(siesta, m) {
     m.doc() = "siesta module";
     m.attr("__version__") = "0.0.0";
@@ -88,4 +108,5 @@ PYBIND11_MODULE(siesta, m) {
 
     add_class_phonopy(m);
     add_class_post_phonopy(m);
+    add_class_post_dos(m);
 }

@@ -115,7 +115,7 @@ class Dos(post.Post):
 
         with open(os.path.join(directory, "elk.in"), "r") as fin:
             elk_in_lines = fin.readlines()
-        atoms_frac = []
+        atoms_elk = []
         for i in range(len(elk_in_lines)):
             if elk_in_lines[i].replace(" ", "").replace("\n", "") == "atoms":
                 atoms_begin_index = i
@@ -135,7 +135,7 @@ class Dos(post.Post):
                 atom.y = float(elk_in_lines[specie_i_start+2+j].split()[1])
                 atom.z = float(elk_in_lines[specie_i_start+2+j].split()[2])
                 elem["atoms"].append(atom)
-            atoms_frac.append(elem)
+            atoms_elk.append(elem)
             specie_i_start = specie_i_start + 1 + natoms + 1
         with open(os.path.join(directory, "post.dir/dos.gnuplot"), "w") as fout:
             fout.write("set terminal png\n")
@@ -157,13 +157,13 @@ class Dos(post.Post):
                                                  
             fout.write("set output 'atom-projected-dos.png\n")
             fout.write("plot \\\n")
-            for i in range(len(atoms_frac)):
-                for j in range(len(atoms_frac[i]["atoms"])):
+            for i in range(len(atoms_elk)):
+                for j in range(len(atoms_elk[i]["atoms"])):
                     fout.write("  '../PDOS_S%02d_A%04d.OUT' using (column(1) * %f):2 w l title '%s' linewidth 3,\\\n" % (
                         i+1,
                         j+1,
                         ha_to_ev,
-                        "%s(%d)" % (atoms_frac[i]["element"], j+1)
+                        "%s(%d)" % (atoms_elk[i]["element"], j+1)
                     ))
         with open(os.path.join(directory, "post.dir/analysis.sh"), "w") as fout:
             fout.write("#!/bin/bash\n\n")

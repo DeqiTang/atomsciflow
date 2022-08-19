@@ -31,7 +31,6 @@ SOFTWARE.
 
 #include <fstream>
 #include <boost/filesystem.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
 #include <iomanip>
 
@@ -147,7 +146,9 @@ void Siesta::py_set_param(std::string key, std::vector<std::vector<std::string>>
 }
 
 void Siesta::new_block(const std::string& name) {
-    this->blocks[name] = std::make_shared<siesta::Block>(name);
+    if (this->blocks.find(name) == this->blocks.end()) {
+        this->blocks[name] = std::make_shared<siesta::Block>(name);
+    }
 }
 
 void Siesta::get_xyz(const std::string& xyzfile) {
@@ -180,65 +181,43 @@ void Siesta::get_xyz(const std::string& xyzfile) {
     // this->set_param("AtomicCoordinatesFormat", "ScaledCartesian");
     this->set_param("LatticeConstant", "1.0 Ang");
 
-    this->new_block("ChemicalSpeciesLabel");
+    i = 0;
     for (const auto& item : elem_index_in_number_order) {
-        this->blocks["ChemicalSpeciesLabel"]->data.push_back(
-            (boost::format("%1% %2% %3%")
-            % item.second % element_map[item.first].number % item.first).str()
-        );
+        this->set_block_data("ChemicalSpeciesLabel", item.second, i, 0);
+        this->set_block_data("ChemicalSpeciesLabel", element_map[item.first].number, i, 1);
+        this->set_block_data("ChemicalSpeciesLabel", item.first, i, 2);
+        i++;
     }
 
     this->new_block("AtomicCoordinatesAndAtomicSpecies");
-    int j = 0;
+    i = 0;
     for (const auto& item : xyz.atoms) {
-        j++;
-        // this->blocks["AtomicCoordinatesAndAtomicSpecies"]->data.push_back(
-        //     (boost::format("%1$.6f %2$.6f %3$.6f %4% # %5% %6%")
-        //     % item.x % item.y % item.z % elem_index_map[item.name]
-        //     % item.name % j).str()
-        // );
-        std::ostringstream tmp;
-        tmp.setf(std::ios::fixed);
-        tmp << std::setprecision(9) << std::setw(15)
-            << item.x << " "
-            << std::setprecision(9) << std::setw(15)
-            << item.y << " "
-            << std::setprecision(9) << std::setw(15)
-            << item.z << " "
-            << std::setw(5)
-            << elem_index_map[item.name] << " # "
-            << item.name << " "
-            << j;
-        this->blocks["AtomicCoordinatesAndAtomicSpecies"]->data.push_back(
-            tmp.str()
+        set_block_data("AtomicCoordinatesAndAtomicSpecies", (boost::format("%1$10.8f") % item.x).str(), i, 0);
+        set_block_data("AtomicCoordinatesAndAtomicSpecies", (boost::format("%1$10.8f") % item.y).str(), i, 1);
+        set_block_data("AtomicCoordinatesAndAtomicSpecies", (boost::format("%1$10.8f") % item.z).str(), i, 2);
+        set_block_data("AtomicCoordinatesAndAtomicSpecies", elem_index_map[item.name], i, 3);
+        // add a comment for atom
+        set_block_data(
+            "AtomicCoordinatesAndAtomicSpecies", 
+            (boost::format("# %1% %2%") % item.name % (i+1)).str(), 
+            i, 4
         );
+        i++;
     }
 
-    new_block("LatticeVectors");
+    i = 0;
     for (const auto& item : xyz.cell) {
-        std::ostringstream tmp;
-        tmp.setf(std::ios::fixed);
-        tmp << std::setprecision(9) << std::setw(15)
-            << item[0] << " "
-            << std::setprecision(9) << std::setw(15)
-            << item[1] << " "
-            << std::setprecision(9) << std::setw(15)
-            << item[2];
-        this->blocks["LatticeVectors"]->data.push_back(
-            tmp.str()
-        );        
+        set_block_data("LatticeVectors", (boost::format("%1$10.8f")%item[0]).str(), i, 0);
+        set_block_data("LatticeVectors", (boost::format("%1$10.8f")%item[1]).str(), i, 1);
+        set_block_data("LatticeVectors", (boost::format("%1$10.8f")%item[2]).str(), i, 2);
+        i++;    
     }
 
-    new_block("PAO.BasisSizes");
+    i = 0;
     for (const auto& item : elem_index_in_number_order) {
-        std::ostringstream tmp;
-        tmp.setf(std::ios::fixed);
-        tmp << std::setw(5)
-            << item.first 
-            << " " << "DZP";
-        this->blocks["PAO.BasisSizes"]->data.push_back(
-            tmp.str()
-        );         
+        set_block_data("PAO.BasisSizes", item.first, i, 0);
+        set_block_data("PAO.BasisSizes", "DZP", i, 1);
+        i++;      
     }    
 }
 
@@ -247,27 +226,23 @@ void Siesta::set_bandlines(Kpath& kpath) {
     set_param("WriteKbands", "false");
     set_param("WriteBands", "false");
 
-    this->new_block("BandLines");
-    std::ostringstream line;
-    line << boost::format("%1% %2% %3% %4% %5%")
-        % 1
-        % kpath.coords[0][0]
-        % kpath.coords[0][1]
-        % kpath.coords[0][2]
-        % kpath.labels[0];
-    this->blocks["BandLines"]->data.push_back(line.str());
-
+    set_block_data("BandLines", 1, 0, 0);
+    set_block_data("BandLines", kpath.coords[0][0], 0, 1);
+    set_block_data("BandLines", kpath.coords[0][1], 0, 2);
+    set_block_data("BandLines", kpath.coords[0][2], 0, 3);
+    set_block_data("BandLines", kpath.labels[0], 0, 4);
+    
     for (int i = 1; i < kpath.links.size(); i++) {
-        line.clear();
-        line.str("");
-        line << boost::format("%1% %2% %3% %4% %5%")
-            % (kpath.links[i-1] == 0 ? 1 : kpath.links[i-1])
-            % kpath.coords[i][0]
-            % kpath.coords[i][1]
-            % kpath.coords[i][2]
-            % kpath.labels[i];
-
-        this->blocks["BandLines"]->data.push_back(line.str());
+        set_block_data(
+            "BandLines", 
+            kpath.links[i-1] == 0 ? 1 : kpath.links[i-1],
+            0,
+            0
+        );
+        set_block_data("BandLines", kpath.coords[i][0], 0, 1);
+        set_block_data("BandLines", kpath.coords[i][1], 0, 2);
+        set_block_data("BandLines", kpath.coords[i][2], 0, 3);
+        set_block_data("BandLines", kpath.labels[i], 0, 4);
     }
 }
 

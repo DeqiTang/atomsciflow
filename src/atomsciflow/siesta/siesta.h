@@ -64,6 +64,83 @@ public:
 
     void new_block(const std::string& name);
 
+    template <typename T>
+    void set_block_data(const std::string& name, T value, int i_row, int i_col) {
+        this->new_block(name);
+        set_block_data_size(name, i_row + 1, i_col + 1);
+        this->blocks[name]->data[i_row][i_col] = boost::lexical_cast<std::string>(value);
+    }
+
+    template <typename T>
+    void set_block_data(const std::string& name, std::vector<T> value, int i_row) {
+        this->new_block(name);
+        set_block_data_size(name, i_row + 1, value.size());
+        for (int j = 0; j < value.size(); j++) {
+            this->blocks[name]->data[i_row][j] = boost::lexical_cast<std::string>(value[j]);
+        }
+    }
+
+    template <typename T>
+    void set_block_data(const std::string& name, std::vector<std::vector<T>> value) {
+        this->new_block(name);
+        set_block_data_size(name, value.size(), value[0].size());
+        for (int i = 0; i < value.size(); i++) {
+            for (int j = 0; j < value[i].size(); j++) {
+                this->blocks[name]->data[i][j] = boost::lexical_cast<std::string>(value[i][j]);
+            }
+        }
+    }
+
+    void set_block_data_size(const std::string& name, int num_row, int num_col) {
+        this->new_block(name);
+
+        if (blocks[name]->data.size() < num_row) {
+            blocks[name]->data.resize(num_row);
+        }
+        for (auto& item : blocks[name]->data) {
+            if (item.size() < num_col) {
+                item.resize(num_col);
+            }
+        }
+    }
+
+    void py_set_block_data(const std::string& name, int value, int row, int col) {
+        this->set_block_data(name, value, row, col);
+    }
+    void py_set_block_data(const std::string& name, double value, int row, int col) {
+        this->set_block_data(name, value, row, col);
+    }
+    void py_set_block_data(const std::string& name, std::string value, int row, int col) {
+        this->set_block_data(name, value, row, col);
+    }
+    void py_set_block_data(const std::string& name, std::vector<int> value, int i_row) {
+        this->set_block_data(name, value, i_row);
+    }
+    void py_set_block_data(const std::string& name, std::vector<double> value, int i_row) {
+        this->set_block_data(name, value, i_row);
+    }
+    void py_set_block_data(const std::string& name, std::vector<std::string> value, int i_row) {
+        this->set_block_data(name, value, i_row);
+    }
+    void py_set_block_data(const std::string& name, std::vector<std::vector<int>> value) {
+        this->set_block_data(name, value);
+    }
+    void py_set_block_data(const std::string& name, std::vector<std::vector<double>> value) {
+        this->set_block_data(name, value);
+    }
+    void py_set_block_data(const std::string& name, std::vector<std::vector<std::string>> value) {
+        this->set_block_data(name, value);
+    }
+
+    void set_status(const std::string& key, bool status) {
+        this->non_block->set_status(key, status);
+    }
+    
+    void set_block_status(const std::string& name, bool status) {
+        this->new_block(name);
+        this->blocks[name]->status = status;
+    }
+
     void get_xyz(const std::string& xyzfile);
 
     void set_bandlines(Kpath& kpath);

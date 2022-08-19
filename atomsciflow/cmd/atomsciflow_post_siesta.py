@@ -30,7 +30,7 @@ def add_siesta_post_subparser(subparsers):
         help="The working directory where calculation is happening")
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "md", "phonopy", "band"],
+        choices=["static", "opt", "md", "phonopy", "band", "dos"],
         help="The calculation to do. The specified value is case insensitive")
         
     ag = subparser.add_argument_group(title="kpoints")
@@ -74,6 +74,10 @@ def siesta_post_processor(args):
             if item.endswith(".xyz"):
                 xyz.read_xyz_file(os.path.join(args.directory, item))        
         job.set_cell(xyz.cell)        
+        job.run(args.directory)
+    elif args.calc.lower() == "dos":
+        from atomsciflow.siesta.post import Dos
+        job = Dos()
         job.run(args.directory)
     else:
         print("The specified post-processing type is unfound!")

@@ -30,7 +30,7 @@ def add_vasp_post_subparser(subparsers):
         help="The working directory where calculation is happening")
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "vcopt", "md", "phonopy", "band"],
+        choices=["static", "opt", "vcopt", "md", "phonopy", "band", "dos"],
         help="The calculation to do. The specified value is case insensitive")
         
     ag = subparser.add_argument_group(title="kpoints")
@@ -70,6 +70,10 @@ def vasp_post_processor(args):
         else:
             kpath.read_file(args.kpath)
         job.set_kpath(kpath)        
+        job.run(args.directory)
+    elif args.calc.lower() == "dos":
+        from atomsciflow.vasp.post import Dos
+        job = Dos()
         job.run(args.directory)
     else:
         print("The specified post-processing type is unfound!")

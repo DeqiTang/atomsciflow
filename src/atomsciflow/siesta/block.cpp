@@ -35,20 +35,26 @@ SOFTWARE.
 namespace atomsciflow::siesta {
 
 Block::Block() {
-
+    this->status = true;
 }
 
 Block::Block(const std::string& name) {
     this->name = name;
+    this->status = true;
 }
 
 std::string Block::to_string() {
+    if (this->status == false) {
+        return "";
+    }
     std::ostringstream out;
     out << "%block " << this->name << "\n";
-    for (const auto& item : this->data) {
-        out << item << "\n";
-    }
-
+    for (auto& row : this->data) {
+        for (auto& val : row) {
+            out << boost::format(" %1%") % val;
+        }
+        out << "\n";
+    }    
     out << "%endblock " << this->name << "\n";
     return out.str();
 }

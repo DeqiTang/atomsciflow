@@ -78,3 +78,9 @@ class Phonopy(siesta.Phonopy):
 class Band(Siesta):
     def __init__(self):
         super().__init__()
+
+class Dos(Siesta):
+    def __init__(self):
+        super().__init__()
+
+        self.set_block_data("ProjectedDensityOfStates", ["-10.0", "10.0", "0.2", "1000", "eV"], 0)

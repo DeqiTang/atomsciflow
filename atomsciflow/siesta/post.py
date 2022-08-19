@@ -223,3 +223,7 @@ class Band(post.Post):
         cmd += "bash "
         cmd += os.path.join(directory, self.run_params["post-dir"] + "/analysis.sh")
         os.system(cmd)
+
+class Dos(siesta.PostDos):
+    def __init__(self):
+        super().__init__()

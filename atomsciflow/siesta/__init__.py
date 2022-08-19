@@ -28,5 +28,6 @@ from atomsciflow.siesta.siesta import (
     VcOpt,
     MD,
     Phonopy,
-    Band
+    Band,
+    Dos
 )

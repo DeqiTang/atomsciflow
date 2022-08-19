@@ -32,6 +32,7 @@ SOFTWARE.
 
 #include <string>
 #include <vector>
+#include <boost/lexical_cast.hpp>
 
 namespace atomsciflow::siesta {
 
@@ -44,7 +45,9 @@ public:
     std::string to_string();
 
     std::string name;
-    std::vector<std::string> data;
+    std::vector<std::vector<std::string>> data;
+    
+    bool status;
 };
 
 } // namespace atomsciflow::siesta

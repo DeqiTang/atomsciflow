@@ -36,7 +36,7 @@ def add_vasp_subparser(subparsers):
     add_calc_parser_common(subparser)
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "vcopt", "md", "phonopy", "band"],
+        choices=["static", "opt", "vcopt", "md", "phonopy", "band", "dos"],
         help="The calculation to do. The specified value is case insensitive")
 
     #custom
@@ -53,7 +53,7 @@ def add_vasp_subparser(subparsers):
 def vasp_processor(args):
     params = {}
     if args.custom != None:
-        custom_str = args.custom.replace(" ", "") # remove all space
+        custom_str = args.custom.replace(" ", "")
         for item in custom_str.split(";"):
             if item == "":
                 continue
@@ -66,11 +66,9 @@ def vasp_processor(args):
     if args.calc.lower() == "static":
         from atomsciflow.vasp import Static
         job = Static()
-        # job.set_params(params, "static")
     elif args.calc.lower() == "opt":
         from atomsciflow.vasp import Opt
         job = Opt()
-        # job.set_params(params, "opt")
     elif args.calc.lower() == "vcopt":
         from atomsciflow.vasp import VcOpt
         job = VcOpt()
@@ -93,6 +91,9 @@ def vasp_processor(args):
         else:
             kpath.read_file(args.kpath)
         job.set_kpath(kpath)
+    elif args.calc.lower() == "dos":
+        from atomsciflow.vasp import Dos
+        job = Dos()
     else:
         print("The specified calculation type is unfound!")
         sys.exit(1)

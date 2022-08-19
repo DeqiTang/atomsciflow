@@ -34,7 +34,7 @@ def add_siesta_subparser(subparsers):
     add_calc_parser_common(subparser)
     
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "vcopt", "md", "phonopy", "band"],
+        choices=["static", "opt", "vcopt", "md", "phonopy", "band", "dos"],
         help="The calculation to do. The specified value is case insensitive")
 
     # custom
@@ -49,16 +49,6 @@ def add_siesta_subparser(subparsers):
     )
 
 def siesta_processor(args):
-    params = {}
-    if args.custom != None:
-        custom_str = args.custom.replace(" ", "") # remove all space
-        for item in custom_str.split(";"):
-            if item == "":
-                continue
-            if item.split("=")[1].count(",") > 0:
-                params[item.split("=")[0]] = [value for value in item.split("=")[1].split(",")]
-            else:
-                params[item.split("=")[0]] = item.split("=")[1]
 
     print("working directory: %s" % args.directory)
     if args.calc.lower() == "static":
@@ -89,6 +79,9 @@ def siesta_processor(args):
         else:
             kpath.read_file(args.kpath)
         job.set_bandlines(kpath)
+    elif args.calc.lower() == "dos":
+        from atomsciflow.siesta import Dos
+        job = Dos()
     else:
         print("The specified calculation type is unfound!")
         sys.exit(1)
@@ -97,8 +90,30 @@ def siesta_processor(args):
     if args.custom_file != None:
         from atomsciflow.siesta.io import read_params
         read_params(job, args.custom_file)   
-    for item in params:
-        if params[item] == None:
-            continue
-        job.set_param(item, params[item])       
+    if args.custom != None:
+        custom_str = args.custom.replace(" ", "")
+        for item in custom_str.split(";"):
+            if item == "":
+                continue
+            if item.count(":=") > 0:
+                if item.split(":=")[1].count("|") > 0:
+                    i = 0
+                    for row in item.split(":=")[1].split("|"):
+                        job.set_block_data(
+                            item.split(":=")[0],
+                            row.split(","),
+                            i
+                        )
+                        i = i +1
+                else:
+                    job.set_block_data(
+                        item.split(":=")[0],
+                        item.split(":=")[1].split(","),
+                        0
+                    )
+            else:
+                if item.split("=")[1].count(",") > 0:
+                    job.set_param(item.split("=")[0], [value for value in item.split("=")[1].split(",")])
+                else:
+                    job.set_param(item.split("=")[0], item.split("=")[1])
     job.run(args.directory)

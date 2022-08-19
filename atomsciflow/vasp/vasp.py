@@ -25,6 +25,7 @@ SOFTWARE.
 from atomsciflow.cpp import vasp
 from atomsciflow.cpp.server import JobScheduler
 from atomsciflow.cpp.config import ConfigManager
+from atomsciflow.cpp.base import Kpath
 
 class Vasp(vasp.Vasp):
     def __init__(self):
@@ -136,3 +137,58 @@ class Band(Vasp):
 
         self.job.run(directory)
         
+class Dos(Vasp):
+    def __init__(self):
+        super().__init__()
+
+    def run(self, directory):
+        import os
+
+        self.set_param("IBRION", -1)
+
+        step = ""
+        step += "cd ${ABSOLUTE_WORK_DIR}\n"
+        step += "cat"
+        for item in self.poscar.elem_natom_in_number_order:
+            step += " "
+            step += os.path.join(self.config.get_pseudo_pot_dir()["vasp"], "PAW_PBE/%s/POTCAR" % item[0])
+        step += " >POTCAR\n"
+        self.job.append_step(step)
+
+        # scf        
+        step = ""
+        self.set_param("ICHARG", 0)
+        self.set_param("LORBIT", 11)
+        self.kpoints.set_kpoints([3, 3, 3, 0, 0, 0], "automatic", Kpath())
+        step += "cat >INCAR<<EOF\n"
+        step += self.incar.to_string()
+        step += "EOF\n"
+        step += "cat >KPOINTS<<EOF\n"
+        step += self.kpoints.to_string()
+        step += "EOF\n"
+        step += "cat >POSCAR<<EOF\n"
+        step += self.poscar.to_string("cartesian")
+        step += "EOF\n"
+        step += "$CMD_HEAD %s\n" % self.job.run_params["cmd"]
+        step += "cp vasprun.xml vasprun.scf.xml\n"
+        self.job.append_step(step)
+
+        # nscf + dos
+        step = ""
+        self.set_param("ICHARG", 11)
+        self.set_param("LORBIT", 11)
+        self.kpoints.set_kpoints([5, 5, 5, 0, 0, 0], "automatic", Kpath())
+        step += "cat >INCAR<<EOF\n"
+        step += self.incar.to_string()
+        step += "EOF\n"
+        step += "cat >KPOINTS<<EOF\n"
+        step += self.kpoints.to_string()
+        step += "EOF\n"
+        step += "cat >POSCAR<<EOF\n"
+        step += self.poscar.to_string("cartesian")
+        step += "EOF\n"
+        step += "$CMD_HEAD %s\n" % self.job.run_params["cmd"]
+        step += "cp vasprun.xml vasprun.nscf.dos.xml\n"
+        self.job.append_step(step)
+
+        self.job.run(directory)

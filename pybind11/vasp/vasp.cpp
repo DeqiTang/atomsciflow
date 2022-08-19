@@ -12,6 +12,7 @@
 #include "atomsciflow/server/job_scheduler.h"
 #include "atomsciflow/vasp/io/params.h"
 #include "atomsciflow/vasp/phonopy.h"
+#include "atomsciflow/vasp/post/dos.h"
 
 namespace py = pybind11;
 
@@ -118,6 +119,13 @@ void add_class_post_band(py::module& m) {
         ;
 }
 
+void add_class_post_dos(py::module& m) {
+    py::class_<atomsciflow::vasp::post::Dos>(m, "PostDos")
+        .def(py::init<>())
+        .def("run", &atomsciflow::vasp::post::Dos::run)
+        ;
+}
+
 PYBIND11_MODULE(vasp, m) {
     m.doc() = "vasp module";
     m.attr("__version__") = "0.0.1";
@@ -132,4 +140,5 @@ PYBIND11_MODULE(vasp, m) {
 
     add_class_phonopy(m);
     add_class_post_band(m);
+    add_class_post_dos(m);
 }
