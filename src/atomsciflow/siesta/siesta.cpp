@@ -236,13 +236,13 @@ void Siesta::set_bandlines(Kpath& kpath) {
         set_block_data(
             "BandLines", 
             kpath.links[i-1] == 0 ? 1 : kpath.links[i-1],
-            0,
+            i,
             0
         );
-        set_block_data("BandLines", kpath.coords[i][0], 0, 1);
-        set_block_data("BandLines", kpath.coords[i][1], 0, 2);
-        set_block_data("BandLines", kpath.coords[i][2], 0, 3);
-        set_block_data("BandLines", kpath.labels[i], 0, 4);
+        set_block_data("BandLines", kpath.coords[i][0], i, 1);
+        set_block_data("BandLines", kpath.coords[i][1], i, 2);
+        set_block_data("BandLines", kpath.coords[i][2], i, 3);
+        set_block_data("BandLines", kpath.labels[i], i, 4);
     }
 }
 
