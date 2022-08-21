@@ -36,6 +36,13 @@ Phonopy::Phonopy() {
     this->job.set_run("phonopy_dim_x", 1);
     this->job.set_run("phonopy_dim_y", 1);
     this->job.set_run("phonopy_dim_z", 1);
+
+    this->set_param("force_eval/stress_tensor", "ANALYTICAL");
+    this->set_param("force_eval/dft/mgrid/cutoff", 300);
+    this->set_param("force_eval/dft/mgrid/rel_cutoff", 100);
+    this->set_param("force_eval/dft/qs/eps_default", 1.0e-14);
+    this->set_param("force_eval/dft/scf/eps_scf", 1.0e-7);
+    this->set_param("force_eval/dft/scf/max_scf", 50);
 }
 
 void Phonopy::run(const std::string& directory) {

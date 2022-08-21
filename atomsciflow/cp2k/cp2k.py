@@ -33,41 +33,102 @@ from atomsciflow.cpp.base import Kpath
 class Cp2k(cp2k.Cp2k):
     def __init__(self):
         super().__init__()
+        self.set_param("force_eval/dft/mgrid/cutoff", 300)
+        self.set_param("force_eval/dft/mgrid/rel_cutoff", 100)
+        self.set_param("force_eval/dft/qs/eps_default", 1.0e-14)
+        self.set_param("force_eval/dft/scf/eps_scf", 1.0e-7)
+        self.set_param("force_eval/dft/scf/max_scf", 50)
 
 class Static(cp2k.Static):
     def __init__(self):
         super().__init__()
         self.set_param("global/run_type", "ENERGY_FORCE")
+        self.set_param("force_eval/dft/mgrid/cutoff", 300)
+        self.set_param("force_eval/dft/mgrid/rel_cutoff", 100)
+        self.set_param("force_eval/dft/qs/eps_default", 1.0e-14)
+        self.set_param("force_eval/dft/scf/eps_scf", 1.0e-7)
+        self.set_param("force_eval/dft/scf/max_scf", 50)        
+        # dos
+        self.set_param("force_eval/dft/print/pdos/nlumo", -1)
+        self.set_param("force_eval/dft/print/pdos/components", ".true.")
+        # band
+        self.set_param("force_eval/dft/print/band_structure/file_name", "bands.bs")
+        self.set_param("force_eval/dft/print/band_structure/added_mos", 10)
+        # Miscellaneous
+        self.set_param("force_eval/dft/print/mo_cubes/nlumo", 5)
+        self.set_param("force_eval/dft/print/mo_cubes/nhomo", 5)
+        self.set_param("force_eval/dft/print/mo/eigenvalues", ".TRUE.")
+        self.set_param("force_eval/dft/print/mo/occupation_numbers", ".TRUE.")
 
-class Band(cp2k.Cp2k):
+class Band(Cp2k):
+    def __init__(self):
+        super().__init__()
+        self.set_param("global/run_type", "ENERGY_FORCE")
+        self.set_param("force_eval/dft/print/band_structure/file_name", "bands.bs")
+        # to output the Fermi energy, set force_eval/dft/print/mo_cubes/nlumo
+        self.set_param("force_eval/dft/print/mo_cubes/nlumo", 5)
+        self.set_param("force_eval/dft/print/mo_cubes/nhomo", 5)
+        self.set_param("force_eval/dft/print/band_structure/added_mos", 10)
+
+
+class Dos(Cp2k):
+    def __init__(self):
+        super().__init__()
+        self.set_param("global/run_type", "ENERGY_FORCE")
+        self.set_param("force_eval/dft/print/pdos/nlumo", -1)
+        # if FORCE_EVAL/DFT/PRINT/PDOS/COMPONENTS is set to .FALSE.(dfault)
+        # the pdos will be print out, projected to angular momentum l components(e.g. s p d f).
+        # when it is set to .TRUE. the pdos will be projected to angular momentum l
+        # and magnetic quantum number m components(e.g. px py pz)
+        self.set_param("force_eval/dft/print/pdos/components", ".true.")
+
+class Scf(Cp2k):
     def __init__(self):
         super().__init__()
         self.set_param("global/run_type", "ENERGY_FORCE")
 
-class Opt(cp2k.Cp2k):
+class Opt(Cp2k):
     def __init__(self):
         super().__init__()
         self.set_param("global/run_type", "geo_opt")
         self.set_param("global/project", "optimization")
+        self.set_param("force_eval/dft/scf/eps_scf", 1.0e-7)
+        self.set_param("force_eval/dft/scf/max_scf", 50)
+        self.set_param("motion/geo_opt/max_iter", 1000)
+        self.set_param("motion/geo_opt/optimizer", "BFGS")
+        self.set_param("motion/geo_opt/rms_force", 1.0e-4)
+        self.set_param("motion/geo_opt/rms_dr", 1.0e-3)
+        self.set_param("motion/print/cell/each/geo_opt", 1)
 
-class VcOpt(cp2k.Cp2k):
+class VcOpt(Cp2k):
     def __init__(self):
         super().__init__()
         self.set_param("global/run_type", "CELL_OPT")
         self.set_param("global/project", "cell-optimization")
         self.set_param("global/print_level", "LOW")
-        self.set_param("force_eval/stress_tensor", "NUMERICAL")
-        self.set_param("motion/geo_opt/max_iter", 100)
-        self.set_param("motion/cell_opt/keep_angles", ".TRUE.")
-        self.set_param("motion/cell_opt/max_iter", 100)
+        self.set_param("force_eval/stress_tensor", "ANALYTICAL")
+        self.set_param("motion/cell_opt/type", "DIRECT_CELL_OPT")
+        self.set_param("motion/cell_opt/pressure_tolerance", 5)
+        self.set_param("motion/cell_opt/keep_angles", ".FALSE.")
+        self.set_param("motion/cell_opt/keep_symmetry", ".FALSE.")
+        self.set_param("motion/cell_opt/max_iter", 1000)
         self.set_param("motion/cell_opt/optimizer", "BFGS")
         self.set_param("motion/cell_opt/rms_dr", 1.0e-3)
         self.set_param("motion/cell_opt/rms_force", 1.0e-4)
+        self.set_param("motion/geo_opt/type", "MINIMIZATION")
+        self.set_param("motion/geo_opt/max_iter", 1000)
+        self.set_param("motion/geo_opt/optimizer", "BFGS")
+        self.set_param("motion/geo_opt/rms_dr", 1.0e-3)     
+        self.set_param("motion/geo_opt/rms_force", 1.0e-4)
+        self.set_param("motion/print/trajectory/each/cell_opt", 1)
+        self.set_param("motion/print/cell/each/geo_opt", 1)
 
 class Vib(Cp2k):
     def __init__(self):
         super().__init__()
         self.set_param("global/run_type", "VIBRATIONAL_ANALYSIS")
+        self.set_param("vibrational_analysis/print/molden_vib(on)/each/replica_eval", 1)
+        self.set_param("vibrational_analysis/dx", 0.01)
 
 class MD(Cp2k):
     def __init__(self):
@@ -132,18 +193,19 @@ class MetaMDPlumed(Cp2k):
 
         self.job.run(directory)
 
-class Neb(Cp2k):
-    def __init__(self):
-        super().__init__()
-        self.set_param("global/run_type", "BAND")
-
 class Phonopy(Cp2k):
     def __init__(self):
         super().__init__()
         self.job.set_run("phonopy_dim_x", 1)
-        self.job.set_run("phonopy_dim_y", 2)
-        self.job.set_run("phonopy_dim_z", 3)
-    
+        self.job.set_run("phonopy_dim_y", 1)
+        self.job.set_run("phonopy_dim_z", 1)
+        self.set_param("force_eval/stress_tensor", "ANALYTICAL")
+        self.set_param("force_eval/dft/mgrid/cutoff", 300)
+        self.set_param("force_eval/dft/mgrid/rel_cutoff", 100)
+        self.set_param("force_eval/dft/qs/eps_default", 1.0e-14)
+        self.set_param("force_eval/dft/scf/eps_scf", 1.0e-7)
+        self.set_param("force_eval/dft/scf/max_scf", 50)
+
     def run(self, directory):
         step = "cd ${ABSOLUTE_WORK_DIR}\n"
         step += "cat >%s<<EOF\n" % self.job.run_params["input"]
@@ -174,3 +236,17 @@ class Phonopy(Cp2k):
 class Neb(cp2k.Neb):
     def __init__(self):
         super().__init__()
+        self.set_param("force_eval/dft/mgrid/cutoff", 300)
+        self.set_param("force_eval/dft/mgrid/rel_cutoff", 100)
+        self.set_param("force_eval/dft/qs/eps_default", 1.0e-14)
+        self.set_param("force_eval/dft/scf/eps_scf", 1.0e-7)
+        self.set_param("force_eval/dft/scf/max_scf", 50)
+        #        
+        self.set_param("motion/band/band_type", "CI-NEB")
+        self.set_param("motion/band/k_spring", 2.0e-2)
+        self.set_param("motion/band/rotate_frames", "TRUE")
+        self.set_param("motion/band/convergence_info(on)/each/band", 1)
+        self.set_param("motion/band/energy(on)/each/band", 1)
+        self.set_param("motion/band/optimize_band/diis/max_steps", 120)
+        self.set_param("motion/band/program_run_info/initial_configuration_info", "TRUE")
+        self.set_param("motion/print/trajectory/each/band", 1)

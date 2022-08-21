@@ -34,27 +34,6 @@ namespace atomsciflow::cp2k::post {
 namespace fs = boost::filesystem;
 namespace pt = boost::property_tree;
 
-class ElementPdos {
-public:
-
-    ElementPdos(const std::string& pdos_file);
-    ~ElementPdos() {
-    };
-
-    void get_data();
-
-    std::string get_spin();
-
-    std::string pdos_file;
-    std::string spin;
-    std::string kind;
-    double fermi; // in a.u.
-    // used to convert energy from [a.u.] unit to [eV] unit
-    double ha_to_ev;
-    arma::mat data;
-    std::vector<std::string> orbitals;
-};
-
 class Pdos : public atomsciflow::post::Post {
 public:
 
@@ -62,10 +41,6 @@ public:
     ~Pdos();
 
     virtual void run(const std::string& directory);
-
-    std::vector<std::shared_ptr<ElementPdos>> data;
-    std::vector<std::shared_ptr<ElementPdos>> data_smearing;
-
 };
 
 } // namespace atomsciflow::cp2k::post

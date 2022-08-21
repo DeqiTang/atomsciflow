@@ -25,14 +25,34 @@ SOFTWARE.
 #ifndef ATOMSCIFLOW_CP2K_POST_BANDS_H_
 #define ATOMSCIFLOW_CP2K_POST_BANDS_H_
 
+#include <memory>
+#include <armadillo>
+
 #include "atomsciflow/post/post.h"
 #include "atomsciflow/base/kpath.h"
-#include <armadillo>
 
 namespace atomsciflow::cp2k::post {
 
 namespace fs = boost::filesystem;
 namespace pt = boost::property_tree;
+
+struct Kpoint {
+    arma::rowvec coord;
+    std::string spin;
+    arma::rowvec band;
+    arma::rowvec energy;
+    arma::rowvec occupation;
+};
+
+struct KpointSet {
+    int num_kpoints;
+    int num_bands;
+    std::string special_label_1;
+    std::string special_label_2;
+    arma::rowvec special_coord_1;
+    arma::rowvec special_coord_2;
+    std::vector<std::shared_ptr<Kpoint>> kpoint;
+};
 
 class Bands : public atomsciflow::post::Post {
 public:
@@ -41,14 +61,10 @@ public:
     ~Bands();
 
     virtual void run(const std::string& directory);
-
-    void set_kpath(Kpath& kpath) {
-        this->kpath = kpath;
-    }
     
     // used to convert energy from [a.u.] unit to [eV] unit
     double ha_to_ev;
-    Kpath kpath;
+    std::vector<std::shared_ptr<KpointSet>> kpoint_sets;
 };
 
 } // namespace atomsciflow::cp2k::post

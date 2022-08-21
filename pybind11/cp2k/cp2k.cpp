@@ -232,7 +232,7 @@ void add_class_post_bands(py::module& m) {
     py::class_<atomsciflow::cp2k::post::Bands>(m, "PostBands")
         .def(py::init<>())
         .def("run", &atomsciflow::cp2k::post::Bands::run)
-        .def("set_kpath", &atomsciflow::cp2k::post::Bands::set_kpath)
+        // .def("set_kpath", &atomsciflow::cp2k::post::Bands::set_kpath)
         ;
 }
 

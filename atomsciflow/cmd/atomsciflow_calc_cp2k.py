@@ -34,7 +34,7 @@ def add_cp2k_subparser(subparsers):
     add_calc_parser_common(subparser)
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "band", "opt", "vcopt", "vib", "md", "metamd", "phonopy", "neb", "metamdplumed"],
+        choices=["scf", "static", "band", "dos", "opt", "vcopt", "vib", "md", "metamd", "phonopy", "neb", "metamdplumed"],
         help="The calculation to do. The specified value is case insensitive")
 
     # neb calculation
@@ -80,6 +80,13 @@ def cp2k_processor(args):
     if args.calc.lower() == "static":
         from atomsciflow.cp2k import Static
         job = Static()
+        from atomsciflow.cpp.base import Kpath
+        kpath = Kpath()
+        if args.kpath.count(";") != 0:
+            kpath.read(args.kpath)
+        else:
+            kpath.read_file(args.kpath)
+        job.set_kpoint_set(kpath)
     elif args.calc.lower() == "band":
         from atomsciflow.cp2k import Band
         job = Band()
@@ -90,6 +97,12 @@ def cp2k_processor(args):
         else:
             kpath.read_file(args.kpath)
         job.set_kpoint_set(kpath)
+    elif args.calc.lower() == "dos":
+        from atomsciflow.cp2k import Dos
+        job = Dos()
+    elif args.calc.lower() == "scf":
+        from atomsciflow.cp2k import Scf
+        job = Scf()
     elif args.calc.lower() == "opt":
         from atomsciflow.cp2k import Opt
         job = Opt()
