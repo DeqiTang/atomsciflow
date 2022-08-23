@@ -87,14 +87,17 @@ void Abinit::get_xyz(const std::string& xyzfile) {
     this->set_param("pp_dirpath[0]", "\"./\"");
     std::ostringstream pseudos;
     pseudos << "\"";
-    int i = 0;
-    for (const auto& element : this->datasets[0]->system->xyz.elements_set) {
-        if (i == 0) {
-            pseudos << element << this->pseudo_ext;
-        } else {
-            pseudos << ", " << element << this->pseudo_ext;
+    for (int i = 0; i < this->datasets[0]->system->elem_typat.size(); i++) {
+        for (const auto& item : this->datasets[0]->system->elem_typat) {
+            if (item.second == (i+1)) {
+                if (i == 0) {
+                    pseudos << item.first << this->pseudo_ext;
+                } else {
+                    pseudos << ", " << item.first << this->pseudo_ext;
+                }
+                break; 
+            }
         }
-        i++;
     }
     pseudos << "\"";
     this->set_param("pseudos[0]", pseudos.str());

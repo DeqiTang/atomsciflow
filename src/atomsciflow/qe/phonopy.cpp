@@ -59,7 +59,7 @@ void Phonopy::run(const std::string& directory) {
     step.clear();
     step.str("");
 
-    for (const auto& item : this->misc.xyz.elements_set) {
+    for (const auto& item : this->xyz.elements_set) {
         step << "# pseudopotential file for element: " << item << "\n";
         step << boost::format("for item in %1%/*\n") 
             % (fs::path(config.get_pseudo_pot_dir()["qe"]) / "SSSP_efficiency_pseudos").string();
@@ -105,7 +105,7 @@ void Phonopy::run(const std::string& directory) {
     this->set_param(
         "system", 
         "nat", 
-        this->misc.xyz.natom() 
+        this->xyz.natom() 
             * boost::lexical_cast<int>(job.run_params["phonopy_dim_x"])
             * boost::lexical_cast<int>(job.run_params["phonopy_dim_y"])
             * boost::lexical_cast<int>(job.run_params["phonopy_dim_z"])
@@ -129,7 +129,7 @@ void Phonopy::run(const std::string& directory) {
     step << "cat pwscf-input-part-1.in ${item} > run-${item}\n";
     step << "cat >>run-${item}<<EOF\n";
     step << "\n\n";
-    step << this->misc.to_string_kpoints();
+    step << this->cards["k_points"]->to_string();
     step << "EOF\n";
     step << "done\n";
     job.steps.push_back(step.str());

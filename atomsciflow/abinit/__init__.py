@@ -25,7 +25,7 @@ SOFTWARE.
 from atomsciflow.abinit.abinit import (
     Abinit,
     Static, 
-    Opt,
+    Opt, VcOpt,
     MD,
     Phonopy,
     DfptElasticPiezoDielec,

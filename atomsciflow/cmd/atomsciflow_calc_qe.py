@@ -32,7 +32,7 @@ def add_qe_subparser(subparsers):
         help="The Quantum Espresso calculator")
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "vcopt", "md", "phonopy", "band", "dos"],
+        choices=["static", "opt", "vcopt", "bomd", "phonopy", "band", "dos"],
         help="The calculation to do. The specified value is case insensitive")
 
     add_calc_parser_common(subparser)
@@ -49,17 +49,7 @@ def add_qe_subparser(subparsers):
     )
 
 def qe_processor(args):
-    params = {}
-    if args.custom != None:
-        custom_str = args.custom.replace(" ", "") # remove all space
-        for item in custom_str.split(";"):
-            if item == "":
-                continue
-            if item.split("=")[1].count(",") > 0:
-                params[item.split("=")[0]] = [value for value in item.split("=")[1].split(",")]
-            else:
-                params[item.split("=")[0]] = item.split("=")[1]
-
+    
     print("working directory: %s" % args.directory)
     if args.calc.lower() == "static":
         from atomsciflow.qe import Static
@@ -89,16 +79,50 @@ def qe_processor(args):
     elif args.calc.lower() == "dos":
         from atomsciflow.qe import Dos
         job = Dos()
+    elif args.calc.lower() == "bomd":
+        from atomsciflow.qe import BOMD
+        job = BOMD()
     else:
         print("The specified calculation type is unfound!")
+        import sys
         sys.exit(1)
     
     set_calc_processor_common(job, args)
     if args.custom_file != None:
         from atomsciflow.qe.io import read_params
-        read_params(job, args.custom_file)      
-    for item in params:
-        if params[item] == None:
-            continue        
-        job.set_param(item.split("/")[0], item.split("/")[1], params[item])    
+        read_params(job, args.custom_file)  
+    if args.custom != None:
+        custom_str = args.custom.replace(" ", "")
+        for item in custom_str.split(";"):
+            if item == "":
+                continue
+            if item.count(":=") > 0:
+                if item.split(":=")[1].count("|") > 0:
+                    i = 0
+                    for row in item.split(":=")[1].split("|"):
+                        job.set_card_data(
+                            item.split(":=")[0],
+                            row.split(","),
+                            i
+                        )
+                        i = i +1
+                else:
+                    job.set_card_data(
+                        item.split(":=")[0],
+                        item.split(":=")[1].split(","),
+                        0
+                    )
+            else:
+                if item.split("=")[1].count(",") > 0:
+                    job.set_param(
+                        item.split("=")[0].split("/")[0],
+                        item.split("=")[0].split("/")[1],
+                        [value for value in item.split("=")[1].split(",")]
+                    )
+                else:
+                    job.set_param(
+                        item.split("=")[0].split("/")[0],
+                        item.split("=")[0].split("/")[1],
+                        item.split("=")[1]
+                    )
     job.run(args.directory)

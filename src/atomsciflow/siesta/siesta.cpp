@@ -53,7 +53,7 @@ Siesta::Siesta() {
     set_param("XC.functional", "GGA");
     set_param("XC.Authors", "PBE");
     set_param("DM.Tolerance", 1.0e-6);
-    set_param("DM.MixingWeight", 0.1);
+    set_param("DM.MixingWeight", 0.2);
     set_param("DM.NumberPulay", 8);
     set_param("DM.AllowExtrapolation", "true");
     set_param("DM.UseSaveDM", "true");
@@ -78,13 +78,13 @@ std::string Siesta::to_string() {
             continue;
         }
         if (grouping.electrons_incharge.find(item.first) != grouping.electrons_incharge.end()) {
-            electrons += item.second.to_string();
+            electrons += item.second.to_string("same-line", ""); // same-line and indent=""
             electrons += "\n";
         } else if (grouping.ions_incharge.find(item.first) != grouping.ions_incharge.end()) {
-            ions += item.second.to_string();
+            ions += item.second.to_string("same-line", ""); // same-line and indent=""
             ions += "\n";
         } else {
-            misc += item.second.to_string();
+            misc += item.second.to_string("same-line", ""); // same-line and indent=""
             misc += "\n";
         }
     }

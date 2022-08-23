@@ -23,7 +23,6 @@ SOFTWARE.
 """
 
 from atomsciflow.cpp import qe
-from atomsciflow.cpp.qe import PwScfMisc
 from atomsciflow.cpp.base import Xyz, Kpath
 from atomsciflow.cpp.server import JobScheduler
 from atomsciflow.cpp.config import ConfigManager
@@ -79,11 +78,12 @@ class Band(PwScf):
 
     def run(self, directory):
         import os
+        import numpy as np
         self.set_param("control", "wf_collect", ".true.")
 
         step = ""
         step += "cd ${ABSOLUTE_WORK_DIR}\n"
-        for item in self.misc.xyz.elements_set:
+        for item in self.xyz.elements_set:
             step += "# pseudopotential file for element: " + item + "\n"
             step += "for item in %s/*\n" % os.path.join(self.config.get_pseudo_pot_dir()["qe"], "SSSP_efficiency_pseudos")
             step += "do\n"
@@ -104,7 +104,6 @@ class Band(PwScf):
 
         step = ""
         self.set_param("control", "calculation", "scf")
-        self.set_kpoints("automatic", [3, 3, 3, 0, 0, 0], self.kpath)
         step += "cat >pw-scf.in<<EOF\n"
         step += self.to_string()
         step += "EOF\n"
@@ -115,7 +114,14 @@ class Band(PwScf):
 
         step = ""
         self.set_param("control", "calculation", "nscf")
-        self.set_kpoints("automatic", [5, 5, 5, 0, 0, 0], self.kpath)
+        if self.get_card_option("k_points") == "automatic":
+            k_scf = self.get_card_data("k_points")[0]
+            k_nscf = []
+            for k in k_scf:
+                k_nscf.append(int(k))
+            for i in range(3):
+                k_nscf[i] = int(np.ceil(k_nscf[i] * 1.333))
+            self.set_card_data("k_points(automatic)", k_nscf, 0)
         step += "cat >pw-nscf.in<<EOF\n"
         step += self.to_string()
         step += "EOF\n"
@@ -126,7 +132,14 @@ class Band(PwScf):
 
         step = ""
         self.set_param("control", "calculation", "bands")
-        self.set_kpoints("crystal_b", [3, 3, 3, 0, 0, 0], self.kpath)
+        self.set_card_option("k_points", "crystal_b")
+        self.set_card_data("k_points", [len(self.kpath.labels)], 0)
+        for i in range(len(self.kpath.coords)):
+            self.set_card_data("k_points", "%7.5f"%self.kpath.coords[i][0], i+1, 0)
+            self.set_card_data("k_points", "%7.5f"%self.kpath.coords[i][1], i+1, 1)
+            self.set_card_data("k_points", "%7.5f"%self.kpath.coords[i][2], i+1, 2)
+            self.set_card_data("k_points", self.kpath.links[i], i+1, 3)
+            self.set_card_data("k_points", "#%s"%self.kpath.labels[i], i+1, 4)
         step += "cat >pw-bands.in<<EOF\n"
         step += self.to_string()
         step += "EOF\n"
@@ -155,11 +168,12 @@ class Dos(PwScf):
 
     def run(self, directory):
         import os
+        import numpy as np
         self.set_param("control", "wf_collect", ".true.")
 
         step = ""
         step += "cd ${ABSOLUTE_WORK_DIR}\n"
-        for item in self.misc.xyz.elements_set:
+        for item in self.xyz.elements_set:
             step += "# pseudopotential file for element: " + item + "\n"
             step += "for item in %s/*\n" % os.path.join(self.config.get_pseudo_pot_dir()["qe"], "SSSP_efficiency_pseudos")
             step += "do\n"
@@ -181,7 +195,6 @@ class Dos(PwScf):
         # scf
         step = ""
         self.set_param("control", "calculation", "scf")
-        self.set_kpoints("automatic", [3, 3, 3, 0, 0, 0], Kpath())
         step += "cat >pw-scf.in<<EOF\n"
         step += self.to_string()
         step += "EOF\n"
@@ -193,7 +206,14 @@ class Dos(PwScf):
         # nscf
         step = ""
         self.set_param("control", "calculation", "nscf")
-        self.set_kpoints("automatic", [5, 5, 5, 0, 0, 0], Kpath())
+        if self.get_card_option("k_points") == "automatic":
+            k_scf = self.get_card_data("k_points")[0]
+            k_nscf = []
+            for k in k_scf:
+                k_nscf.append(int(k))
+            for i in range(3):
+                k_nscf[i] = int(np.ceil(k_nscf[i] * 1.333))
+            self.set_card_data("k_points(automatic)", k_nscf, 0)
         step += "cat >pw-nscf.in<<EOF\n"
         step += self.to_string()
         step += "EOF\n"
@@ -216,3 +236,16 @@ class Dos(PwScf):
         self.job.append_step(step)
 
         self.job.run(directory)
+
+class BOMD(PwScf):
+    def __init__(self):
+        super().__init__()
+        
+        self.set_param("control", "calculation", "md")
+        self.set_param("control", "title", "Born-Oppenheimer MD")
+        self.set_param("control", "nstep", 1000)
+        self.set_param("ions", "ion_dynamics", "verlet")
+        self.set_param("ions", "ion_temperature", "andersen")
+        self.set_param("ions", "tempw", 300.0)
+        self.set_param("ions", "wfc_extrapolation", "second_order")
+        

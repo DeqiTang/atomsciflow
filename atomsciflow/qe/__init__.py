@@ -29,5 +29,6 @@ from atomsciflow.qe.pwscf import (
     VcOpt,
     Phonopy,
     Band,
-    Dos
+    Dos,
+    BOMD
 )

@@ -53,9 +53,11 @@ namespace atomsciflow {
 void AbinitSystem::get_xyz(const std::string& xyzfile) {
     this->xyz.read_xyz_file(xyzfile);
     int i = 0;
-    for (const auto& element : this->xyz.elements_set) {
-        this->elem_typat[element] = i + 1;
-        i++;
+    for (auto& atom : this->xyz.atoms) {
+        if (this->elem_typat.find(atom.name) == this->elem_typat.end()) {
+            this->elem_typat[atom.name] = i + 1;
+            i++;
+        }
     }
 }
 
@@ -85,9 +87,14 @@ std::string AbinitSystem::to_string(int n = 0) {
         }
         out += "\n\n";
         out += (boost::format("znucl%1%\n") % n).str();
-        for (const auto& element :this->elem_typat) {
-            out += std::to_string(element_number_map[element.first].number);
-            out += " ";
+        for (int i = 0; i < this->elem_typat.size(); i++) {
+            for (const auto& item : this->elem_typat) {
+                if (item.second == (i+1)) {
+                    out += std::to_string(element_number_map[item.first].number);
+                    out += " ";
+                    break;
+                }
+            }
         }
         out += "\n\n";
         if ("cartesian" == this->coordtype) {
@@ -126,9 +133,14 @@ std::string AbinitSystem::to_string(int n = 0) {
         }
         out += "\n\n";
         out += "znucl\n";
-        for (const auto& element :this->xyz.elements_set) {
-            out += std::to_string(element_number_map[element].number);
-            out += " ";
+        for (int i = 0; i < this->elem_typat.size(); i++) {
+            for (const auto& item : this->elem_typat) {
+                if (item.second == (i+1)) {
+                    out += std::to_string(element_number_map[item.first].number);
+                    out += " ";                    
+                    break;
+                }
+            }
         }
         out += "\n\n";
         if ("cartesian" == this->coordtype) {

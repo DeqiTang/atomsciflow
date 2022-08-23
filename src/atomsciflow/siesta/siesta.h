@@ -78,6 +78,9 @@ public:
         for (int j = 0; j < value.size(); j++) {
             this->blocks[name]->data[i_row][j] = boost::lexical_cast<std::string>(value[j]);
         }
+        for (int j = value.size(); j < this->blocks[name]->data[i_row].size(); j++) {
+            this->blocks[name]->data[i_row][j] = "";
+        }        
     }
 
     template <typename T>
@@ -89,6 +92,16 @@ public:
                 this->blocks[name]->data[i][j] = boost::lexical_cast<std::string>(value[i][j]);
             }
         }
+        for (int i = 0; i < value.size(); i++) {
+            for (int j = value[i].size(); j < this->blocks[name]->data[i].size(); j++) {
+                this->blocks[name]->data[i][j] = "";
+            }
+        }
+        for (int i = value.size(); i < this->blocks[name]->data.size(); i++) {
+            for (int j = 0; j < this->blocks[name]->data[i].size(); j++) {
+                this->blocks[name]->data[i][j] = "";
+            }
+        }        
     }
 
     void set_block_data_size(const std::string& name, int num_row, int num_col) {

@@ -29,11 +29,14 @@ SOFTWARE.
 
 #include "atomsciflow/qe/pwscf.h"
 
+#include <regex>
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 
+#include "atomsciflow/utils/structure.h"
+#include "atomsciflow/base/element.h"
 #include "atomsciflow/server/submit_script.h"
 #include "atomsciflow/remote/server.h"
 
@@ -50,16 +53,10 @@ PwScf::PwScf() {
 
     this->set_param("control", "pseudo_dir", "./");
 
-    job.set_run_default("bash");
-    job.set_run_default("yh");
-    job.set_run_default("llhpc");
-    job.set_run_default("pbs");
-    job.set_run_default("lsf_sz");
-    job.set_run_default("lsf_sustc");
-    job.set_run_default("cdcloud");
+    set_card_option("k_points", "gamma");
+    set_card_data("k_points(gamma)", std::vector<int>{}, 0);
+    set_card_data("k_points(automatic)", std::vector<int>{1, 1, 1, 0, 0, 0}, 0);
     
-    job.set_run("runopt", "genrun");
-    job.set_run("auto_level", "0");
     job.set_run("input", "pw.in");
     job.set_run("output", "pw.out");
     job.set_run("cmd", "$ASF_CMD_QE_PWSCF");
@@ -91,16 +88,85 @@ std::string PwScf::to_string(std::string indent) {
             out += "\n";
         }
     }
+    std::vector<std::string> cards_order;
+    cards_order.push_back("atomic_species");
+    cards_order.push_back("atomic_positions");
+    cards_order.push_back("k_points");
+    cards_order.push_back("additional_k_pionts");
+    cards_order.push_back("cell_parameters");
+    cards_order.push_back("constraints");
+    cards_order.push_back("occupations");
+    cards_order.push_back("atomic_velocities");
+    cards_order.push_back("atomic_forces");
+    cards_order.push_back("solvents");
+    cards_order.push_back("hubbard");
+    for (auto& item : cards_order) {
+        if (cards.find(item) == cards.end()) {
+            continue;
+        }
+        out += cards[item]->to_string();
+    }
     out += "\n";
-    // out += this->misc.to_string("angstrom");
-    out += this->misc.to_string("crystal");
+
     return out;
 }
 
 void PwScf::get_xyz(const std::string& xyzfile) {
-    this->misc.xyz.read_xyz_file(xyzfile);
     job.set_run("xyz_file", fs::absolute(xyzfile).string());
-    this->basic_setting_system();
+
+    this->xyz.read_xyz_file(xyzfile);
+    this->set_card_option("cell_parameters", "angstrom");
+    this->set_card_data("cell_parameters", this->xyz.cell);
+    this->set_card_option("atomic_positions", "crystal");
+    std::vector<Atom> atoms_frac;
+    atoms_cart_to_frac(atoms_frac, this->xyz.atoms, this->xyz.cell);
+    for (int k = 0; k < atoms_frac.size(); k++) {
+        this->set_card_data("atomic_positions", atoms_frac[k].name, k, 0);
+        this->set_card_data("atomic_positions", (boost::format("%1$10.6f")%atoms_frac[k].x).str(), k, 1);
+        this->set_card_data("atomic_positions", (boost::format("%1$10.6f")%atoms_frac[k].y).str(), k, 2);
+        this->set_card_data("atomic_positions", (boost::format("%1$10.6f")%atoms_frac[k].z).str(), k, 3);
+    }
+
+    auto element_map = get_element_number_map();
+
+    std::vector<fs::path> all_files;
+    for (const auto& p : fs::directory_iterator(fs::path(config.get_pseudo_pot_dir()["qe"]) / "SSSP_efficiency_pseudos")) {
+        all_files.emplace_back(p.path());
+    }
+    int i = 0;
+    for (const auto& element : xyz.elements_set) {
+        set_card_data("atomic_species", element, i, 0);
+        set_card_data("atomic_species", boost::lexical_cast<std::string>(element_map[element].mass), i, 1);
+
+        std::string pat_string = "";
+        if (element.size() == 1) {
+            pat_string = (boost::format("^[%1%|%2%][.|_]")
+                % boost::to_upper_copy(element)
+                % boost::to_lower_copy(element)
+            ).str();
+        } else {
+            pat_string = (boost::format("^[%1%|%2%][%3%|%4%][.|_]")
+                % boost::to_upper_copy(boost::lexical_cast<std::string>(element[0]))
+                % boost::to_lower_copy(boost::lexical_cast<std::string>(element[0]))
+                % boost::to_upper_copy(boost::lexical_cast<std::string>(element[1]))
+                % boost::to_lower_copy(boost::lexical_cast<std::string>(element[1]))
+            ).str();            
+        }
+        for (const auto& item : all_files) {
+            std::regex pat{pat_string};
+            if (std::regex_search(item.filename().string(), pat)) {
+                set_card_data("atomic_species", item.filename().string(), i, 2);
+                break;
+            }
+        }
+        i++;
+    }
+
+    set_param("system", "ibrav", 0);
+    set_param("system", "nat", boost::lexical_cast<int>(xyz.atoms.size()));
+    set_param("system", "ntyp", xyz.nspecies);
+    set_param("system", "ecutwfc", 100);
+    set_param("system", "input_dft", "PBE");
 }
 
 void PwScf::set_param(const std::string& namelist, std::string key, int value) {
@@ -137,10 +203,6 @@ void PwScf::set_param(const std::string& namelist, std::string key, std::vector<
 
 void PwScf::set_param(const std::string& namelist, std::string key, std::vector<std::vector<std::string>> value) {
     this->namelists[namelist].set_param(key, value);
-}
-
-void PwScf::set_kpoints(std::string kpoints_option, std::vector<int>& kpoints_mp, Kpath crystal_b) {
-    this->misc.set_kpoints(kpoints_option, kpoints_mp, crystal_b);
 }
 
 void PwScf::basic_setting_ions(std::string calc = "relax") {
@@ -203,15 +265,6 @@ void PwScf::basic_setting_control(std::string calc = "scf") {
     }
 }
 
-void PwScf::basic_setting_system() {
-    this->namelists["system"].set_param("ibrav", 0);
-    this->namelists["system"].set_param("nat", boost::lexical_cast<int>(misc.xyz.atoms.size()));
-    this->namelists["system"].set_param("ntyp", misc.xyz.nspecies);
-
-    this->namelists["system"].set_param("ecutwfc", 100);
-    this->namelists["system"].set_param("input_dft", "PBE");
-}
-
 void PwScf::set_occupations(std::string occupations = "smearing", std::string smearing = "gaussian", double degauss=0.001) {
     this->namelists["system"].set_param("occupations", occupations);
     if ("smearing" == occupations) {
@@ -247,7 +300,7 @@ void PwScf::run(const std::string& directory) {
     step << boost::format("cat > %1%<<EOF\n") % job.run_params["input"];
     step << this->to_string();
     step << "EOF\n";
-    for (const auto& item : this->misc.xyz.elements_set) {
+    for (const auto& item : this->xyz.elements_set) {
         step << "# pseudopotential file for element: " << item << "\n";
         step << boost::format("for item in %1%/*\n") 
             % (fs::path(config.get_pseudo_pot_dir()["qe"]) / "SSSP_efficiency_pseudos").string();

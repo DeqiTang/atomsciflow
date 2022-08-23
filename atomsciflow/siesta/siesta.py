@@ -74,13 +74,83 @@ class MD(Siesta):
 class Phonopy(siesta.Phonopy):
     def __init__(self):
         super().__init__()
+        self.set_param("XC.functional", "GGA")
+        self.set_param("XC.Authors", "PBE")
+        self.set_param("DM.Tolerance", 1.0e-6)
+        self.set_param("DM.MixingWeight", 0.2)
+        self.set_param("DM.NumberPulay", 8)
+        self.set_param("DM.AllowExtrapolation", "true")
+        self.set_param("DM.UseSaveDM", "true")
+        self.set_param("SolutionMethod", "diagon")
+        self.set_param("MeshCutOff", "300 Ry")
 
 class Band(Siesta):
     def __init__(self):
         super().__init__()
+        self.set_param("XC.functional", "GGA")
+        self.set_param("XC.Authors", "PBE")
+        self.set_param("DM.Tolerance", 1.0e-6)
+        self.set_param("DM.MixingWeight", 0.2)
+        self.set_param("DM.NumberPulay", 8)
+        self.set_param("DM.AllowExtrapolation", "true")
+        self.set_param("DM.UseSaveDM", "true")
+        self.set_param("SolutionMethod", "diagon")
+        self.set_param("MeshCutOff", "300 Ry")
 
 class Dos(Siesta):
     def __init__(self):
         super().__init__()
-
         self.set_block_data("ProjectedDensityOfStates", ["-10.0", "10.0", "0.2", "1000", "eV"], 0)
+        self.set_param("XC.functional", "GGA")
+        self.set_param("XC.Authors", "PBE")
+        self.set_param("DM.Tolerance", 1.0e-6)
+        self.set_param("DM.MixingWeight", 0.2)
+        self.set_param("DM.NumberPulay", 8)
+        self.set_param("DM.AllowExtrapolation", "true")
+        self.set_param("DM.UseSaveDM", "true")
+        self.set_param("SolutionMethod", "diagon")
+        self.set_param("MeshCutOff", "300 Ry")
+
+class Static(Siesta):
+    def __init__(self):
+        super().__init__()
+        self.set_param("XC.functional", "GGA")
+        self.set_param("XC.Authors", "PBE")
+        self.set_param("DM.Tolerance", 1.0e-6)
+        self.set_param("DM.MixingWeight", 0.2)
+        self.set_param("DM.NumberPulay", 8)
+        self.set_param("DM.AllowExtrapolation", "true")
+        self.set_param("DM.UseSaveDM", "true")
+        self.set_param("SolutionMethod", "diagon")
+        self.set_param("MeshCutOff", "300 Ry")        
+        # band: call self.set_bandlines() before run, then band is calculated
+        # dos
+        self.set_block_data("ProjectedDensityOfStates", ["-10.0", "10.0", "0.2", "1000", "eV"], 0)
+        # Population analysis: Mulliken, Voronoi, Hirshfeld
+        self.set_param("WriteMullikenPop", 3)
+        self.set_param("WriteVoronoiPop", "true")
+        self.set_param("WriteHirshfeldPop", "true")
+        # COOP/COHP
+        self.set_param("COOP.Write", "true")
+        # macroscopic polarization
+        self.set_block_data("PolarizationGrids", 10, 0, 0)
+        self.set_block_data("PolarizationGrids", 10, 0, 1)
+        self.set_block_data("PolarizationGrids", 10, 0, 2)
+        self.set_block_data("PolarizationGrids", "yes", 0, 3)
+        self.set_block_data("PolarizationGrids", 10, 1, 0)
+        self.set_block_data("PolarizationGrids", 10, 1, 1)
+        self.set_block_data("PolarizationGrids", 10, 1, 2)
+        self.set_block_data("PolarizationGrids", "yes", 1, 3)
+        self.set_block_data("PolarizationGrids", 10, 2, 0)
+        self.set_block_data("PolarizationGrids", 10, 2, 1)
+        self.set_block_data("PolarizationGrids", 10, 2, 2)
+        self.set_block_data("PolarizationGrids", "yes", 2, 3)
+        # optical properties
+        self.set_param("OpticalCalculation", "true")
+        self.set_param("Optical.Energy.Minimum", ["0", "Ry"])
+        self.set_param("Optical.Energy.Maximum", ["10", "Ry"])
+        self.set_param("Optical.Broaden", ["0.1", "Ry"])
+        self.set_param("Optical.Scissor", ["0", "Ry"])
+        self.set_block_data("Optical.Mesh", [5, 5, 5], 0)
+        self.set_param("Optical.PolarizationType", "polycrystal")
+        self.set_block_data("Optical.Vector", [0.0, 0.0, 1.0], 0)

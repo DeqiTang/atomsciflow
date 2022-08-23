@@ -1,7 +1,7 @@
-"""
+/************************************************************************
 MIT License
 
-Copyright (c) 2021 Deqi Tang
+Copyright (c) 2022 Deqi Tang
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,15 +20,45 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-"""
+************************************************************************/
 
-from atomsciflow.siesta.siesta import (
-    Siesta, 
-    Opt,
-    VcOpt,
-    MD,
-    Phonopy,
-    Band,
-    Dos,
-    Static
-)
+#include "atomsciflow/qe/card.h"
+
+#include <boost/format.hpp>
+#include <boost/algorithm/string.hpp>
+
+namespace atomsciflow::qe {
+
+Card::Card() {
+    this->status = true;
+    this->option = "";
+}
+
+Card::Card(const std::string& name) {
+    this->name = name;
+    this->status = true;
+    this->option = "";
+}
+
+Card::~Card() {
+
+}
+
+std::string Card::to_string() {
+    if (this->status == false) {
+        return "";
+    }
+    std::ostringstream out;
+    out << boost::format("%1% %2%\n") % boost::to_upper_copy(this->name) % this->option;
+
+    for (auto& row : this->data) {
+        for (auto& val : row) {
+            out << boost::format(" %1%") % val;
+        }
+        out << "\n";
+    }
+    out << "\n";
+    return out.str();
+}
+
+} // namespace atomsciflow:;qe

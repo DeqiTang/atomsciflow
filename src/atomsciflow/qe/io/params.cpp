@@ -42,6 +42,7 @@ void read_params(PwScf& pwscf, const std::string& filepath) {
 
     std::vector<std::string> str_vec_1;
     std::vector<std::string> str_vec_2;
+    std::vector<std::string> str_vec_3;
     std::string tmp_str;
 
     for (const auto& item : lines) {
@@ -52,17 +53,41 @@ void read_params(PwScf& pwscf, const std::string& filepath) {
             continue;
         }
 
-        boost::split(str_vec_1, item, boost::is_any_of("="));
-        tmp_str = str_vec_1[0];
-        boost::erase_all(tmp_str, " ");
-        boost::erase_all(tmp_str, "\t");
-        
-        if (boost::starts_with(tmp_str, "#")) {
-            continue;
-        }
+        if (boost::contains(tmp_str, ":=")) {
+            boost::split(str_vec_1, item, boost::is_any_of(":="), boost::token_compress_on);
+            tmp_str = str_vec_1[0];
+            boost::erase_all(tmp_str, " ");
+            boost::erase_all(tmp_str, "\t");
+            
+            if (boost::starts_with(tmp_str, "#")) {
+                continue;
+            }
 
-        boost::split(str_vec_2, tmp_str, boost::is_any_of("/"), boost::token_compress_on);
-        pwscf.set_param(str_vec_2[0], str_vec_2[1], str_vec_1[1]);
+            if (boost::contains(str_vec_1[1], "|")) {
+                boost::split(str_vec_2, str_vec_1[1], boost::is_any_of("|"), boost::token_compress_on);
+                int i = 0;
+                for (auto& row : str_vec_2) {
+                    boost::split(str_vec_3, row, boost::is_any_of(","), boost::token_compress_on);
+                    pwscf.set_card_data(tmp_str, str_vec_3, i);
+                    i++;
+                }
+            } else {
+                boost::split(str_vec_2, str_vec_1[1], boost::is_any_of(","), boost::token_compress_on);
+                pwscf.set_card_data(tmp_str, str_vec_2, 0);
+            }
+        } else {
+            boost::split(str_vec_1, item, boost::is_any_of("="));
+            tmp_str = str_vec_1[0];
+            boost::erase_all(tmp_str, " ");
+            boost::erase_all(tmp_str, "\t");
+            
+            if (boost::starts_with(tmp_str, "#")) {
+                continue;
+            }
+
+            boost::split(str_vec_2, tmp_str, boost::is_any_of("/"), boost::token_compress_on);
+            pwscf.set_param(str_vec_2[0], str_vec_2[1], str_vec_1[1]);
+        }
     }
 
     stream.close();

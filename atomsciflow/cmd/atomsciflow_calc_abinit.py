@@ -34,7 +34,7 @@ def add_abinit_subparser(subparsers):
     add_calc_parser_common(subparser)
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "md", "phonopy", "dfpt-epd", "band", "dos"],
+        choices=["static", "opt", "vcopt", "md", "phonopy", "dfpt-epd", "band", "dos"],
         help="The calculation to do. The specified value is case insensitive")
 
     subparser.add_argument("--pot", type=str, default="ncpp",
@@ -62,6 +62,9 @@ def abinit_processor(args):
     elif args.calc.lower() == "opt":
         from atomsciflow.abinit import Opt
         job = Opt()
+    elif args.calc.lower() == "vcopt":
+        from atomsciflow.abinit import VcOpt
+        job = VcOpt()
     elif args.calc.lower() == "md":
         from atomsciflow.abinit import MD
         job = MD()

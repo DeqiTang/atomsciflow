@@ -52,8 +52,15 @@ def siesta_processor(args):
 
     print("working directory: %s" % args.directory)
     if args.calc.lower() == "static":
-        from atomsciflow.siesta import Siesta
-        job = Siesta()
+        from atomsciflow.siesta import Static
+        job = Static()
+        from atomsciflow.cpp.base import Kpath
+        kpath = Kpath()
+        if args.kpath.count(";") != 0:
+            kpath.read(args.kpath)
+        else:
+            kpath.read_file(args.kpath)
+        job.set_bandlines(kpath)        
     elif args.calc.lower() == "opt":
         from atomsciflow.siesta import Opt
         job = Opt()

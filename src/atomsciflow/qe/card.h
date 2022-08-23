@@ -1,7 +1,7 @@
-"""
+/************************************************************************
 MIT License
 
-Copyright (c) 2021 Deqi Tang
+Copyright (c) 2022 Deqi Tang
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,15 +20,33 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-"""
+************************************************************************/
 
-from atomsciflow.siesta.siesta import (
-    Siesta, 
-    Opt,
-    VcOpt,
-    MD,
-    Phonopy,
-    Band,
-    Dos,
-    Static
-)
+#ifndef ATOMSCIFLOW_QE_CARD_H_
+#define ATOMSCIFLOW_QE_CARD_H_
+
+#include <string>
+#include <vector>
+#include <boost/lexical_cast.hpp>
+
+namespace atomsciflow::qe {
+
+class Card {
+public:
+
+    Card();
+    explicit Card(const std::string& name);
+
+    ~Card();
+
+    std::string to_string();
+
+    std::string name;
+    std::vector<std::vector<std::string>> data;
+    std::string option;
+    bool status;
+};
+
+} // namespace atomsciflow::qe
+
+#endif // ATOMSCIFLOW_QE_CARD_H_
