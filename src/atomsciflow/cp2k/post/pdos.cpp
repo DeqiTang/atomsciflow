@@ -120,7 +120,7 @@ void Pdos::run(const std::string& directory) {
             } else {
                 spin = "unpolarized";
             }            
-            out.open((fs::path(directory) / "post.dir" / (boost::format("pdos-%1%-%2%.data")%element%spin).str()));
+            out.open((fs::path(directory) / "post.dir" / (boost::format("pdos-%1%-%2%.data")%element%spin).str()).string());
             out << boost::format("# data extracted and smeared from %1%, fermi energy(eV): %2%\n") % filename % fermi_in_ev;
             int n_components = smearing_data.n_cols - 3;
             out << boost::format("# MO Eigenvalue [eV] Occupation");
@@ -153,7 +153,7 @@ void Pdos::run(const std::string& directory) {
             std::string spin = boost::replace_all_copy(str_vec[2], ".data", "");
             std::string key = (boost::format("%1%-%2%")%element%spin).str();
             arma::mat data;
-            fin.open((fs::path(directory) / "post.dir" / filename));
+            fin.open((fs::path(directory) / "post.dir" / filename).string());
             std::getline(fin, line);
             std::getline(fin, line);
             data.load(fin);
@@ -166,7 +166,7 @@ void Pdos::run(const std::string& directory) {
     }
 
     for (auto& item : elem_proj) {
-        out.open((fs::path(directory) / "post.dir" / (boost::format("elem-proj-%1%.data")%item.first).str()));
+        out.open((fs::path(directory) / "post.dir" / (boost::format("elem-proj-%1%.data")%item.first).str()).string());
         for (int i = 0; i < energies.size(); i++) {
             out << boost::format("%1$10.6f %2$10.6f\n") % energies.at(i) % item.second.at(i);
         }
@@ -182,7 +182,7 @@ void Pdos::run(const std::string& directory) {
             std::string spin = boost::replace_all_copy(str_vec[2], ".data", "");
 
             arma::mat data;
-            fin.open((fs::path(directory) / "post.dir" / filename));
+            fin.open((fs::path(directory) / "post.dir" / filename).string());
             std::getline(fin, line);
             std::getline(fin, line);
             boost::split(str_vec, line, boost::is_any_of(" "), boost::token_compress_on);
@@ -201,7 +201,7 @@ void Pdos::run(const std::string& directory) {
     }
 
     for (auto& item : elem_component_proj) {
-        out.open((fs::path(directory) / "post.dir" / (boost::format("elem-component-proj-%1%.data")%item.first).str()));
+        out.open((fs::path(directory) / "post.dir" / (boost::format("elem-component-proj-%1%.data")%item.first).str()).string());
         for (int i = 0; i < energies.size(); i++) {
             out << boost::format("%1$10.6f %2$10.6f\n") % energies.at(i) % item.second.at(i);
         }

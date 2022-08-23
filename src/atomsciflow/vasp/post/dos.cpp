@@ -81,7 +81,7 @@ void Dos::run(const std::string& directory) {
     }
 
     for (auto& item : total_dos) {
-        out.open((fs::path(directory) / "post.dir" / (boost::format("total-%1%.data")%item.first).str()));
+        out.open((fs::path(directory) / "post.dir" / (boost::format("total-%1%.data")%item.first).str()).string());
         for (int i = 0; i < energies.size(); i++) {
             out << boost::format("%1$10.8f %2$10.8f\n") % energies.at(i) % item.second.at(i);
         }
@@ -89,7 +89,7 @@ void Dos::run(const std::string& directory) {
     }
 
     for (auto& item : total_integrated_dos) {
-        out.open((fs::path(directory) / "post.dir" / (boost::format("total-integrated-%1%.data")%item.first).str()));
+        out.open((fs::path(directory) / "post.dir" / (boost::format("total-integrated-%1%.data")%item.first).str()).string());
         for (int i = 0; i < energies.size(); i++) {
             out << boost::format("%1$10.8f %2$10.8f\n") % energies.at(i) % item.second.at(i);
         }
@@ -144,7 +144,7 @@ void Dos::run(const std::string& directory) {
 
 
     for (auto& item : ion_orbital_proj) {
-        out.open((fs::path(directory) / "post.dir" / (boost::format("ion-orbital-proj-%1%.data")%item.first).str()));
+        out.open((fs::path(directory) / "post.dir" / (boost::format("ion-orbital-proj-%1%.data")%item.first).str()).string());
         for (int i = 0; i < energies.size(); i++) {
             out << boost::format("%1$10.8f %2$10.8f\n") % energies.at(i) % item.second.at(i);
         }
