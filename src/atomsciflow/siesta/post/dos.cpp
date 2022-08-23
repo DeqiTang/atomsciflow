@@ -67,7 +67,7 @@ void Dos::run(const std::string& directory) {
 
 
     for (auto& item : elem_proj) {
-        out.open((fs::path(directory) / "post.dir" / (boost::format("elem-proj-%1%.data")%item.first).str()));
+        out.open((fs::path(directory) / "post.dir" / (boost::format("elem-proj-%1%.data")%item.first).str()).string());
         for (int i = 0; i < energies.size(); i++) {
             out << boost::format("%1$10.8f %2$10.8f\n") % energies.at(i) % item.second.at(i);
         }
@@ -99,7 +99,7 @@ void Dos::run(const std::string& directory) {
     }
 
     for (auto& item : elem_l_proj) {
-        out.open((fs::path(directory) / "post.dir" / (boost::format("elem-l-proj-%1%.data")%item.first).str()));
+        out.open((fs::path(directory) / "post.dir" / (boost::format("elem-l-proj-%1%.data")%item.first).str()).string());
         for (int i = 0; i < energies.size(); i++) {
             out << boost::format("%1$10.8f %2$10.8f\n") % energies.at(i) % item.second.at(i);
         }
@@ -126,7 +126,7 @@ void Dos::run(const std::string& directory) {
     }
 
     for (auto& item : elem_l_m_proj) {
-        out.open((fs::path(directory) / "post.dir" / (boost::format("elem-l-m-proj-%1%.data")%item.first).str()));
+        out.open((fs::path(directory) / "post.dir" / (boost::format("elem-l-m-proj-%1%.data")%item.first).str()).string());
         for (int i = 0; i < energies.size(); i++) {
             out << boost::format("%1$10.8f %2$10.8f\n") % energies.at(i) % item.second.at(i);
         }
