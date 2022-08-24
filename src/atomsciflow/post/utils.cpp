@@ -131,7 +131,7 @@ void extract_data_from_band_yaml(const std::string& directory) {
     std::ofstream band_gnuplot;
     band_gnuplot.open((fs::path(directory) / "band.gnuplot").string());
     band_gnuplot.setf(std::ios::fixed);
-    band_gnuplot << "set terminal png\n";
+    band_gnuplot << "set terminal pngcairo enhanced\n";
     band_gnuplot << "set output 'phonon_band.png'\n";
     band_gnuplot << "unset key\n";
     band_gnuplot << "set parametric\n";

@@ -17,13 +17,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-2019]
+        os: [windows-latest]
         python_version: ["3.8", "3.9", "3.10"]
     steps:
-      - name: Set up Visual Studio 2019 community version
+      - name: Set up Visual Studio 2022 community version
         run: |
-          choco install visualstudio2019community --package-parameters "--allWorkloads --includeRecommended --passive"
-          & "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Auxiliary/Build/vcvars64.bat"
+          choco install visualstudio2022community --package-parameters "--allWorkloads --includeRecommended --passive"
+          & "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvars64.bat"
         shell: powershell
       - uses: actions/setup-python@v2
         with:
@@ -36,8 +36,8 @@ jobs:
         id: install-boost
         uses: MarkusJx/install-boost@v2.2.0
         with:
-          boost_version: 1.78.0
-          platform_version: 2019
+          boost_version: 1.79.0
+          platform_version: 2022
           boost_install_dir: "C:/Softwares"
           toolset: msvc
       - name: Download yaml-cpp
@@ -48,9 +48,9 @@ jobs:
       - name: Install yaml-cpp
         id: install-yaml-cpp
         run: |
-          & "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Auxiliary/Build/vcvars64.bat"
+          & "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvars64.bat"
           $prefix_ = "C:/Softwares/yaml-cpp"
-          cmake yaml-cpp-yaml-cpp-0.7.0 -B build_yaml_cpp -G "Visual Studio 16 2019" -A x64 -DCMAKE_INSTALL_PREFIX="${prefix_}" -DCMAKE_BUILD_TYPE=Release
+          cmake yaml-cpp-yaml-cpp-0.7.0 -B build_yaml_cpp -G "Visual Studio 17 2022" -A x64 -DCMAKE_INSTALL_PREFIX="${prefix_}" -DCMAKE_BUILD_TYPE=Release
           cmake --build build_yaml_cpp --config Release --parallel 4 
           cmake --install build_yaml_cpp
           echo "::set-output name=prefix::${prefix_}"
@@ -69,9 +69,9 @@ jobs:
         id: install-libssh2
         shell: powershell 
         run: |
-          & "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Auxiliary/Build/vcvars64.bat"
+          & "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvars64.bat"
           $prefix_ = "C:/Softwares/libssh2"
-          cmake libssh2-1.10.0 -B build_libssh2 -G "Visual Studio 16 2019" -A x64 -DCMAKE_INSTALL_PREFIX="${prefix_}" -DCMAKE_BUILD_TYPE=Release 
+          cmake libssh2-1.10.0 -B build_libssh2 -G "Visual Studio 17 2022" -A x64 -DCMAKE_INSTALL_PREFIX="${prefix_}" -DCMAKE_BUILD_TYPE=Release 
           cmake --build build_libssh2 --config Release --parallel 4
           cmake --install build_libssh2
           echo "::set-output name=prefix::${prefix_}"
@@ -86,9 +86,9 @@ jobs:
       - name: Install armadillo
         id: install-armadillo
         run: |
-          & "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Auxiliary/Build/vcvars64.bat"
+          & "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvars64.bat"
           $prefix_ = "C:/Softwares/armadillo"
-          cmake armadillo-10.8.2 -B build_armadillo -G "Visual Studio 16 2019" -A x64 -DCMAKE_INSTALL_PREFIX="${prefix_}" -DCMAKE_BUILD_TYPE=Release
+          cmake armadillo-10.8.2 -B build_armadillo -G "Visual Studio 17 2022" -A x64 -DCMAKE_INSTALL_PREFIX="${prefix_}" -DCMAKE_BUILD_TYPE=Release
           cmake --build build_armadillo --config Release
           cmake --install build_armadillo
           echo "::set-output name=prefix::${prefix_}"
@@ -98,10 +98,10 @@ jobs:
           fetch-depth: 1
       - name: Build atomsciflow
         run: |
-          & "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Auxiliary/Build/vcvars64.bat"
+          & "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvars64.bat"
           $env:ATOMSCIFLOW_BUILD_PY_EXT_NO_FORTRAN = "true"
           python -m pip install scikit-build cython pybind11[global]
-          python setup.py build bdist_wheel -G "Visual Studio 16 2019" -DLibssh2_DIR="${{ steps.install-libssh2.outputs.prefix }}"
+          python setup.py build bdist_wheel -G "Visual Studio 17 2022" -DLibssh2_DIR="${{ steps.install-libssh2.outputs.prefix }}"
           cd dist
           $atomsciflow_whl = $(Get-ChildItem ./)
           pip install ${atomsciflow_whl}

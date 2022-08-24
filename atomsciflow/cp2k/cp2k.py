@@ -35,9 +35,12 @@ class Cp2k(cp2k.Cp2k):
         super().__init__()
         self.set_param("force_eval/dft/mgrid/cutoff", 300)
         self.set_param("force_eval/dft/mgrid/rel_cutoff", 100)
+        self.set_param("force_eval/dft/mgrid/ngrids", 4)
         self.set_param("force_eval/dft/qs/eps_default", 1.0e-14)
         self.set_param("force_eval/dft/scf/eps_scf", 1.0e-7)
         self.set_param("force_eval/dft/scf/max_scf", 50)
+        self.set_param("force_eval/dft/qs/extrapolation", "ASPC")
+        self.set_param("force_eval/dft/method", "QS")
 
 class Static(cp2k.Static):
     def __init__(self):
@@ -45,9 +48,12 @@ class Static(cp2k.Static):
         self.set_param("global/run_type", "ENERGY_FORCE")
         self.set_param("force_eval/dft/mgrid/cutoff", 300)
         self.set_param("force_eval/dft/mgrid/rel_cutoff", 100)
+        self.set_param("force_eval/dft/mgrid/ngrids", 4)
         self.set_param("force_eval/dft/qs/eps_default", 1.0e-14)
         self.set_param("force_eval/dft/scf/eps_scf", 1.0e-7)
-        self.set_param("force_eval/dft/scf/max_scf", 50)        
+        self.set_param("force_eval/dft/scf/max_scf", 50)  
+        self.set_param("force_eval/dft/qs/extrapolation", "ASPC")      
+        self.set_param("force_eval/dft/method", "QS")
         # dos
         self.set_param("force_eval/dft/print/pdos/nlumo", -1)
         self.set_param("force_eval/dft/print/pdos/components", ".true.")
@@ -57,6 +63,7 @@ class Static(cp2k.Static):
         # Miscellaneous
         self.set_param("force_eval/dft/print/mo_cubes/nlumo", 5)
         self.set_param("force_eval/dft/print/mo_cubes/nhomo", 5)
+        self.set_param("force_eval/dft/print/mo_cubes/write_cube", ".true.")
         self.set_param("force_eval/dft/print/mo/eigenvalues", ".TRUE.")
         self.set_param("force_eval/dft/print/mo/occupation_numbers", ".TRUE.")
 
@@ -65,9 +72,10 @@ class Band(Cp2k):
         super().__init__()
         self.set_param("global/run_type", "ENERGY_FORCE")
         self.set_param("force_eval/dft/print/band_structure/file_name", "bands.bs")
-        # to output the Fermi energy, set force_eval/dft/print/mo_cubes/nlumo
+        # to output the Fermi energy and HOMO-LUMO gap, set force_eval/dft/print/mo_cubes
         self.set_param("force_eval/dft/print/mo_cubes/nlumo", 5)
         self.set_param("force_eval/dft/print/mo_cubes/nhomo", 5)
+        self.set_param("force_eval/dft/print/mo_cubes/write_cube", ".false.")
         self.set_param("force_eval/dft/print/band_structure/added_mos", 10)
 
 
@@ -238,9 +246,12 @@ class Neb(cp2k.Neb):
         super().__init__()
         self.set_param("force_eval/dft/mgrid/cutoff", 300)
         self.set_param("force_eval/dft/mgrid/rel_cutoff", 100)
+        self.set_param("force_eval/dft/mgrid/ngrids", 4)
         self.set_param("force_eval/dft/qs/eps_default", 1.0e-14)
         self.set_param("force_eval/dft/scf/eps_scf", 1.0e-7)
         self.set_param("force_eval/dft/scf/max_scf", 50)
+        self.set_param("force_eval/dft/qs/extrapolation", "ASPC")
+        self.set_param("force_eval/dft/method", "QS")
         #        
         self.set_param("motion/band/band_type", "CI-NEB")
         self.set_param("motion/band/k_spring", 2.0e-2)

@@ -234,7 +234,7 @@ void Bands::run(const std::string& directory) {
     }
 
     out.open((fs::path(directory) / run_params["post-dir"] / "band.gnuplot").string());
-    out << "set terminal png\n";
+    out << "set terminal pngcairo enhanced\n";
     out << "set parametric\n";
     out << "set title 'Band structure' font ',15'\n";
     out << "set ylabel 'Energy (eV)' font ',15'\n";

@@ -209,7 +209,7 @@ void Pdos::run(const std::string& directory) {
     }
 
     out.open((fs::path(directory) / "post.dir/dos.gnuplot").string());
-    out << "set terminal png\n";
+    out << "set terminal pngcairo enhanced\n";
     out << "set parametric\n";
     out << "set title 'Density of state' font ',15'\n";
     out << "set ylabel 'Density of state' font ',15'\n";

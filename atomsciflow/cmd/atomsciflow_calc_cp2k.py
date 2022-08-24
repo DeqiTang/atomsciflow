@@ -67,7 +67,7 @@ def cp2k_processor(args):
     params["global/print_level"] = "LOW"
 
     if args.custom != None:
-        custom_str = args.custom
+        custom_str = args.custom.replace(" ", "")
         for item in custom_str.split(";"):
             if item.isspace() or item == "":
                 continue
