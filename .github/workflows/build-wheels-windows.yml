@@ -20,7 +20,14 @@ jobs:
         os: [windows-latest]
         python_version: ["3.8", "3.9", "3.10"]
     steps:
+      - name: Caching MSVC Community version 2022
+        id: cache-msvc-community
+        uses: actions/cache@3
+        with:
+          path: "C:/Program Files/Microsoft Visual Studio/2022/Community"
+          key: ${{runner.os}}-cache-msvc-community-on-2022.08.24-version-1
       - name: Set up Visual Studio 2022 community version
+        if: steps.cache-msvc-community.outputs.cache-hit != 'true'
         run: |
           choco install visualstudio2022community --package-parameters "--allWorkloads --includeRecommended --passive"
           & "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvars64.bat"

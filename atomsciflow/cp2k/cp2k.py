@@ -40,7 +40,7 @@ class Cp2k(cp2k.Cp2k):
         self.set_param("force_eval/dft/scf/eps_scf", 1.0e-7)
         self.set_param("force_eval/dft/scf/max_scf", 50)
         self.set_param("force_eval/dft/qs/extrapolation", "ASPC")
-        self.set_param("force_eval/dft/method", "QS")
+        self.set_param("force_eval/method", "QS")
 
 class Static(cp2k.Static):
     def __init__(self):
@@ -53,7 +53,7 @@ class Static(cp2k.Static):
         self.set_param("force_eval/dft/scf/eps_scf", 1.0e-7)
         self.set_param("force_eval/dft/scf/max_scf", 50)  
         self.set_param("force_eval/dft/qs/extrapolation", "ASPC")      
-        self.set_param("force_eval/dft/method", "QS")
+        self.set_param("force_eval/method", "QS")
         # dos
         self.set_param("force_eval/dft/print/pdos/nlumo", -1)
         self.set_param("force_eval/dft/print/pdos/components", ".true.")
@@ -251,7 +251,7 @@ class Neb(cp2k.Neb):
         self.set_param("force_eval/dft/scf/eps_scf", 1.0e-7)
         self.set_param("force_eval/dft/scf/max_scf", 50)
         self.set_param("force_eval/dft/qs/extrapolation", "ASPC")
-        self.set_param("force_eval/dft/method", "QS")
+        self.set_param("force_eval/method", "QS")
         #        
         self.set_param("motion/band/band_type", "CI-NEB")
         self.set_param("motion/band/k_spring", 2.0e-2)
