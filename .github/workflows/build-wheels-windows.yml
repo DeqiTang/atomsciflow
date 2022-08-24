@@ -22,7 +22,7 @@ jobs:
     steps:
       - name: Caching MSVC Community version 2022
         id: cache-msvc-community
-        uses: actions/cache@3
+        uses: actions/cache@v3
         with:
           path: "C:/Program Files/Microsoft Visual Studio/2022/Community"
           key: ${{runner.os}}-cache-msvc-community-on-2022.08.24-version-1
