@@ -67,3 +67,68 @@ class Phonon(Elk):
 class Dos(Elk):
     def __init__(self):
         super().__init__()
+
+class Phonopy(Elk):
+    def __init__(self):
+        super().__init__()        
+        self.job.set_run("phonopy_dim_x", 1)
+        self.job.set_run("phonopy_dim_y", 1)
+        self.job.set_run("phonopy_dim_z", 1)
+        
+        # set tforce = .true. to calculate the force at end of SCF
+        # so that in the post-processing, the 'FORCE_SETS' file can be
+        # created successfully
+        self.set_param("tforce", ".ture.")
+
+        self.set_param("spinpol", ".false.")
+        self.set_param("epspot", 1.0e-6)
+        self.set_param("ngridk", [3, 3, 3])
+        self.set_param("mixtype", 3)
+        self.set_param("xctype", 20)
+        self.set_param("lmaxapw", 8)
+        self.set_param("xctype", 20)
+        self.set_param("stype", 3)
+        self.set_param("mixtype", 3)
+        self.set_param("epspot", 1.0e-6)
+        self.set_param("epsengy", 1.0e-5)
+
+    def run(self, directory):
+        step = "cd ${ABSOLUTE_WORK_DIR}\n"
+        step += "cat >elk.in<<EOF\n"
+        step += self.to_string()
+        step += "EOF\n"
+        self.job.append_step(step)
+
+        step = "cat >elk-input-part-1.in<<EOF\n"
+        self.set_block_status("atoms", False)
+        self.set_block_status("avec", False)
+        step += self.to_string()
+        step += "EOF\n"
+        self.job.append_step(step)
+
+        step = "phonopy --elk -c %s -d --dim='%s %s %s'" % (
+            "elk.in",
+            self.job.run_params["phonopy_dim_x"],
+            self.job.run_params["phonopy_dim_y"],
+            self.job.run_params["phonopy_dim_z"]
+        )
+        self.job.append_step(step)
+
+        step = "for item in supercell-*.in\n"
+        step += "do\n"
+        step += "mkdir run-${item/.in/}\n"
+        step += "cat elk-input-part-1.in ${item} > run-${item/.in/}/elk.in\n"
+        step += "done\n"
+        self.job.append_step(step)
+
+        step = "for item in run-supercell-*\n"
+        step += "do\n"
+        step += "cd ${item}\n"
+        step += "$CMD_HEAD %s elk.in > elk.out\n" % (
+            self.job.run_params["cmd"]
+        )
+        step += "cd ../\n"
+        step += "done\n"
+        self.job.append_step(step)
+
+        self.job.run(directory)

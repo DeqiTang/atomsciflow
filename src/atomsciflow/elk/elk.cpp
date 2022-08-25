@@ -61,6 +61,9 @@ std::string Elk::to_string() {
     std::ostringstream out;
 
     for (const auto& item : this->blocks) {
+        if (item.second->status == false) {
+            continue;
+        }
         if (item.first == "atoms") {
             out << "atoms\n";
             out << boost::format("  %1% : nspecies\n") % item.second->params["nspecies"].value[0][0];

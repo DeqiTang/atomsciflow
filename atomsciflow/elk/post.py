@@ -176,3 +176,11 @@ class Dos(post.Post):
         cmd += "bash "
         cmd += os.path.join(directory, self.run_params["post-dir"] + "/analysis.sh")
         os.system(cmd)
+
+class Phonopy(elk.PostPhonopy):
+    def __init__(self):
+        super().__init__()
+
+    def run(self, directory):
+        super().run(directory)
+        self.extract_data(directory)

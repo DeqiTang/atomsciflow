@@ -62,6 +62,13 @@ public:
     void py_set_param(const std::string& path, std::vector<std::vector<double>> value);
     void py_set_param(const std::string& path, std::vector<std::vector<std::string>> value);
 
+    void set_block_status(const std::string& name, bool status) {
+        if (this->blocks.find(name) == this->blocks.end()) {
+            this->blocks[name] = std::make_shared<Block>();
+        }
+        this->blocks[name]->status = status;
+    }
+
     void set_kpath(const Kpath& kpath);
 
     virtual void run(const std::string& directory);

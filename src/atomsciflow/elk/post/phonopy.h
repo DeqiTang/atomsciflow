@@ -1,7 +1,7 @@
-"""
+/************************************************************************
 MIT License
 
-Copyright (c) 2021 Deqi Tang
+Copyright (c) 2022 Deqi Tang
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,15 +20,42 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-"""
+************************************************************************/
 
-from atomsciflow.elk.elk import (
-    Elk,
-    Static, 
-    Opt,
-    VcOpt,
-    Band,
-    Phonon,
-    Dos,
-    Phonopy
-)
+#ifndef ATOMSCIFLOW_ELK_POST_PHONOPY_H_
+#define ATOMSCIFLOW_ELK_POST_PHONOPY_H_
+
+#include "atomsciflow/post/post.h"
+#include "atomsciflow/base/kpath.h"
+#include "atomsciflow/post/utils.h"
+
+namespace atomsciflow::elk::post {
+
+namespace fs = boost::filesystem;
+
+class Phonopy : public atomsciflow::post::Post {
+public:
+
+    Phonopy();
+    ~Phonopy() {
+
+    }
+
+    virtual void run(const std::string& directory);
+
+    void set_kpath(Kpath& kpath) {
+        this->kpath = kpath;
+    }
+
+    void extract_data(const std::string& directory);
+
+    Kpath kpath;
+};
+
+inline void Phonopy::extract_data(const std::string& directory) {
+    atomsciflow::post::extract_data_from_band_yaml((fs::path(directory) / run_params["post-dir"]).string());
+}
+
+} // namespace atomsciflow::elk::post
+
+#endif // ATOMSCIFLOW_ELK_POST_PHONOPY_H_

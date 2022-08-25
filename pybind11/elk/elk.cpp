@@ -14,6 +14,7 @@
 #include "atomsciflow/elk/opt.h"
 #include "atomsciflow/elk/io/params.h"
 #include "atomsciflow/elk/post/opt.h"
+#include "atomsciflow/elk/post/phonopy.h"
 
 namespace py = pybind11;
 
@@ -31,6 +32,7 @@ void add_class_elk(py::module& m) {
         .def("set_param", py::overload_cast<const std::string&, std::vector<std::vector<int>>>(&atomsciflow::elk::Elk::py_set_param))
         .def("set_param", py::overload_cast<const std::string&, std::vector<std::vector<double>>>(&atomsciflow::elk::Elk::py_set_param))
         .def("set_param", py::overload_cast<const std::string&, std::vector<std::vector<std::string>>>(&atomsciflow::elk::Elk::py_set_param))        
+        .def("set_block_status", &atomsciflow::elk::Elk::set_block_status)
         .def("set_kpath", &atomsciflow::elk::Elk::set_kpath)
         .def("run", &atomsciflow::elk::Elk::run)
         .def_readwrite("job", &atomsciflow::elk::Elk::job)
@@ -64,6 +66,15 @@ void add_class_post_opt(py::module& m) {
         ;
 }
 
+void add_class_post_phonopy(py::module& m) {
+    py::class_<atomsciflow::elk::post::Phonopy>(m, "PostPhonopy")
+        .def(py::init<>())
+        .def("set_kpath", &atomsciflow::elk::post::Phonopy::set_kpath)
+        .def("extract_data", &atomsciflow::elk::post::Phonopy::extract_data)
+        .def("run", &atomsciflow::elk::post::Phonopy::run)
+        ;
+}
+
 PYBIND11_MODULE(elk, m) {
     m.doc() = "elk module";
     
@@ -74,5 +85,6 @@ PYBIND11_MODULE(elk, m) {
     add_elk_read_params(m);
 
     add_class_post_opt(m);
+    add_class_post_phonopy(m);
 }
 

@@ -37,9 +37,14 @@ namespace atomsciflow::elk {
 class Block : public VariableGroup {
 public:
 
+    Block() {
+        status = true;
+    }
+    
     std::string to_string();
 
     std::string name;
+    bool status;
 };
 
 } // namespace atomsciflow::elk
