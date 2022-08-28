@@ -55,7 +55,6 @@ Cp2k::Cp2k() {
     this->new_section("force_eval");
     this->sections["force_eval"]->set_param("method", "quickstep");
 
-    //Cp2kSection dft{"dft"};
     auto dft = std::make_shared<Cp2kSection>("dft");
     dft->set_param("basis_set_file_name", "BASIS_MOLOPT");
     dft->set_param("potential_file_name", "GTH_POTENTIALS");
@@ -65,7 +64,7 @@ Cp2k::Cp2k() {
 
     auto& mgrid = dft->add_section("mgrid");
     mgrid->set_param("ngrids", 4);
-    mgrid->set_param("cutoff", 100);
+    mgrid->set_param("cutoff", 300);
     mgrid->set_param("rel_cutoff", 60);
 
     auto& xc = dft->add_section("xc");
@@ -75,14 +74,14 @@ Cp2k::Cp2k() {
     auto& scf = dft->add_section("scf");
     scf->set_param("scf_guess", "atomic");
     scf->set_param("eps_scf", "1.0e-7");
-    scf->set_param("max_scf", 100);
+    scf->set_param("max_scf", 50);
     auto& diag = scf->add_section("diagonalization");
     diag->set_param("algorithm", "standard");
 
     auto& mixing = scf->add_section("mixing");
     mixing->set_param("method", "broyden_mixing");
     mixing->set_param("alpha", 0.4);
-    mixing->set_param("nbroyden", 8);
+    mixing->set_param("nbroyden", 4);
 
     auto& print = dft->add_section("print");
 

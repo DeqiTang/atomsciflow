@@ -81,9 +81,9 @@ void Bands::run(const std::string& directory) {
     std::regex pat_xyz("\\.xyz$");
     std::smatch match_xyz;
     for (auto& item : fs::directory_iterator(directory)) {
-        if (std::regex_search(item.path().filename().string(), match_xyz, pat_xyz)) {
-            std::string filename = item.path().filename().string();
-            xyz.read_xyz_file((fs::path(directory) / item.path().filename().string()).string());
+        std::string filename = item.path().filename().string();
+        if (std::regex_search(filename, match_xyz, pat_xyz)) {
+            xyz.read_xyz_file((fs::path(directory) / filename).string());
         }
     }
 

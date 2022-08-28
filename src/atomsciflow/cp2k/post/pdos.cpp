@@ -73,8 +73,8 @@ void Pdos::run(const std::string& directory) {
     std::regex pat_cp2k_pdos("k\\d+-1\\.pdos$");
     std::smatch match_cp2k_pdos;
     for (auto& item : fs::directory_iterator(directory)) {
-        if (std::regex_search(item.path().filename().string(), match_cp2k_pdos, pat_cp2k_pdos)) {
-            std::string filename = item.path().filename().string();
+        std::string filename = item.path().filename().string();
+        if (std::regex_search(filename, match_cp2k_pdos, pat_cp2k_pdos)) {
             fin.open((fs::path(directory) / filename).string());
             std::getline(fin, line);
             ba::replace_all(line, "\t", " ");
@@ -146,8 +146,8 @@ void Pdos::run(const std::string& directory) {
     std::regex pat_smearing_pdos("pdos-[A-Za-z]{1,2}-[A-Za-z]+\\.data$");
     std::smatch match_smearing_pdos;
     for (auto& item : fs::directory_iterator((fs::path(directory)/"post.dir").string())) {
-        if (std::regex_search(item.path().filename().string(), match_smearing_pdos, pat_smearing_pdos)) {
-            std::string filename = item.path().filename().string();
+        std::string filename = item.path().filename().string();
+        if (std::regex_search(filename, match_smearing_pdos, pat_smearing_pdos)) {
             boost::split(str_vec, filename, boost::is_any_of("-"), boost::token_compress_on);
             std::string element = str_vec[1];
             std::string spin = boost::replace_all_copy(str_vec[2], ".data", "");
@@ -175,8 +175,8 @@ void Pdos::run(const std::string& directory) {
 
     std::map<std::string, arma::rowvec> elem_component_proj;
     for (auto& item : fs::directory_iterator((fs::path(directory)/"post.dir").string())) {
-        if (std::regex_search(item.path().filename().string(), match_smearing_pdos, pat_smearing_pdos)) {
-            std::string filename = item.path().filename().string();
+        std::string filename = item.path().filename().string();
+        if (std::regex_search(filename, match_smearing_pdos, pat_smearing_pdos)) {
             boost::split(str_vec, filename, boost::is_any_of("-"), boost::token_compress_on);
             std::string element = str_vec[1];
             std::string spin = boost::replace_all_copy(str_vec[2], ".data", "");

@@ -110,6 +110,14 @@ Opt::Opt() {
         }
     }});
 
+    info.put("optimized", "false");
+    this->add_rule(std::function<void(const std::string&)>{[&](const std::string& str) {
+        std::regex pat1("Reevaluating energy at the minimum");
+        std::smatch m1;
+        if (std::regex_search(str, m1, pat1)) {
+            info.put("optimized", "true");
+        }
+    }});
 }
 
 void Opt::run(const std::string& directory) {
@@ -146,7 +154,11 @@ void Opt::run(const std::string& directory) {
     stream.close();
 
     std::ofstream out;
-    out.open((fs::path(directory) / run_params["post-dir"] / "optimized.xyz").string());
+    if (info.get<std::string>("optimized") == "true") {
+        out.open((fs::path(directory) / run_params["post-dir"] / "optimized.xyz").string());
+    } else {
+        out.open((fs::path(directory) / run_params["post-dir"] / "unoptimized.xyz").string());
+    }
     out << boost::format("%1%\n") % natoms;
     tmp_str = cell_lines[cell_lines.size() - 1];
     ba::replace_all(tmp_str, "\t", " ");

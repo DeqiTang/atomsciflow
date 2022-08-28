@@ -25,7 +25,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: "C:/Program Files/Microsoft Visual Studio/2022/Community"
-          key: ${{runner.os}}-cache-msvc-community-on-2022.08.24-version-1
+          key: ${{runner.os}}-cache-msvc-community-on-2022.08.28-version-1
       - name: Set up Visual Studio 2022 community version
         if: steps.cache-msvc-community.outputs.cache-hit != 'true'
         run: |
