@@ -40,7 +40,15 @@ public:
     Pdos();
     ~Pdos();
 
+    void set_smear_width(double width) {
+        this->smear_width = width;
+    }
+
     virtual void run(const std::string& directory);
+
+private:
+    double ha_to_ev;
+    double smear_width;
 };
 
 } // namespace atomsciflow::cp2k::post

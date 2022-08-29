@@ -35,6 +35,9 @@ namespace ba = boost::algorithm;
 Pdos::Pdos() {
     this->set_run("program-out", "cp2k.out");
     this->set_run("output-json", "post-dos.json");
+
+    this->smear_width = 0.01;
+    this->ha_to_ev = 27.211324570273;
 }
 
 Pdos::~Pdos() {
@@ -53,14 +56,13 @@ Pdos::~Pdos() {
 void Pdos::run(const std::string& directory) {
     Post::run(directory);
 
-    double ha_to_ev = 27.211324570273;
-
-    double smearing_width = 1.2 / ha_to_ev;
-
     arma::rowvec energies;
     double fermi_in_ev;
     std::vector<std::string> str_vec;
     std::string line;
+
+    double smearing_width = this->smear_width / this->ha_to_ev;
+
 
     auto delta = [&](double emin, double emax, int npts, double energy, double width) -> arma::vec {
         auto energies = arma::linspace(emin, emax, npts);
@@ -218,7 +220,7 @@ void Pdos::run(const std::string& directory) {
     out << "set xtics font ',15'\n";
     out << "set border linewidth 3\n";
     out << "set autoscale\n";
-    out << "set xrange [-20:20]\n";
+    out << "set xrange [-10:10]\n";
 
     out << "set arrow from 0, graph 0 to 0, graph 1 nohead linecolor rgb \'black\' linewidth 0.5\n";
     out << "set arrow from -20, 0 to 20, 0 nohead linecolor rgb \'black\' linewidth 0.5\n";

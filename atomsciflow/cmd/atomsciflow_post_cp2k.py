@@ -38,6 +38,10 @@ def add_cp2k_post_subparser(subparsers):
     ag.add_argument("--kpath", type=str, default=None,
         help="Specify the kpath, either from a file or command line string, e.g. --kpath kpath.txt or --kpath \"0 0 0 GAMMA 5;0.5 0 0 x |\"")
 
+    ag = subparser.add_argument_group(title="dos")
+
+    ag.add_argument("--smear-width", type=float, default=0.01,
+        help="Specify the smear width to do convolution on the dos")
 
 def cp2k_post_processor(args):
     print("working directory: %s" % args.directory)
@@ -46,6 +50,7 @@ def cp2k_post_processor(args):
     elif args.calc.lower() == "dos":
         from atomsciflow.cp2k.post import Pdos
         job = Pdos()
+        job.set_smear_width(args.smear_width)
         job.run(args.directory)
     elif args.calc.lower() == "band":
         from atomsciflow.cp2k.post import Bands
