@@ -42,6 +42,7 @@ std::string submit_header_bash(std::map<std::string, std::string>& params);
 std::string submit_header_lsf_sz(std::map<std::string, std::string>& params);
 std::string submit_header_lsf_sustc(std::map<std::string, std::string>& params);
 std::string submit_header_cdcloud(std::map<std::string, std::string>& params);
+std::string submit_header_slurm(std::map<std::string, std::string>& params);
 
 } // namespace atomsciflow
 

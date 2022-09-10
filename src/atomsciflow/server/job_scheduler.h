@@ -56,6 +56,7 @@ public:
     void set_run_default_lsf_sz();
     void set_run_default_lsf_sustc();
     void set_run_default_cdcloud();
+    void set_run_default_slurm();
     void gen_llhpc(const std::string& script);
     void gen_yh(const std::string& script);
     void gen_pbs(const std::string& script);
@@ -63,6 +64,7 @@ public:
     void gen_lsf_sz(const std::string& script);
     void gen_lsf_sustc(const std::string& script);
     void gen_cdcloud(const std::string& script);
+    void gen_slurm(const std::string& script);
 
     void run(const std::string& directory);
 

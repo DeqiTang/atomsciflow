@@ -51,6 +51,7 @@ JobScheduler::JobScheduler() {
     this->set_run_default("lsf_sz");
     this->set_run_default("lsf_sustc");
     this->set_run_default("cdcloud");
+    this->set_run_default("slurm");
 }
 
 template <typename T>
@@ -100,6 +101,8 @@ void JobScheduler::set_run_default(std::string platform) {
         this->set_run_default_lsf_sustc();
     } else if ("cdcloud" == platform) {
         this->set_run_default_cdcloud();
+    } else if ("slurm" == platform) {
+        this->set_run_default_slurm();
     }
 }
 
@@ -141,13 +144,22 @@ void JobScheduler::set_run_default_lsf_sustc() {
 void JobScheduler::set_run_default_cdcloud() {
     this->run_params["partition"] = "normal";
     this->run_params["nodes"] = "1";
-    this->run_params["ntask"] = "32";
+    this->run_params["ntasks_per_node"] = "32";
     this->run_params["jobname"] = "running-job";
     this->run_params["stdout"] = "slurm.out";
     this->run_params["stderr"] = "slurm.err";
 }
 
-void JobScheduler::gen_llhpc(const std::string& script = "vasp.sub") {
+void JobScheduler::set_run_default_slurm() {
+    this->run_params["partition"] = "normal";
+    this->run_params["nodes"] = "1";
+    this->run_params["ntasks_per_node"] = "32";
+    this->run_params["jobname"] = "running-job";
+    this->run_params["stdout"] = "slurm.out";
+    this->run_params["stderr"] = "slurm.err";
+}
+
+void JobScheduler::gen_llhpc(const std::string& script) {
 
     std::ofstream outfile;
     outfile.open(script);
@@ -271,6 +283,23 @@ void JobScheduler::gen_cdcloud(const std::string& script = "vasp.sub") {
     outfile.close();
 }
 
+void JobScheduler::gen_slurm(const std::string& script) {
+    std::ofstream outfile;
+    outfile.open(script);
+    outfile.setf(std::ios::fixed);
+
+    outfile << submit_header_slurm(this->run_params);
+
+    int i = 0;
+    for (const auto& step : this->steps) {
+        outfile << script_step_header(i);
+        outfile << step << "\n";
+        i++;
+    }
+
+    outfile.close();
+}
+
 /**
  * @brief Overall control of the running of the job
  * 
@@ -300,7 +329,7 @@ void JobScheduler::run(const std::string& directory) {
         fs::copy(run_params["xyz_file"], fs::path(directory));
 
         gen_llhpc((
-            fs::path(directory) / (run_params["script_name_head"] + ".slurm")
+            fs::path(directory) / (run_params["script_name_head"] + ".slurm_llhpc")
             ).string()
         );
         gen_bash((
@@ -321,6 +350,10 @@ void JobScheduler::run(const std::string& directory) {
         );
         gen_cdcloud((
             fs::path(directory) / (run_params["script_name_head"] + ".slurm_cd")
+            ).string()
+        );
+        gen_slurm((
+            fs::path(directory) / (run_params["script_name_head"] + ".slurm")
             ).string()
         );
     }

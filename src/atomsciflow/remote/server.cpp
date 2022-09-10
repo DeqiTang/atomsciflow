@@ -66,7 +66,7 @@ void server_handle(std::string directory, std::string jobfilebase, std::string s
                 % fs::absolute(directory).string()
                 % jobfilebase;
         } else if ("llhpc" == server) {
-            cmd << boost::format("cd %1%; yhbatch %2%.slurm")
+            cmd << boost::format("cd %1%; yhbatch %2%.slurm_llhpc")
                 % fs::absolute(directory).string()
                 % jobfilebase;            
         } else if ("lsf_sz" == server) {
@@ -79,6 +79,10 @@ void server_handle(std::string directory, std::string jobfilebase, std::string s
                 % jobfilebase;                   
         } else if ("cdcloud" == server) {
             cmd << boost::format("cd %1%; sbatch < %2%.slurm_cd")
+                % fs::absolute(directory).string()
+                % jobfilebase;
+        } else if ("slurm" == server) {
+            cmd << boost::format("cd %1%; sbatch < %2%.slurm")
                 % fs::absolute(directory).string()
                 % jobfilebase;
         }

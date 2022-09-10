@@ -58,19 +58,39 @@ def add_calc_parser_common(subparser):
         help="The automation level of the task. 0 -> doing nothing; 1 -> generate files only; 2 -> generate and run locally using bash directly; 3 -> generate and submit job to job scheduler locally; 4 -> generate and copy to remote server; 5 -> generate and copy to remote server, then run remotely using bash directly; 6 -> generate and copy to remote server, then submit it to remote server job scheduler;")
 
     subparser.add_argument("--server", type=str, default="pbs",
-        choices=["pbs", "llhpc", "yhbatch", "lsf_sz", "lsf_sustc", "cdcloud"])
+        choices=["pbs", "llhpc", "yhbatch", "lsf_sz", "lsf_sustc", "cdcloud", "slurm"])
 
-    subparser.add_argument("--partition", type=str, default="free",
-        help="Specify the partition to submit the job")
+    ag = subparser.add_argument_group(title="scheduler common")
 
-    subparser.add_argument("--nodes", type=int, default=1,
+    ag.add_argument("--nodes", type=int, default=1,
         help="Specify the number of nodes to submit the job")
 
-    subparser.add_argument("--ntask", type=int, default=24,
-        help="Specify the ntask parameter")
+    ag.add_argument("--jobname", type=str, default="running-job")
 
-    subparser.add_argument("--ppn", type=int, default=32,
+    ag = subparser.add_argument_group(title="slurm specific")
+
+    ag.add_argument("--partition", type=str, default="free",
+        help="Specify the partition to submit the job")
+
+    ag.add_argument("--ntasks-per-node", type=int, default=24,
+        help="Specify the --ntasks-per-node parameter")
+
+    ag.add_argument("--account", type=str, default="",
+        help="Specify the --account parameter")
+
+    ag.add_argument("--time", type=str, default="",
+        help="Specify the --time parameter")
+        
+    ag.add_argument("--constraint", type=str, default="",
+        help="Specify the --constraint parameter")
+
+    ag = subparser.add_argument_group(title="pbs specific")
+
+    ag.add_argument("--ppn", type=int, default=32,
         help="Specify the ppn parameter")
+
+    ag.add_argument("--queue", type=str, default="",
+        help="Specify the PBS -q parameter")
 
     add_calc_parser_common_phonopy(subparser)
     add_calc_parser_common_kpoints(subparser)
@@ -98,7 +118,10 @@ def set_calc_processor_common(calc, args):
     calc.job.set_run("server", args.server)
     calc.job.set_run("partition", args.partition)
     calc.job.set_run("nodes", args.nodes)
-    calc.job.set_run("ntask", args.ntask)
+    calc.job.set_run("ntasks_per_node", args.ntasks_per_node)
+    calc.job.set_run("account", args.account)
+    calc.job.set_run("time", args.time)
+    calc.job.set_run("constraint", args.constraint)
     calc.job.set_run("ppn", args.ppn)
     set_calc_processor_common_phonopy(calc, args)
     set_calc_processor_common_structure(calc, args)

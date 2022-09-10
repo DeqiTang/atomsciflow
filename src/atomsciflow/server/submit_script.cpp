@@ -41,7 +41,7 @@ std::string submit_header_llhpc(std::map<std::string, std::string>& params) {
     out += "#!/bin/bash\n";
     out += (boost::format("#SBATCH -p %1%\n") % params["partition"]).str();
     out += (boost::format("#SBATCH -N %1%\n") % params["nodes"]).str();
-    out += (boost::format("#SBATCH -n %1%\n") % params["ntask"]).str();
+    out += (boost::format("#SBATCH -n %1%\n") % params["ntasks_per_node"]).str();
     out += (boost::format("#SBATCH -J %1%\n") % params["jobname"]).str();
     out += (boost::format("#SBATCH -o %1%\n") % params["stdout"]).str();
     out += (boost::format("#SBATCH -e %1%\n") % params["stderr"]).str();
@@ -107,7 +107,6 @@ std::string submit_header_lsf_sz(std::map<std::string, std::string>& params) {
     out += (boost::format("NP_PER_NODE=%1%\n") % params["np_per_node"]).str();
     out += "RUN=\"RAW\"\n";
     out += "CURDIR=$PWD\n";
-    out += "#VASP=/home-yg/Soft/Vasp5.4/vasp_std\n";
     out += "source /home-yg/env/intel-12.1.sh\n";
     out += "source /home-yg/env/openmpi-1.6.5-intel.sh\n";
     out += "cd $CURDIR\n";
@@ -150,12 +149,12 @@ std::string submit_header_cdcloud(std::map<std::string, std::string>& params) {
     std::string out;
 
     out += "#!/bin/bash\n";
-    out += (boost::format("#SBATCH -p %1%\n") % params["partition"]).str();
-    out += (boost::format("#SBATCH -N %1%\n") % params["nodes"]).str();
-    out += (boost::format("#SBATCH -n %1%\n") % params["ntask"]).str();
-    out += (boost::format("#SBATCH -J %1%\n") % params["jobname"]).str();
-    out += (boost::format("#SBATCH -o %1%\n") % params["stdout"]).str();
-    out += (boost::format("#SBATCH -e %1%\n") % params["stderr"]).str();
+    out += (boost::format("#SBATCH --partition=%1%\n") % params["partition"]).str();
+    out += (boost::format("#SBATCH --nodes=%1%\n") % params["nodes"]).str();
+    out += (boost::format("#SBATCH --ntasks-per-node=%1%\n") % params["ntasks_per_node"]).str();
+    out += (boost::format("#SBATCH --job-name=%1%\n") % params["jobname"]).str();
+    out += (boost::format("#SBATCH --output=%1%\n") % params["stdout"]).str();
+    out += (boost::format("#SBATCH --error=%1%\n") % params["stderr"]).str();
     out += "#\n";
     out += "export I_MPI_PMI_LIBRARY=/opt/gridview/slurm/lib/libpmi.so\n";
     // out += "export FORT_BUFFERED=1\n"; // may arouse error for running of quantum espresso 
@@ -163,6 +162,28 @@ std::string submit_header_cdcloud(std::map<std::string, std::string>& params) {
     out += (boost::format("ABSOLUTE_WORK_DIR=%1%\n") % params["absolute_work_dir"]).str();
     out += "\n";
     out += "CMD_HEAD=\"srun --mpi=pmix_v3\"\n";
+
+    return out;
+}
+
+std::string submit_header_slurm(std::map<std::string, std::string>& params) {
+    std::string out;
+
+    out += "#!/bin/bash\n";
+    out += (boost::format("#SBATCH --partition=%1%\n") % params["partition"]).str();
+    out += (boost::format("#SBATCH --nodes=%1%\n") % params["nodes"]).str();
+    out += (boost::format("#SBATCH --ntasks-per-node=%1%\n") % params["ntasks_per_node"]).str();
+    out += (boost::format("#SBATCH --time=%1%\n") % params["time"]).str();
+    out += (boost::format("#SBATCH --account=%1%\n") % params["account"]).str();
+    out += (boost::format("#SBATCH --constraint=%1%\n") % params["constraint"]).str();
+    out += (boost::format("#SBATCH --output=%1%\n") % params["stdout"]).str();
+    out += (boost::format("#SBATCH --error=%1%\n") % params["stderr"]).str();
+    out += (boost::format("#SBATCH --job-name=%1%\n") % params["jobname"]).str();
+    out += "#\n";
+
+    out += (boost::format("ABSOLUTE_WORK_DIR=%1%\n") % params["absolute_work_dir"]).str();
+    out += "\n";
+    out += "CMD_HEAD=\"srun\"\n";
 
     return out;
 }
