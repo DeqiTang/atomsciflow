@@ -49,7 +49,7 @@ void extract_data_from_band_yaml(const std::string& directory) {
     std::ofstream band_data;
     band_data.open((fs::path(directory) / "band.data").string());
     band_data.setf(std::ios::fixed);
-    band_data << "#kpoint(segmented) band(1-n)\n";
+    // band_data << "#kpoint(segmented) band(1-n)\n";
     int nqpoint = band_yaml["nqpoint"].as<int>();
     int nband = band_yaml["phonon"][0]["band"].size();
 
@@ -74,7 +74,8 @@ void extract_data_from_band_yaml(const std::string& directory) {
             }
             band_data << "\n";
         }
-        band_data << "\n";
+        // if segment between kpath is wanted, uncomment the following code.
+        // band_data << "\n";
     }
     band_data.close();
 

@@ -234,6 +234,7 @@ void Bands::run(const std::string& directory) {
     }
 
     out.open((fs::path(directory) / run_params["post-dir"] / "band.gnuplot").string());
+    out << boost::format("efermi = %1%\n") % fermi_in_ev;
     out << "set terminal pngcairo enhanced\n";
     out << "set parametric\n";
     out << "set title 'Band structure' font ',15'\n";
@@ -259,14 +260,12 @@ void Bands::run(const std::string& directory) {
     out << "plot \\\n";
     for (int spin = 0; spin < num_spins; spin++) {
         if (spin == 0) {            
-            out << boost::format("  \'band-spin-%1%.data\' using 1:(column(2)-(%2%)) w l title 'spin-%3%' linecolor rgb \'black\' linewidth 3 linetype 1,\\\n")
+            out << boost::format("  \'band-spin-%1%.data\' using 1:(column(2)-(efermi)) w l title 'spin-%2%' linecolor rgb \'black\' linewidth 3 linetype 1,\\\n")
                 % (spin+1)
-                % fermi_in_ev
                 % (spin+1);
         } else {
-            out << boost::format("  \'band-spin-%1%.data\' using 1:(column(2)-(%2%)) w l title 'spin-%3%' linecolor rgb \'red\' linewidth 3 linetype 1\n")
+            out << boost::format("  \'band-spin-%1%.data\' using 1:(column(2)-(efermi)) w l title 'spin-%2%' linecolor rgb \'red\' linewidth 3 linetype 1\n")
                 % (spin+1)
-                % fermi_in_ev
                 % (spin+1);
         }
     }

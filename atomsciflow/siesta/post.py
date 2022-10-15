@@ -156,6 +156,7 @@ class Band(post.Post):
                 xtics_labels[-1] = xtics_labels[-1] + " | " + self.kpath.labels[i].upper() if self.kpath.labels[i] != "GAMMA" else "{/symbol G}"
 
         with open(os.path.join(directory, "post.dir/band.siesta-kcoords-1d.gnuplot"), "w") as fout:
+            fout.write("efermi = %f\n" % fermi_energy)
             fout.write("set terminal png\n")
             fout.write("unset key\n")
             fout.write("set parametric\n")
@@ -181,9 +182,10 @@ class Band(post.Post):
 
             for spin in range(num_spins):
                 fout.write("set output 'band-spin-%d.siesta-kcoords-1d.png'\n" % spin)
-                fout.write("plot for [j=2:%d] \'band-spin-%d.siesta-kcoords-1d.data\' using 1:(column(j) - %f) w l notitle linestyle 1\n" % (num_bands+1, spin, fermi_energy))
+                fout.write("plot for [j=2:%d] \'band-spin-%d.siesta-kcoords-1d.data\' using 1:(column(j) - (efermi)) w l notitle linestyle 1\n" % (num_bands+1, spin))
 
         with open(os.path.join(directory, "post.dir/band.normal-kcoords-1d.gnuplot"), "w") as fout:
+            fout.write("efermi = %f\n" % fermi_energy)
             fout.write("set terminal png\n")
             fout.write("unset key\n")
             fout.write("set parametric\n")
@@ -209,7 +211,7 @@ class Band(post.Post):
 
             for spin in range(num_spins):
                 fout.write("set output 'band-spin-%d.normal-kcoords-1d.png'\n" % spin)
-                fout.write("plot for [j=2:%d] \'band-spin-%d.normal-kcoords-1d.data\' using 1:(column(j) - %f) w l notitle linestyle 1\n" % (num_bands+1, spin, fermi_energy))
+                fout.write("plot for [j=2:%d] \'band-spin-%d.normal-kcoords-1d.data\' using 1:(column(j) - (efermi)) w l notitle linestyle 1\n" % (num_bands+1, spin))
 
         with open(os.path.join(directory, "post.dir/analysis.sh"), "w") as fout:
             fout.write("#!/bin/bash\n\n")

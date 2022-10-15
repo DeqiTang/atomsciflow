@@ -152,6 +152,7 @@ void Dos::run(const std::string& directory) {
     }
 
     out.open((fs::path(directory) / "post.dir/dos.gnuplot").string());
+    out << boost::format("efermi = %1%\n") % fermi_energy;
     out << "set terminal png\n";
     out << "set parametric\n";
     out << "set title 'Density of state' font ',15'\n";
@@ -173,15 +174,13 @@ void Dos::run(const std::string& directory) {
     out << "plot \\\n";
     for (auto item : total_dos) {
         if (i != total_dos.size() -1) {
-            out << boost::format("  \'total-%1%.data\' using (column(1)-(%2%)):(column(2)*(%3%)) w l title \'%4%\' linewidth 3,\\\n")
+            out << boost::format("  \'total-%1%.data\' using (column(1)-(efermi)):(column(2)*(%2%)) w l title \'%3%\' linewidth 3,\\\n")
                 % item.first
-                % fermi_energy
                 % (boost::contains(item.first, "spin-2") ? -1 : 1)
                 % item.first;
         } else {
-            out << boost::format("  \'total-%1%.data\' using (column(1)-(%2%)):(column(2)*(%3%)) w l title \'%4%\' linewidth 3\n")
+            out << boost::format("  \'total-%1%.data\' using (column(1)-(efermi)):(column(2)*(%2%)) w l title \'%3%\' linewidth 3\n")
                 % item.first
-                % fermi_energy
                 % (boost::contains(item.first, "spin-2") ? -1 : 1)
                 % item.first;
         }
@@ -191,24 +190,21 @@ void Dos::run(const std::string& directory) {
     out << "set output \'total-and-integrated-dos.png\'\n";
     out << "plot \\\n";
     for (auto& item : total_dos) {   
-        out << boost::format("  \'total-%1%.data\' using (column(1)-(%2%)):(column(2)*(%3%)) w l title \'%4%\' linewidth 3,\\\n")
+        out << boost::format("  \'total-%1%.data\' using (column(1)-(efermi)):(column(2)*(%2%)) w l title \'%3%\' linewidth 3,\\\n")
             % item.first
-            % fermi_energy
             % (boost::contains(item.first, "spin-2") ? -1 : 1)
             % item.first;
     }
     i = 0;
     for (auto item : total_integrated_dos) {
         if (i != total_dos.size() -1) {
-            out << boost::format("  \'total-integrated-%1%.data\' using (column(1)-(%2%)):(column(2)*(%3%)) w l title \'%4%\' linewidth 3,\\\n")
+            out << boost::format("  \'total-integrated-%1%.data\' using (column(1)-(efermi)):(column(2)*(%2%)) w l title \'%3%\' linewidth 3,\\\n")
                 % item.first
-                % fermi_energy
                 % (boost::contains(item.first, "spin-2") ? -1 : 1)
                 % item.first;
         } else {
-            out << boost::format("  \'total-integrated-%1%.data\' using (column(1)-(%2%)):(column(2)*(%3%)) w l title \'%4%\' linewidth 3\n")
+            out << boost::format("  \'total-integrated-%1%.data\' using (column(1)-(efermi)):(column(2)*(%2%)) w l title \'%3%\' linewidth 3\n")
                 % item.first
-                % fermi_energy
                 % (boost::contains(item.first, "spin-2") ? -1 : 1)
                 % item.first;
         }
@@ -220,15 +216,13 @@ void Dos::run(const std::string& directory) {
     i = 0;
     for (auto& item : ion_orbital_proj) {
         if (i != ion_orbital_proj.size() - 1) {
-            out << boost::format("  \'ion-orbital-proj-%1%.data\' using (column(1)-(%2%)):(column(2)*(%3%)) w l title \'%4%\' linewidth 3,\\\n")
+            out << boost::format("  \'ion-orbital-proj-%1%.data\' using (column(1)-(efermi)):(column(2)*(%2%)) w l title \'%3%\' linewidth 3,\\\n")
                 % item.first
-                % fermi_energy
                 % (boost::contains(item.first, "spin-2") ? -1 : 1)
                 % item.first;
         } else {
-            out << boost::format("  \'ion-orbital-proj-%1%.data\' using (column(1)-(%2%)):(column(2)*(%3%)) w l title \'%4%\' linewidth 3\n")
+            out << boost::format("  \'ion-orbital-proj-%1%.data\' using (column(1)-(efermi)):(column(2)*(%2%)) w l title \'%3%\' linewidth 3\n")
                 % item.first 
-                % fermi_energy
                 % (boost::contains(item.first, "spin-2") ? -1 : 1)
                 % item.first;
         }

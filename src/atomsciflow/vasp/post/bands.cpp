@@ -188,6 +188,7 @@ void Bands::run(const std::string& directory) {
     }
 
     out.open((fs::path(directory) / "post.dir/band.gnuplot").string());
+    out << boost::format("efermi = %1%\n") % this->fermi_energy;
     out << "set terminal png\n";
     out << "unset key\n";
     out << "set parametric\n";
@@ -216,11 +217,11 @@ void Bands::run(const std::string& directory) {
     for (auto& spin : this->eigenvalues) {
         out << boost::format("set output 'band-%1%.png'\n") % spin.first;
         // the * in "for [j=2:*]" together with column(j) might not work for low version of gunuplot
-        // out << boost::format("plot for [j=2:*] \'band-%1%.data\' using 1:(column(j) - %2%) w l notitle linestyle 1\n") 
-            // % spin.first % this->fermi_energy;
-        out << boost::format("plot for [j=2:%1%] \'band-%2%.data\' using 1:(column(j) - %3%) w l notitle linestyle 1\n") 
+        // out << boost::format("plot for [j=2:*] \'band-%1%.data\' using 1:(column(j) - (efermi)) w l notitle linestyle 1\n") 
+            // % spin.first;
+        out << boost::format("plot for [j=2:%1%] \'band-%2%.data\' using 1:(column(j) - (efermi)) w l notitle linestyle 1\n") 
             % int(spin.second[0]["energy"].size() + 1)
-            % spin.first % this->fermi_energy;
+            % spin.first;
     }
     out.close();
 

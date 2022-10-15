@@ -134,6 +134,7 @@ void Dos::run(const std::string& directory) {
     }    
 
     out.open((fs::path(directory) / "post.dir/dos.gnuplot").string());
+    out << boost::format("efermi = %1%\n") % fermi_energy;
     out << "set terminal png\n";
     out << "set parametric\n";
     out << "set title 'Density of state' font ',15'\n";
@@ -155,15 +156,13 @@ void Dos::run(const std::string& directory) {
     i = 0;
     for (auto& item : elem_proj) {
         if (i != elem_proj.size() - 1) {
-            out << boost::format("  \'elem-proj-%1%.data\' using (column(1)-(%2%)):(column(2)*(%3%)) w l title \'%4%\' linewidth 3,\\\n")
+            out << boost::format("  \'elem-proj-%1%.data\' using (column(1)-(efermi)):(column(2)*(%2%)) w l title \'%3%\' linewidth 3,\\\n")
                 % item.first
-                % fermi_energy
                 % (boost::contains(item.first, "spin-2") ? -1 : 1)
                 % item.first;
         } else {
-            out << boost::format("  \'elem-proj-%1%.data\' using (column(1)-(%2%)):(column(2)*(%3%)) w l title \'%4%\' linewidth 3\n")
+            out << boost::format("  \'elem-proj-%1%.data\' using (column(1)-(efermi)):(column(2)*(%2%)) w l title \'%3%\' linewidth 3\n")
                 % item.first 
-                % fermi_energy
                 % (boost::contains(item.first, "spin-2") ? -1 : 1)
                 % item.first;
         }
@@ -175,15 +174,13 @@ void Dos::run(const std::string& directory) {
     i = 0;
     for (auto& item : elem_l_proj) {
         if (i != elem_l_proj.size() - 1) {
-            out << boost::format("  \'elem-l-proj-%1%.data\' using (column(1)-(%2%)):(column(2)*(%3%)) w l title \'%4%\' linewidth 3,\\\n")
+            out << boost::format("  \'elem-l-proj-%1%.data\' using (column(1)-(efermi)):(column(2)*(%2%)) w l title \'%3%\' linewidth 3,\\\n")
                 % item.first
-                % fermi_energy
                 % (boost::contains(item.first, "spin-2") ? -1 : 1)
                 % item.first;
         } else {
-            out << boost::format("  \'elem-l-proj-%1%.data\' using (column(1)-(%2%)):(column(2)*(%3%)) w l title \'%4%\' linewidth 3\n")
+            out << boost::format("  \'elem-l-proj-%1%.data\' using (column(1)-(efermi)):(column(2)*(%2%)) w l title \'%3%\' linewidth 3\n")
                 % item.first 
-                % fermi_energy
                 % (boost::contains(item.first, "spin-2") ? -1 : 1)
                 % item.first;
         }
@@ -195,15 +192,13 @@ void Dos::run(const std::string& directory) {
     i = 0;
     for (auto& item : elem_l_m_proj) {
         if (i != elem_l_m_proj.size() - 1) {
-            out << boost::format("  \'elem-l-m-proj-%1%.data\' using (column(1)-(%2%)):(column(2)*(%3%)) w l title \'%4%\' linewidth 3,\\\n")
+            out << boost::format("  \'elem-l-m-proj-%1%.data\' using (column(1)-(efermi)):(column(2)*(%2%)) w l title \'%3%\' linewidth 3,\\\n")
                 % item.first
-                % fermi_energy
                 % (boost::contains(item.first, "spin-2") ? -1 : 1)
                 % item.first;
         } else {
-            out << boost::format("  \'elem-l-m-proj-%1%.data\' using (column(1)-(%2%)):(column(2)*(%3%)) w l title \'%4%\' linewidth 3\n")
+            out << boost::format("  \'elem-l-m-proj-%1%.data\' using (column(1)-(efermi)):(column(2)*(%2%)) w l title \'%3%\' linewidth 3\n")
                 % item.first 
-                % fermi_energy
                 % (boost::contains(item.first, "spin-2") ? -1 : 1)
                 % item.first;
         }

@@ -61,6 +61,7 @@ class Dos(post.Post):
             num_bands = len(dos_files)
 
         with open(os.path.join(directory, "post.dir/dos.gnuplot"), "w") as fout:
+            fout.write("efermi = %f\n" % (efermi[1][0]))
             fout.write("set terminal png\n")
             fout.write("set parametric\n")
             fout.write("set title 'Density of state' font ',15'\n")
@@ -77,36 +78,36 @@ class Dos(post.Post):
 
             if num_spins == 1:
                 fout.write("set output 'total-dos.png'\n")
-                fout.write("plot '../static/total-dos.dat' using (column(1)-(%f)):2 w l notitle linewidth 3\n" % efermi[1][0])
+                fout.write("plot '../static/total-dos.dat' using (column(1)-(efermi)):2 w l notitle linewidth 3\n")
                 fout.write("set output 'dos-band-resolved.png'\n")
                 fout.write("plot \\\n")
                 for i in range(num_bands-1):
-                    fout.write("  '../static/dos-%04d.dat' using (column(1)-(%f)):($2) w l notitle linewidth 3,\\\n" % (
-                        i+1, efermi[1][0]
+                    fout.write("  '../static/dos-%04d.dat' using (column(1)-(efermi)):($2) w l notitle linewidth 3,\\\n" % (
+                        i+1
                     ))
-                fout.write("  '../static/dos-%04d.dat' using (column(1)-(%f)):($2) w l notitle linewidth 3\n" % (
-                    num_bands, efermi[1][0]
+                fout.write("  '../static/dos-%04d.dat' using (column(1)-(efermi)):($2) w l notitle linewidth 3\n" % (
+                    num_bands
                 ))
             elif num_spins == 2:
                 fout.write("set output 'total-dos.png'\n")
                 fout.write("plot \\\n")
-                fout.write("  '../static/total-dos-1.dat' using (column(1)-(%f)):(column(2)) w l notitle linewidth 3,\\\n" % efermi[1][0])
-                fout.write("  '../static/total-dos-2.dat' using (column(1)-(%f)):(-column(2)) w l notitle linewidth 3\n" % efermi[1][0])
+                fout.write("  '../static/total-dos-1.dat' using (column(1)-(efermi)):(column(2)) w l notitle linewidth 3,\\\n")
+                fout.write("  '../static/total-dos-2.dat' using (column(1)-(efermi)):(-column(2)) w l notitle linewidth 3\n")
 
                 fout.write("set output 'dos-band-resolved.png'\n")
                 fout.write("plot \\\n")
                 for i in range(num_bands-1):
-                    fout.write("  '../static/dos-%04d-1.dat' using (column(1)-(%f)):($2) w l notitle linewidth 3,\\\n" % (
-                        i+1, efermi[1][0],
+                    fout.write("  '../static/dos-%04d-1.dat' using (column(1)-(efermi)):($2) w l notitle linewidth 3,\\\n" % (
+                        i+1
                     ))
-                    fout.write("  '../static/dos-%04d-2.dat' using (column(1)-(%f)):(-$2) w l notitle linewidth 3,\\\n" % (
-                        i+1, efermi[1][0]
+                    fout.write("  '../static/dos-%04d-2.dat' using (column(1)-(efermi)):(-$2) w l notitle linewidth 3,\\\n" % (
+                        i+1
                     ))
-                fout.write("  '../static/dos-%04d-1.dat' using (column(1)-(%f)):($2) w l notitle linewidth 3,\\\n" % (
-                    num_bands, efermi[1][0]
+                fout.write("  '../static/dos-%04d-1.dat' using (column(1)-(efermi)):($2) w l notitle linewidth 3,\\\n" % (
+                    num_bands
                 ))
-                fout.write("  '../static/dos-%04d-2.dat' using (column(1)-(%f)):(-$2) w l notitle linewidth 3\n" % (
-                    num_bands, efermi[1][0]
+                fout.write("  '../static/dos-%04d-2.dat' using (column(1)-(efermi)):(-$2) w l notitle linewidth 3\n" % (
+                    num_bands
                 ))
 
         with open(os.path.join(directory, "post.dir/analysis.sh"), "w") as fout:

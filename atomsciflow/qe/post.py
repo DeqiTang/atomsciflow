@@ -85,6 +85,7 @@ class Band(post.Post):
                 xtics_labels.append(self.kpath.labels[i] if self.kpath.labels[i] != "GAMMA" else "{/symbol G}")
 
         with open(os.path.join(directory, "post.dir/band.gnuplot"), "w") as fout:
+            fout.write("efermi = %f\n" % self.fermi_energy)
             fout.write("set terminal png\n")
             fout.write("unset key\n")
             fout.write("set parametric\n")
@@ -109,7 +110,7 @@ class Band(post.Post):
             fout.write("set arrow from 0, 0 to %f, 0 nohead linestyle 2\n" % xtics_locs[-1])
 
             fout.write("set output 'band-structure.png'\n")
-            fout.write("plot \'../%s\' using 1:(column(2) - %f) w l notitle linestyle 1\n" % (self.bandfile_gnu, self.fermi_energy))
+            fout.write("plot \'../%s\' using 1:(column(2) - (efermi)) w l notitle linestyle 1\n" % (self.bandfile_gnu))
 
         with open(os.path.join(directory, "post.dir/analysis.sh"), "w") as fout:
             fout.write("#!/bin/bash\n\n")
@@ -241,6 +242,7 @@ class Dos(post.Post):
                     fout.write("%f %f\n" % (energies[i], elem_l_m_proj[item][i]))
 
         with open(os.path.join(directory, "post.dir/dos.gnuplot"), "w") as fout:
+            fout.write("efermi = %f\n" % self.fermi_energy)
             fout.write("set terminal png\n")
             fout.write("set parametric\n")
             fout.write("set title 'Density of state' font ',15'\n")
@@ -264,15 +266,13 @@ class Dos(post.Post):
                 i = 0
                 for item in elem_proj:
                     if i != len(elem_proj) - 1:
-                        fout.write("  'elem-proj-%s.data' using (column(1)-(%f)):(column(2)) w l title '%s' linewidth 3,\\\n" % (
+                        fout.write("  'elem-proj-%s.data' using (column(1)-(efermi)):(column(2)) w l title '%s' linewidth 3,\\\n" % (
                             item, 
-                            self.fermi_energy,
                             item
                         ))
                     else:
-                        fout.write("  'elem-proj-%s.data' using (column(1)-(%f)):(column(2)) w l title '%s' linewidth 3\n" % (
+                        fout.write("  'elem-proj-%s.data' using (column(1)-(efermi)):(column(2)) w l title '%s' linewidth 3\n" % (
                             item, 
-                            self.fermi_energy,
                             item
                         ))
                     i = i + 1
@@ -282,15 +282,13 @@ class Dos(post.Post):
                 i = 0
                 for item in elem_l_proj:
                     if i != len(elem_l_proj) - 1:
-                        fout.write("  'elem-l-proj-%s.data' using (column(1)-(%f)):(column(2)) w l title '%s' linewidth 3,\\\n" % (
+                        fout.write("  'elem-l-proj-%s.data' using (column(1)-(efermi)):(column(2)) w l title '%s' linewidth 3,\\\n" % (
                             item,
-                            self.fermi_energy,
                             item
                         ))
                     else:
-                        fout.write("  'elem-l-proj-%s.data' using (column(1)-(%f)):(column(2)) w l title '%s' linewidth 3\n" % (
+                        fout.write("  'elem-l-proj-%s.data' using (column(1)-(efermi)):(column(2)) w l title '%s' linewidth 3\n" % (
                             item,
-                            self.fermi_energy,
                             item
                         ))
                     i = i + 1
@@ -300,39 +298,35 @@ class Dos(post.Post):
                 i = 0
                 for item in elem_l_m_proj:
                     if i != len(elem_l_m_proj) - 1:
-                        fout.write("  'elem-l-m-proj-%s.data' using (column(1)-(%f)):(column(2)) w l title '%s' linewidth 3,\\\n" % (
+                        fout.write("  'elem-l-m-proj-%s.data' using (column(1)-(efermi)):(column(2)) w l title '%s' linewidth 3,\\\n" % (
                             item,
-                            self.fermi_energy,
                             item
                         ))
                     else:
-                        fout.write("  'elem-l-m-proj-%s.data' using (column(1)-(%f)):(column(2)) w l title '%s' linewidth 3\n" % (
+                        fout.write("  'elem-l-m-proj-%s.data' using (column(1)-(efermi)):(column(2)) w l title '%s' linewidth 3\n" % (
                             item,
-                            self.fermi_energy,
                             item
                         ))
                     i = i + 1
                 
             elif num_spins == 2:                    
                 fout.write("set output 'total-dos.png'\n")
-                fout.write("plot '../pwscf.pdos_tot' using (column(1)-(%f)):(column(2)) w l notitle linecolor rgb \'black\' linewidth 3,\\\n" % (self.fermi_energy))
-                fout.write("  '../pwscf.pdos_tot' using (column(1)-(%f)):(-column(3)) w l notitle linecolor rgb \'black\' linewidth 3\n" % (self.fermi_energy))
+                fout.write("plot '../pwscf.pdos_tot' using (column(1)-(efermi)):(column(2)) w l notitle linecolor rgb \'black\' linewidth 3,\\\n")
+                fout.write("  '../pwscf.pdos_tot' using (column(1)-(efermi)):(-column(3)) w l notitle linecolor rgb \'black\' linewidth 3\n")
 
                 fout.write("set output 'elem-proj-dos.png'\n")
                 i = 0
                 fout.write("plot \\\n")
                 for item in elem_proj:
                     if i != len(elem_proj) -1:
-                        fout.write("  'elem-proj-%s.data' using (column(1)-(%f)):(column(2)*(%f)) w l title '%s' linewidth 3,\\\n" % (
+                        fout.write("  'elem-proj-%s.data' using (column(1)-(efermi)):(column(2)*(%f)) w l title '%s' linewidth 3,\\\n" % (
                             item, 
-                            self.fermi_energy,
                             1 if item.split("-")[-1] == "up" else -1,
                             item,
                         ))
                     else:
-                        fout.write("  'elem-proj-%s.data' using (column(1)-(%f)):(column(2)*(%f)) w l title '%s' linewidth 3\n" % (
+                        fout.write("  'elem-proj-%s.data' using (column(1)-(efermi)):(column(2)*(%f)) w l title '%s' linewidth 3\n" % (
                             item, 
-                            self.fermi_energy,
                             1 if item.split("-")[-1] == "up" else -1,
                             item
                         ))
@@ -343,16 +337,14 @@ class Dos(post.Post):
                 i = 0
                 for item in elem_l_proj:
                     if i != len(elem_l_proj) - 1:
-                        fout.write("  'elem-l-proj-%s.data' using (column(1)-(%f)):(column(2)*(%f)) w l title '%s' linewidth 3,\\\n" % (
+                        fout.write("  'elem-l-proj-%s.data' using (column(1)-(efermi)):(column(2)*(%f)) w l title '%s' linewidth 3,\\\n" % (
                             item, 
-                            self.fermi_energy,
                             1 if item.split("-")[-1] == "up" else -1,
                             item,
                         ))
                     else:
-                        fout.write("  'elem-l-proj-%s.data' using (column(1)-(%f)):(column(2)*(%f)) w l title '%s' linewidth 3\n" % (
+                        fout.write("  'elem-l-proj-%s.data' using (column(1)-(efermi)):(column(2)*(%f)) w l title '%s' linewidth 3\n" % (
                             item, 
-                            self.fermi_energy,
                             1 if item.split("-")[-1] == "up" else -1,
                             item,
                         ))
@@ -363,16 +355,14 @@ class Dos(post.Post):
                 i = 0
                 for item in elem_l_m_proj:
                     if i != len(elem_l_m_proj) - 1:
-                        fout.write("  'elem-l-m-proj-%s.data' using (column(1)-(%f)):(column(2)*(%f)) w l title '%s' linewidth 3,\\\n" % (
+                        fout.write("  'elem-l-m-proj-%s.data' using (column(1)-(efermi)):(column(2)*(%f)) w l title '%s' linewidth 3,\\\n" % (
                             item, 
-                            self.fermi_energy,
                             1 if item.split("-")[-1] == "up" else -1,
                             item,
                         ))
                     else:
-                        fout.write("  'elem-l-m-proj-%s.data' using (column(1)-(%f)):(column(2)*(%f)) w l title '%s' linewidth 3\n" % (
+                        fout.write("  'elem-l-m-proj-%s.data' using (column(1)-(efermi)):(column(2)*(%f)) w l title '%s' linewidth 3\n" % (
                             item, 
-                            self.fermi_energy,
                             1 if item.split("-")[-1] == "up" else -1,
                             item,
                         ))

@@ -314,6 +314,7 @@ class Dos(post.Post):
                     fout.write("%f %f\n" % (energies[i] * ha_to_ev, elem_l_m_proj[item][i]))
 
         with open(os.path.join(directory, "post.dir/dos.gnuplot"), "w") as fout:
+            fout.write("efermi = %f\n" % (fermi_energy_in_ha * ha_to_ev))
             fout.write("set terminal png\n")
             fout.write("set parametric\n")
             fout.write("set title 'Density of state' font ',15'\n")
@@ -330,22 +331,20 @@ class Dos(post.Post):
 
             if num_spins == 1:
                 fout.write("set output 'total-dos.png'\n")
-                fout.write("plot \'total-dos-spin-0.data\' using (column(1) - (%f)):2 w l notitle linewidth 3\n" % (fermi_energy_in_ha * ha_to_ev))
+                fout.write("plot \'total-dos-spin-0.data\' using (column(1) - (efermi)):2 w l notitle linewidth 3\n")
 
                 fout.write("set output 'elem-proj-dos.png'\n")
                 fout.write("plot \\\n")
                 i = 0
                 for item in elem_proj:
                     if i != len(elem_proj) - 1:
-                        fout.write("  'elem-proj-%s.data' using (column(1)-(%f)):(column(2)) w l title '%s' linewidth 3,\\\n" % (
+                        fout.write("  'elem-proj-%s.data' using (column(1)-(efermi)):(column(2)) w l title '%s' linewidth 3,\\\n" % (
                             item,
-                            fermi_energy_in_ha * ha_to_ev,
                             item
                         ))
                     else:
-                        fout.write("  'elem-proj-%s.data' using (column(1)-(%f)):(column(2)) w l title '%s' linewidth 3\n" % (
+                        fout.write("  'elem-proj-%s.data' using (column(1)-(efermi)):(column(2)) w l title '%s' linewidth 3\n" % (
                             item,
-                            fermi_energy_in_ha * ha_to_ev,
                             item
                         ))
                     i = i + 1
@@ -355,15 +354,13 @@ class Dos(post.Post):
                 i = 0
                 for item in elem_l_proj:
                     if i != len(elem_l_proj) - 1:
-                        fout.write("  'elem-l-proj-%s.data' using (column(1)-(%f)):(column(2)) w l title '%s' linewidth 3,\\\n" % (
+                        fout.write("  'elem-l-proj-%s.data' using (column(1)-(efermi)):(column(2)) w l title '%s' linewidth 3,\\\n" % (
                             item,
-                            fermi_energy_in_ha * ha_to_ev,
                             item
                         ))
                     else:
-                        fout.write("  'elem-l-proj-%s.data' using (column(1)-(%f)):(column(2)) w l title '%s' linewidth 3\n" % (
+                        fout.write("  'elem-l-proj-%s.data' using (column(1)-(efermi)):(column(2)) w l title '%s' linewidth 3\n" % (
                             item,
-                            fermi_energy_in_ha * ha_to_ev,
                             item
                         ))
                     i = i + 1
@@ -373,38 +370,34 @@ class Dos(post.Post):
                 i = 0
                 for item in elem_l_m_proj:
                     if i != len(elem_l_m_proj) - 1:
-                        fout.write("  'elem-l-m-proj-%s.data' using (column(1)-(%f)):(column(2)) w l title '%s' linewidth 3,\\\n" % (
+                        fout.write("  'elem-l-m-proj-%s.data' using (column(1)-(efermi)):(column(2)) w l title '%s' linewidth 3,\\\n" % (
                             item,
-                            fermi_energy_in_ha * ha_to_ev,
                             item
                         ))
                     else:
-                        fout.write("  'elem-l-m-proj-%s.data' using (column(1)-(%f)):(column(2)) w l title '%s' linewidth 3\n" % (
+                        fout.write("  'elem-l-m-proj-%s.data' using (column(1)-(efermi)):(column(2)) w l title '%s' linewidth 3\n" % (
                             item,
-                            fermi_energy_in_ha * ha_to_ev,
                             item
                         ))
                     i = i + 1
             elif num_spins == 2:
                 fout.write("set output 'total-dos.png'\n")
-                fout.write("plot \'total-dos-spin-0.data\' using (column(1) - (%f)):(column(2)) w l notitle linewidth 3,\\\n" % (fermi_energy_in_ha * ha_to_ev))
-                fout.write("     \'total-dos-spin-1.data\' using (column(1) - (%f)):(-column(2)) w l notitle linewidth 3\n" % (fermi_energy_in_ha * ha_to_ev))
+                fout.write("plot \'total-dos-spin-0.data\' using (column(1) - (efermi)):(column(2)) w l notitle linewidth 3,\\\n")
+                fout.write("     \'total-dos-spin-1.data\' using (column(1) - (efermi)):(-column(2)) w l notitle linewidth 3\n")
 
                 fout.write("set output 'elem-proj-dos.png'\n")
                 fout.write("plot \\\n")
                 i = 0
                 for item in elem_proj:
                     if i != len(elem_proj) - 1:
-                        fout.write("  'elem-proj-%s.data' using (column(1)-(%f)):(column(2)*(%f)) w l title '%s' linewidth 3,\\\n" % (
+                        fout.write("  'elem-proj-%s.data' using (column(1)-(efermi)):(column(2)*(%f)) w l title '%s' linewidth 3,\\\n" % (
                             item, 
-                            fermi_energy_in_ha * ha_to_ev,
                             1 if item.split("-")[-1] == "up" else -1,
                             item,
                         ))
                     else:
-                        fout.write("  'elem-proj-%s.data' using (column(1)-(%f)):(column(2)*(%f)) w l title '%s' linewidth 3\n" % (
+                        fout.write("  'elem-proj-%s.data' using (column(1)-(efermi)):(column(2)*(%f)) w l title '%s' linewidth 3\n" % (
                             item, 
-                            fermi_energy_in_ha * ha_to_ev,
                             1 if item.split("-")[-1] == "up" else -1,
                             item,
                         ))
@@ -415,16 +408,14 @@ class Dos(post.Post):
                 i = 0
                 for item in elem_l_proj:
                     if i != len(elem_l_proj) - 1:
-                        fout.write("  'elem-l-proj-%s.data' using (column(1)-(%f)):(column(2)*(%f)) w l title '%s' linewidth 3,\\\n" % (
+                        fout.write("  'elem-l-proj-%s.data' using (column(1)-(efermi)):(column(2)*(%f)) w l title '%s' linewidth 3,\\\n" % (
                             item, 
-                            fermi_energy_in_ha * ha_to_ev,
                             1 if item.split("-")[-1] == "up" else -1,
                             item,
                         ))
                     else:
-                        fout.write("  'elem-l-proj-%s.data' using (column(1)-(%f)):(column(2)*(%f)) w l title '%s' linewidth 3\n" % (
+                        fout.write("  'elem-l-proj-%s.data' using (column(1)-(efermi)):(column(2)*(%f)) w l title '%s' linewidth 3\n" % (
                             item, 
-                            fermi_energy_in_ha * ha_to_ev,
                             1 if item.split("-")[-1] == "up" else -1,
                             item,
                         ))
@@ -435,16 +426,14 @@ class Dos(post.Post):
                 i = 0
                 for item in elem_l_m_proj:
                     if i != len(elem_l_m_proj) - 1:
-                        fout.write("  'elem-l-m-proj-%s.data' using (column(1)-(%f)):(column(2)*(%f)) w l title '%s' linewidth 3,\\\n" % (
+                        fout.write("  'elem-l-m-proj-%s.data' using (column(1)-(efermi)):(column(2)*(%f)) w l title '%s' linewidth 3,\\\n" % (
                             item, 
-                            fermi_energy_in_ha * ha_to_ev,
                             1 if item.split("-")[-1] == "up" else -1,
                             item,
                         ))
                     else:
-                        fout.write("  'elem-l-m-proj-%s.data' using (column(1)-(%f)):(column(2)*(%f)) w l title '%s' linewidth 3\n" % (
+                        fout.write("  'elem-l-m-proj-%s.data' using (column(1)-(efermi)):(column(2)*(%f)) w l title '%s' linewidth 3\n" % (
                             item, 
-                            fermi_energy_in_ha * ha_to_ev,
                             1 if item.split("-")[-1] == "up" else -1,
                             item,
                         ))

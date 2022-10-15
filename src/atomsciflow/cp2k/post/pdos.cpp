@@ -211,6 +211,7 @@ void Pdos::run(const std::string& directory) {
     }
 
     out.open((fs::path(directory) / "post.dir/dos.gnuplot").string());
+    out << boost::format("efermi = %1%\n") % fermi_in_ev;
     out << "set terminal pngcairo enhanced\n";
     out << "set parametric\n";
     out << "set title 'Density of state' font ',15'\n";
@@ -232,15 +233,13 @@ void Pdos::run(const std::string& directory) {
     i = 0;
     for (auto& item : elem_proj) {
         if (i != elem_proj.size() - 1) {
-            out << boost::format("  \'elem-proj-%1%.data\' using (column(1)-(%2%)):(column(2)*(%3%)) w l title \'%4%\' linewidth 3,\\\n")
+            out << boost::format("  \'elem-proj-%1%.data\' using (column(1)-(efermi)):(column(2)*(%2%)) w l title \'%3%\' linewidth 3,\\\n")
                 % item.first
-                % fermi_in_ev
                 % (boost::contains(item.first, "beta") ? -1 : 1)
                 % item.first;
         } else {
-            out << boost::format("  \'elem-proj-%1%.data\' using (column(1)-(%2%)):(column(2)*(%3%)) w l title \'%4%\' linewidth 3\n")
+            out << boost::format("  \'elem-proj-%1%.data\' using (column(1)-(efermi)):(column(2)*(%2%)) w l title \'%3%\' linewidth 3\n")
                 % item.first 
-                % fermi_in_ev
                 % (boost::contains(item.first, "beta") ? -1 : 1)
                 % item.first;
         }
@@ -252,15 +251,13 @@ void Pdos::run(const std::string& directory) {
     i = 0;
     for (auto& item : elem_component_proj) {
         if (i != elem_component_proj.size() - 1) {
-            out << boost::format("  \'elem-component-proj-%1%.data\' using (column(1)-(%2%)):(column(2)*(%3%)) w l title \'%4%\' linewidth 3,\\\n")
+            out << boost::format("  \'elem-component-proj-%1%.data\' using (column(1)-(efermi)):(column(2)*(%2%)) w l title \'%3%\' linewidth 3,\\\n")
                 % item.first
-                % fermi_in_ev
                 % (boost::contains(item.first, "beta") ? -1 : 1)
                 % item.first;
         } else {
-            out << boost::format("  \'elem-component-proj-%1%.data\' using (column(1)-(%2%)):(column(2)*(%3%)) w l title \'%4%\' linewidth 3\n")
+            out << boost::format("  \'elem-component-proj-%1%.data\' using (column(1)-(efermi)):(column(2)*(%2%)) w l title \'%3%\' linewidth 3\n")
                 % item.first 
-                % fermi_in_ev
                 % (boost::contains(item.first, "beta") ? -1 : 1)
                 % item.first;
         }
