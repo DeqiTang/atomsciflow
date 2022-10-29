@@ -43,7 +43,7 @@ def add_cp2k_post_subparser(subparsers):
     ag.add_argument("--smear-width", type=float, default=0.01,
         help="Specify the smear width to do convolution on the dos")
 
-    ag.add_argument("--smear-npoints", type=float, default=10000,
+    ag.add_argument("--smear-npoints", type=int, default=10000,
         help="Specify the number of points to do smear sampling")
 
     ag.add_argument("--xmin", type=float, default=-5,
