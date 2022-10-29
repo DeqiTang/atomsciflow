@@ -51,14 +51,12 @@ std::string Block::to_string() {
     std::ostringstream out;
     out << "% " << this->name << "\n";
 
-    for (auto& row : this->data) {
-        int i = 0;
-        for (auto& val : row) {
-            out << boost::format(" %1% ") % val;
-            if (i != (row.size() - 1)) {
+    for (int i = 0; i < this->num_rows; i++) {
+        for (int j = 0; j < this->num_cols; j++) {
+            out << boost::format(" %1% ") % this->data[i][j];
+            if (j != (this->num_cols - 1)) {
                 out << "|";
             }
-            i++;
         }
         out << "\n";
     }

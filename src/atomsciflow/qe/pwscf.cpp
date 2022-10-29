@@ -302,8 +302,17 @@ void PwScf::run(const std::string& directory) {
     step << "EOF\n";
     for (const auto& item : this->xyz.elements_set) {
         step << "# pseudopotential file for element: " << item << "\n";
-        step << boost::format("for item in %1%/*\n") 
-            % (fs::path(config.get_pseudo_pot_dir()["qe"]) / "SSSP_efficiency_pseudos").string();
+        if (job.run_params["qe_pseudo_choice"] == "sssp-efficiency") {
+            step << boost::format("for item in %1%/*\n") 
+                % (fs::path(config.get_pseudo_pot_dir()["qe"]) / "SSSP_efficiency_pseudos").string();
+        } else if (job.run_params["qe_pseudo_choice"] == "sssp-precision") {
+            step << boost::format("for item in %1%/*\n") 
+                % (fs::path(config.get_pseudo_pot_dir()["qe"]) / "SSSP_precision_pseudos").string();            
+        } else {
+            std::cout << "atomsciflow::PwScf::run\n";
+            std::cout << "you have to specify the right qe_pseudo_choice\n";
+            std::exit(0);
+        }
         step << "do\n";
         if (item.size() == 1) {
             step << boost::format("if [[ ${item} =~ /[%1%|%2%][.|_] ]]\n")

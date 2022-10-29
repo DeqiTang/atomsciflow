@@ -45,6 +45,8 @@ public:
 
     std::string name;
     std::vector<std::vector<std::string>> data;
+    int num_rows;
+    int num_cols;
     bool status;
 };
 

@@ -30,5 +30,6 @@ from atomsciflow.qe.pwscf import (
     Phonopy,
     Band,
     Dos,
-    BOMD
+    BOMD,
+    Hubbard
 )

@@ -225,6 +225,9 @@ void add_class_post_pdos(py::module& m) {
     py::class_<atomsciflow::cp2k::post::Pdos>(m, "PostPdos")
         .def(py::init<>())
         .def("set_smear_width", &atomsciflow::cp2k::post::Pdos::set_smear_width)
+        .def("set_smear_npoints", &atomsciflow::cp2k::post::Pdos::set_smear_npoints)
+        .def("set_xmin", &atomsciflow::cp2k::post::Pdos::set_xmin)
+        .def("set_xmax", &atomsciflow::cp2k::post::Pdos::set_xmax)
         .def("run", &atomsciflow::cp2k::post::Pdos::run)
         ;
 }

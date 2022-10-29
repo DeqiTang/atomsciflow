@@ -32,10 +32,14 @@ def add_qe_subparser(subparsers):
         help="The Quantum Espresso calculator")
 
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "vcopt", "bomd", "phonopy", "band", "dos"],
+        choices=["static", "opt", "vcopt", "bomd", "phonopy", "band", "dos", "hp"],
         help="The calculation to do. The specified value is case insensitive")
 
     add_calc_parser_common(subparser)
+
+    subparser.add_argument("--pseudo-choice", type=str, default="sssp-efficiency",
+        choices=["sssp-efficiency", "sssp-precision"],
+        help="Specify the choice of pseudo to use")
 
     # custom
     ag = subparser.add_argument_group(title="custom")
@@ -82,12 +86,16 @@ def qe_processor(args):
     elif args.calc.lower() == "bomd":
         from atomsciflow.qe import BOMD
         job = BOMD()
+    elif args.calc.lower() == "hp":
+        from atomsciflow.qe import Hubbard
+        job = Hubbard()
     else:
         print("The specified calculation type is unfound!")
         import sys
         sys.exit(1)
     
     set_calc_processor_common(job, args)
+    job.job.set_run("qe_pseudo_choice", args.pseudo_choice)
     if args.custom_file != None:
         from atomsciflow.qe.io import read_params
         read_params(job, args.custom_file)  

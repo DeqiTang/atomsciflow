@@ -107,17 +107,19 @@ public:
         }
     }
 
-    void set_block_data_size(const std::string& name, int num_row, int num_col) {
+    void set_block_data_size(const std::string& name, int num_rows, int num_cols) {
         this->new_block(name);
 
-        if (blocks[name]->data.size() < num_row) {
-            blocks[name]->data.resize(num_row);
+        if (blocks[name]->data.size() < num_rows) {
+            blocks[name]->data.resize(num_rows);
         }
         for (auto& item : blocks[name]->data) {
-            if (item.size() < num_col) {
-                item.resize(num_col);
+            if (item.size() < num_cols) {
+                item.resize(num_cols);
             }
         }
+        blocks[name]->num_rows = num_rows;
+        blocks[name]->num_cols = num_cols;
     }
 
     void py_set_block_data(const std::string& name, int value, int row, int col) {

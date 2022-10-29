@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import sys
 from atomsciflow.cpp import qe
 from atomsciflow.cpp.base import Xyz, Kpath
 from atomsciflow.cpp.server import JobScheduler
@@ -175,7 +176,14 @@ class Dos(PwScf):
         step += "cd ${ABSOLUTE_WORK_DIR}\n"
         for item in self.xyz.elements_set:
             step += "# pseudopotential file for element: " + item + "\n"
-            step += "for item in %s/*\n" % os.path.join(self.config.get_pseudo_pot_dir()["qe"], "SSSP_efficiency_pseudos")
+            if self.job.run_params["qe_pseudo_choice"] == "sssp-efficiency":
+                step += "for item in %s/*\n" % os.path.join(self.config.get_pseudo_pot_dir()["qe"], "SSSP_efficiency_pseudos")
+            elif self.job.run_params["qe_pseudo_choice"] == "sssp-precision":
+                step += "for item in %s/*\n" % os.path.join(self.config.get_pseudo_pot_dir()["qe"], "SSSP_precision_pseudos")
+            else:
+                print("atomsciflow::PwScf::run")
+                print("you have to specify the right qe_pseudo_choice")
+                sys.exit(0)
             step += "do\n"
             if len(item) == 1:
                 step += "if [[ ${item} =~ /[%s|%s][.|_] ]]\n" % (item.upper(), item.lower())
@@ -249,3 +257,68 @@ class BOMD(PwScf):
         self.set_param("ions", "tempw", 300.0)
         self.set_param("ions", "wfc_extrapolation", "second_order")
         
+class Hubbard(PwScf):
+    def __init__(self):
+        super().__init__()
+
+    def run(self, directory):
+        import os
+        import numpy as np
+        self.set_param("control", "wf_collect", ".true.")
+
+        step = ""
+        step += "cd ${ABSOLUTE_WORK_DIR}\n"
+        for item in self.xyz.elements_set:
+            step += "# pseudopotential file for element: " + item + "\n"
+            if self.job.run_params["qe_pseudo_choice"] == "sssp-efficiency":
+                step += "for item in %s/*\n" % os.path.join(self.config.get_pseudo_pot_dir()["qe"], "SSSP_efficiency_pseudos")
+            elif self.job.run_params["qe_pseudo_choice"] == "sssp-precision":
+                step += "for item in %s/*\n" % os.path.join(self.config.get_pseudo_pot_dir()["qe"], "SSSP_precision_pseudos")
+            else:
+                print("atomsciflow::PwScf::run")
+                print("you have to specify the right qe_pseudo_choice")
+                sys.exit(0)
+            step += "do\n"
+            if len(item) == 1:
+                step += "if [[ ${item} =~ /[%s|%s][.|_] ]]\n" % (item.upper(), item.lower())
+            else:
+                step += "if [[ ${item} =~ /[%s|%s][%s|%s][.|_] ]]\n" % (
+                    item[0].upper(), 
+                    item[0].lower(), 
+                    item[1].upper(), 
+                    item[1].lower()
+                )
+            step += "then\n"
+            step += "cp ${item} ${ABSOLUTE_WORK_DIR}/\n"
+            step += "fi\n"
+            step += "done\n"
+        self.job.append_step(step)
+
+        # scf
+        step = ""
+        self.set_param("control", "calculation", "scf")
+        step += "cat >pw-scf.in<<EOF\n"
+        step += self.to_string()
+        step += "EOF\n"
+        step += "$CMD_HEAD %s < pw-scf.in | tee pw-scf.out\n" % (
+            self.job.run_params["cmd"],
+        )
+        self.job.append_step(step)
+
+        # hp.x
+        step = ""
+        step += "cat >hp.in<<EOF\n"
+        step += "&inputhp\n"
+        # step += "prefix = \'pwscf\'\n"
+        # step += "outdir = \'./tmp\'\n"
+        step += "nq1 = 2\n"
+        step += "nq2 = 2\n"
+        step += "nq3 = 2\n"
+        step += "conv_thr_chi = 1.0e-8\n"
+        step += "iverbosity = 2\n"
+        step += "/\n"
+        step += "EOF\n"
+        step += "$CMD_HEAD $ASF_CMD_QE_HPX < hp.in | tee hp.out\n"
+        self.job.append_step(step)
+
+        self.job.run(directory)

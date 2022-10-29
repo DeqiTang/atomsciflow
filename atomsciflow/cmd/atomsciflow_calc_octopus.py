@@ -94,7 +94,7 @@ def octopus_processor(args):
                             row.split(","),
                             i
                         )
-                        i = i +1
+                        i = i + 1
                 else:
                     job.set_block_data(
                         item.split(":=")[0],

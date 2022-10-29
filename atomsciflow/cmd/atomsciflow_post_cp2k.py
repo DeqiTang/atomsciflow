@@ -43,6 +43,15 @@ def add_cp2k_post_subparser(subparsers):
     ag.add_argument("--smear-width", type=float, default=0.01,
         help="Specify the smear width to do convolution on the dos")
 
+    ag.add_argument("--smear-npoints", type=float, default=10000,
+        help="Specify the number of points to do smear sampling")
+
+    ag.add_argument("--xmin", type=float, default=-5,
+        help="Specify the plot x range min.")
+
+    ag.add_argument("--xmax", type=float, default=5,
+        help="Specify the plot x range max.")
+
 def cp2k_post_processor(args):
     print("working directory: %s" % args.directory)
     if args.calc.lower() == "static":
@@ -51,6 +60,9 @@ def cp2k_post_processor(args):
         from atomsciflow.cp2k.post import Pdos
         job = Pdos()
         job.set_smear_width(args.smear_width)
+        job.set_smear_npoints(args.smear_npoints)
+        job.set_xmin(args.xmin)
+        job.set_xmax(args.xmax)
         job.run(args.directory)
     elif args.calc.lower() == "band":
         from atomsciflow.cp2k.post import Bands

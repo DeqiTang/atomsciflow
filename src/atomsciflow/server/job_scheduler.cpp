@@ -236,7 +236,7 @@ void JobScheduler::gen_lsf_sz(const std::string& script) {
     outfile.open(script);
 
     outfile << submit_header_lsf_sz(this->run_params);
-    outfile << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
+    outfile << "cd \"${ABSOLUTE_WORK_DIR}\"" << "\n";
 
     int i = 0;
     for (const auto& step : this->steps) {

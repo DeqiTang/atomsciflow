@@ -43,12 +43,24 @@ public:
     void set_smear_width(double width) {
         this->smear_width = width;
     }
+    void set_smear_npoints(int npoints) {
+        this->smear_npoints = npoints;
+    }
+    void set_xmin(double xmin) {
+        this->xmin = xmin;
+    }
+    void set_xmax(double xmax) {
+        this->xmax = xmax;
+    }
 
     virtual void run(const std::string& directory);
 
 private:
     double ha_to_ev;
     double smear_width;
+    int smear_npoints;
+    double xmin;
+    double xmax;
 };
 
 } // namespace atomsciflow::cp2k::post

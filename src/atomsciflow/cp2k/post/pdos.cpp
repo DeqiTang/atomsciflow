@@ -38,6 +38,9 @@ Pdos::Pdos() {
 
     this->smear_width = 0.01;
     this->ha_to_ev = 27.211324570273;
+    this->smear_npoints = 10000;
+    this->xmin = -5;
+    this->xmax = 5;
 }
 
 Pdos::~Pdos() {
@@ -92,21 +95,29 @@ void Pdos::run(const std::string& directory) {
             arma::mat data;
             data.load(fin);
             fin.close();
-            arma::mat smearing_data = arma::zeros(data.n_rows, data.n_cols);
-            smearing_data.col(0) = data.col(0);
-            smearing_data.col(1) = data.col(1);
-            smearing_data.col(2) = data.col(2);
+
             // smearing the data
+            // In the old implementation, the number of generated data points
+            // is set to be equal to the number of MOs.
+            // Now, this->smear_npoints is provided to allow control of the 
+            // number of sampling points.
             double emin = arma::min(data.col(1));
-            double emax = arma::max(data.col(1));
+            double emax = arma::max(data.col(1));            
+            arma::mat smearing_data = arma::zeros(this->smear_npoints, data.n_cols);
+            smearing_data.col(0) = arma::linspace(1, this->smear_npoints, this->smear_npoints);// index of points
+            smearing_data.col(1) = arma::linspace(emin, emax, this->smear_npoints); // energies
+            smearing_data.col(2) = arma::zeros(this->smear_npoints); // occcupation
+            // for the smeared occupation column, we set all the value to 0,
+            // which is not processed, for real occupation, please see the output of
+            // cp2k pdos file.
+
             for (int j = 3; j < data.n_cols; j++) {
                 smearing_data.col(j).zeros();
                 for (int k = 0; k < data.n_rows; k++) {
-                    auto tmp_vec = delta(emin, emax, data.n_rows, data.at(k, 1), smearing_width);
+                    auto tmp_vec = delta(emin, emax, this->smear_npoints, data.at(k, 1), smearing_width);
                     smearing_data.col(j) += data.at(k, j) * tmp_vec;
                 }
             }
-            smearing_data.col(1) = arma::linspace(emin, emax, smearing_data.n_rows);
             smearing_data.col(1) *= ha_to_ev;
             energies = arma::conv_to<arma::rowvec>::from(smearing_data.col(1));
             // output smearing data
@@ -125,7 +136,7 @@ void Pdos::run(const std::string& directory) {
             out.open((fs::path(directory) / "post.dir" / (boost::format("pdos-%1%-%2%.data")%element%spin).str()).string());
             out << boost::format("# data extracted and smeared from %1%, fermi energy(eV): %2%\n") % filename % fermi_in_ev;
             int n_components = smearing_data.n_cols - 3;
-            out << boost::format("# MO Eigenvalue [eV] Occupation");
+            out << boost::format("# Index Energy [eV] Occupation");
             for (auto& component : components) {
                 out << boost::format(" %1%") % component;
             }
@@ -221,7 +232,7 @@ void Pdos::run(const std::string& directory) {
     out << "set xtics font ',15'\n";
     out << "set border linewidth 3\n";
     out << "set autoscale\n";
-    out << "set xrange [-10:10]\n";
+    out << boost::format("set xrange [%1%:%2%]\n") % this->xmin % this->xmax;
 
     out << "set arrow from 0, graph 0 to 0, graph 1 nohead linecolor rgb \'black\' linewidth 0.5\n";
     out << "set arrow from -20, 0 to 20, 0 nohead linecolor rgb \'black\' linewidth 0.5\n";

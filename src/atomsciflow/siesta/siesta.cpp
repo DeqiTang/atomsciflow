@@ -258,7 +258,7 @@ void Siesta::run(const std::string& directory) {
         step << " " << (fs::path(config.get_pseudo_pot_dir()["siesta"]) / "abinit-ncpp" / (item + ".psf")).string();
     }
     step << " ./\n";
-    step << "$CMD_HEAD " << job.run_params["cmd"] << " < " << job.run_params["input"] << " > " << job.run_params["output"] << "\n";
+    step << "$CMD_HEAD " << job.run_params["cmd"] << " < " << job.run_params["input"] << " | tee " << job.run_params["output"] << "\n";
     job.steps.push_back(step.str());
     step.clear();
 

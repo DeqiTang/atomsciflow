@@ -288,6 +288,7 @@ setup(
             'atomsciflow = atomsciflow.cmd.atomsciflow:main',
             "atomsciflow-calc = atomsciflow.cmd.atomsciflow_calc:main",
             "atomsciflow-post = atomsciflow.cmd.atomsciflow_post:main",
+            "atomsciflow-stru = atomsciflow.cmd.atomsciflow_stru:main",
         ]
     },
 )

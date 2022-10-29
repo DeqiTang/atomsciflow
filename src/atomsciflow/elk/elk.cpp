@@ -373,7 +373,7 @@ void Elk::run(const std::string& directory) {
     step << this->to_string();
     step << "EOF\n";
 
-    step << boost::format("$CMD_HEAD %1% > elk.out\n") % this->job.run_params["cmd"];
+    step << boost::format("$CMD_HEAD %1% | tee elk.out\n") % this->job.run_params["cmd"];
     job.steps.push_back(step.str());
     step.clear();
 

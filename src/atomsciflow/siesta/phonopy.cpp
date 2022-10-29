@@ -137,7 +137,7 @@ void Phonopy::run(const std::string& directory) {
     step << boost::format("for item in run-supercell-*\n");
     step << "do\n";
     step << "cd ${item}\n";
-    step << boost::format("$CMD_HEAD %1% < ${item}.fdf > ${item}.fdf.out\n")
+    step << boost::format("$CMD_HEAD %1% < ${item}.fdf | tee ${item}.fdf.out\n")
         % job.run_params["cmd"];
     step << "cd ../\n";
     step << "done\n";
