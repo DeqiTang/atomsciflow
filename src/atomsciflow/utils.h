@@ -50,7 +50,7 @@ int move_along(atomsciflow::Crystal* structure, std::vector<int> atoms_to_move, 
 
 int remove_atoms(atomsciflow::Crystal* structure, std::vector<int> atoms_to_remove);
 
-int vacuum_layer(atomsciflow::Crystal* structure, int plane, double thickness);
+int vacuum_layer(atomsciflow::Crystal* structure, std::string plane, double thickness);
 
 int set_frac_min_to_zero(atomsciflow::Crystal* structure);
 
