@@ -724,7 +724,7 @@ int cleave_surface(atomsciflow::Crystal* structure, std::vector<int> direction, 
     // redefine lattice
     redefine_lattice(structure, a_from_old, b_from_old, c_from_old, precision);
     
-    vacuum_layer(structure, 1, thickness);
+    vacuum_layer(structure, "ab", thickness);
     
     return 0;
 }
@@ -879,7 +879,7 @@ int cleave_surface_old(atomsciflow::Crystal* structure, std::vector<int> directi
     redefine_lattice(structure, a_from_old, b_from_old, c_from_old, precision);
     
     std::cout << "add vacuum layer" << std::endl;
-    vacuum_layer(structure, 1, thickness);
+    vacuum_layer(structure, "ab", thickness);
     
     return 0;
 }
@@ -1080,7 +1080,7 @@ atomsciflow::Crystal merge_layers(atomsciflow::Crystal* structure1, atomsciflow:
     }
     
     std::cout << "add vacuum layer: " << thickness << " (Angstrom)" << std::endl;
-    vacuum_layer(&out, 1, thickness);
+    vacuum_layer(&out, "ab", thickness);
     std::cout << "end add vacuum layer" << std::endl;
     
     return out;

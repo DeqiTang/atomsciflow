@@ -86,7 +86,9 @@ int read_xyz_file(atomsciflow::Crystal* crystal, std::string filepath) {
     std::vector<std::string> str_vec;
 
     for (i = 0; i < natom; i++) {
-        boost::split(str_vec, boost::trim_left_copy(lines[i+2]), boost::is_space(), boost::token_compress_on);
+        std::string line = lines[i+2];
+        line = boost::trim_left_copy(line);
+        boost::split(str_vec, line, boost::is_space(), boost::token_compress_on);
         Atom atom;
         atom.set_name(str_vec[0]);
         atom.set_x(std::atof(str_vec[1].c_str()));
