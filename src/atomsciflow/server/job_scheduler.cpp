@@ -34,6 +34,7 @@ SOFTWARE.
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include "atomsciflow/server/submit_script.h"
 #include "atomsciflow/remote/server.h"
@@ -167,7 +168,9 @@ void JobScheduler::gen_llhpc(const std::string& script) {
     outfile.setf(std::ios::fixed);
 
     outfile << submit_header_llhpc(this->run_params);
+    outfile << this->job_script_front();
     outfile << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
+    outfile << this->job_script_back();
 
     int i = 0;
     for (const auto& step : this->steps) {
@@ -185,7 +188,9 @@ void JobScheduler::gen_yh(const std::string& script) {
     outfile.setf(std::ios::fixed);
 
     outfile << submit_header_yh(this->run_params);
+    outfile << this->job_script_front();
     outfile << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
+    outfile << this->job_script_back();
 
     int i = 0;
     for (const auto& step : this->steps) {
@@ -202,7 +207,9 @@ void JobScheduler::gen_pbs(const std::string& script) {
     outfile.open(script);
 
     outfile << submit_header_pbs(this->run_params);
+    outfile << this->job_script_front();
     outfile << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
+    outfile << this->job_script_back();
 
     int i = 0;
     for (const auto& step : this->steps) {
@@ -219,7 +226,9 @@ void JobScheduler::gen_bash(const std::string& script) {
     outfile.open(script);
 
     outfile << submit_header_bash(this->run_params);
+    outfile << this->job_script_front();
     outfile << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
+    outfile << this->job_script_back();
 
     int i = 0;
     for (const auto& step : this->steps) {
@@ -236,7 +245,9 @@ void JobScheduler::gen_lsf_sz(const std::string& script) {
     outfile.open(script);
 
     outfile << submit_header_lsf_sz(this->run_params);
+    outfile << this->job_script_front();
     outfile << "cd \"${ABSOLUTE_WORK_DIR}\"" << "\n";
+    outfile << this->job_script_back();
 
     int i = 0;
     for (const auto& step : this->steps) {
@@ -254,7 +265,9 @@ void JobScheduler::gen_lsf_sustc(const std::string& script = "vasp.lsf_sustc") {
     outfile.setf(std::ios::fixed);
 
     outfile << submit_header_lsf_sustc(this->run_params);
+    outfile << this->job_script_front();
     outfile << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
+    outfile << this->job_script_back();
 
     int i = 0;
     for (const auto& step : this->steps) {
@@ -266,12 +279,15 @@ void JobScheduler::gen_lsf_sustc(const std::string& script = "vasp.lsf_sustc") {
     outfile.close();
 }
 
-void JobScheduler::gen_cdcloud(const std::string& script = "vasp.sub") {
+void JobScheduler::gen_cdcloud(const std::string& script = "run.sub") {
     std::ofstream outfile;
     outfile.open(script);
     outfile.setf(std::ios::fixed);
 
     outfile << submit_header_cdcloud(this->run_params);
+    outfile << this->job_script_front();
+    outfile << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
+    outfile << this->job_script_back();
 
     int i = 0;
     for (const auto& step : this->steps) {
@@ -289,6 +305,9 @@ void JobScheduler::gen_slurm(const std::string& script) {
     outfile.setf(std::ios::fixed);
 
     outfile << submit_header_slurm(this->run_params);
+    outfile << this->job_script_front();
+    outfile << "cd ${ABSOLUTE_WORK_DIR}" << "\n";
+    outfile << this->job_script_back();
 
     int i = 0;
     for (const auto& step : this->steps) {
@@ -298,6 +317,36 @@ void JobScheduler::gen_slurm(const std::string& script) {
     }
 
     outfile.close();
+}
+
+std::string JobScheduler::job_script_front() {
+    std::ostringstream out;
+    out << "#======================================================================#\n";
+    out << "#--------------------------job script front----------------------------#\n";
+    out << "#======================================================================#\n";
+    if (this->run_params.find("job_script_front") != this->run_params.end()) {
+        std::vector<std::string> str_vec;
+        boost::split(str_vec, run_params["job_script_front"], boost::is_any_of(";"));
+        for (auto& item : str_vec) {
+            out << item << "\n";
+        }
+    }
+    return out.str();
+}
+
+std::string JobScheduler::job_script_back() {
+    std::ostringstream out;
+    out << "#======================================================================#\n";
+    out << "#--------------------------job script back----------------------------#\n";
+    out << "#======================================================================#\n";
+    if (this->run_params.find("job_script_back") != this->run_params.end()) {
+        std::vector<std::string> str_vec;
+        boost::split(str_vec, run_params["job_script_back"], boost::is_any_of(";"));
+        for (auto& item : str_vec) {
+            out << item << "\n";
+        }
+    }
+    return out.str();
 }
 
 /**
@@ -328,37 +377,44 @@ void JobScheduler::run(const std::string& directory) {
         fs::create_directories(directory);
         fs::copy(run_params["xyz_file"], fs::path(directory));
 
-        gen_llhpc((
-            fs::path(directory) / (run_params["script_name_head"] + ".slurm_llhpc")
-            ).string()
-        );
+        if ("llhpc" == run_params["server"]) {
+            gen_llhpc((
+                fs::path(directory) / (run_params["script_name_head"] + ".slurm_llhpc")
+                ).string()
+            );
+        } else if ("lsf_sz" == run_params["server"]) {
+            gen_lsf_sz((
+                fs::path(directory) / (run_params["script_name_head"] + ".lsf_sz")
+                ).string()
+            );
+        } else if ("pbs" == run_params["server"]) {
+            gen_pbs((
+                fs::path(directory) / (run_params["script_name_head"] + ".pbs")
+                ).string()
+            );
+        } else if ("lsf_sustc" == run_params["server"]) {
+            gen_lsf_sustc((
+                fs::path(directory) / (run_params["script_name_head"] + ".lsf_sustc")
+                ).string()
+            );
+        } else if ("cdcloud" == run_params["server"]) {
+            gen_cdcloud((
+                fs::path(directory) / (run_params["script_name_head"] + ".slurm_cd")
+                ).string()
+            );
+        } else if ("slurm" == run_params["server"]) {
+            gen_slurm((
+                fs::path(directory) / (run_params["script_name_head"] + ".slurm")
+                ).string()
+            );
+        }
+    }
+    // run locally using bash directly
+    if (2 == auto_level) {
         gen_bash((
             fs::path(directory) / (run_params["script_name_head"] + ".sh")
             ).string()
         );
-        gen_lsf_sz((
-            fs::path(directory) / (run_params["script_name_head"] + ".lsf_sz")
-            ).string()
-        );
-        gen_pbs((
-            fs::path(directory) / (run_params["script_name_head"] + ".pbs")
-            ).string()
-        );
-        gen_lsf_sustc((
-            fs::path(directory) / (run_params["script_name_head"] + ".lsf_sustc")
-            ).string()
-        );
-        gen_cdcloud((
-            fs::path(directory) / (run_params["script_name_head"] + ".slurm_cd")
-            ).string()
-        );
-        gen_slurm((
-            fs::path(directory) / (run_params["script_name_head"] + ".slurm")
-            ).string()
-        );
-    }
-    // run locally using bash directly
-    if (2 == auto_level) {
         std::string cmd = "";
         cmd += "bash ";
         cmd += (

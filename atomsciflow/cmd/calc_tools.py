@@ -92,6 +92,12 @@ def add_calc_parser_common(subparser):
     ag.add_argument("--queue", type=str, default="",
         help="Specify the PBS -q parameter")
 
+    ag.add_argument("--job-script-front", type=str, default="",
+        help="Specify the commands you want to add to the front of job script.")
+
+    ag.add_argument("--job-script-back", type=str, default="",
+        help="Specify the commands you want to add to the back of job script.")
+
     add_calc_parser_common_phonopy(subparser)
     add_calc_parser_common_kpoints(subparser)
 
@@ -123,5 +129,7 @@ def set_calc_processor_common(calc, args):
     calc.job.set_run("time", args.time)
     calc.job.set_run("constraint", args.constraint)
     calc.job.set_run("ppn", args.ppn)
+    calc.job.set_run("job_script_front", args.job_script_front)
+    calc.job.set_run("job_script_back", args.job_script_back)
     set_calc_processor_common_phonopy(calc, args)
     set_calc_processor_common_structure(calc, args)

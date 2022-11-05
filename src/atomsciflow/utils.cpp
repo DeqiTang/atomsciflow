@@ -49,6 +49,7 @@ std::string version() {
  * @param disp: displacement of the atoms in unit of Angstrom
  */
 int move_along(atomsciflow::Crystal* structure, std::vector<int> atoms_to_move, std::vector<int> direc, double disp) {
+
     // do some checking
     if (*std::max_element(atoms_to_move.begin(), atoms_to_move.end()) > (structure->natom() - 1)) {
         std::cout << "========================================================================" << std::endl;
@@ -57,7 +58,7 @@ int move_along(atomsciflow::Crystal* structure, std::vector<int> atoms_to_move, 
         std::cout << "the atom you are trying to move is beyond the number of atoms in the structure\n";
         std::exit(1);
     }
-    arma::vec direc_cartesian(3);
+    arma::rowvec direc_cartesian(3);
     arma::mat latcell(3, 3);
     std::vector<std::vector<double>> cell = structure->get_cell();
     latcell.row(0) = arma::conv_to<arma::rowvec>::from(cell[0]);
@@ -79,6 +80,8 @@ int move_along(atomsciflow::Crystal* structure, std::vector<int> atoms_to_move, 
         structure->atoms[i].y += deltay;
         structure->atoms[i].z += deltaz;
     }
+    set_frac_within_zero_and_one(structure);
+    
     return 0;
 }
 
@@ -107,16 +110,16 @@ int remove_atoms(atomsciflow::Crystal* structure, std::vector<int> atoms_to_remo
  *      3 -> bc plane
  * @param thickness: thickness of the vacuum layer
  */
-int vacuum_layer(atomsciflow::Crystal* structure, int plane, double thickness) {
+int vacuum_layer(atomsciflow::Crystal* structure, std::string plane, double thickness) {
     arma::mat latcell(3, 3);
     latcell.row(0) = arma::conv_to<arma::rowvec>::from(structure->cell[0]);
     latcell.row(1) = arma::conv_to<arma::rowvec>::from(structure->cell[1]);
     latcell.row(2) = arma::conv_to<arma::rowvec>::from(structure->cell[2]);    
     
-    if (1 == plane) {
-        std::cout << "the normal_of_ab" << std::endl;
+    if ("ab" == plane) {
+        // std::cout << "the normal_of_ab" << std::endl;
         arma::vec normal_of_ab = arma::cross(arma::conv_to<arma::vec>::from(latcell.row(0)), arma::conv_to<arma::vec>::from(latcell.row(1)));
-        std::cout << "got the normal_of_ab" << std::endl;
+        // std::cout << "got the normal_of_ab" << std::endl;
         // get the cosine of the angle between c and outer product of ab
         double cosangle = arma::dot(latcell.row(2), normal_of_ab) / arma::norm(latcell.row(2)) / arma::norm(normal_of_ab);
         double proj_c_on_ab_normal = arma::norm(latcell.row(2)) * std::abs(cosangle);
@@ -124,11 +127,11 @@ int vacuum_layer(atomsciflow::Crystal* structure, int plane, double thickness) {
         for (const auto& atom : structure->atoms) {
             z_all.push_back(atom.z);
         }
-        std::cout << "got all z for atoms" << std::endl;
+        // std::cout << "got all z for atoms" << std::endl;
         
         double factor = (*std::max_element(z_all.begin(), z_all.end()) - *std::min_element(z_all.begin(), z_all.end()) + thickness) / proj_c_on_ab_normal * 1.0;
         structure->cell[2] = arma::conv_to<std::vector<double>>::from(latcell.row(2) * factor);
-    } else if (plane == 2) {
+    } else if ("ac" == plane) {
         arma::vec normal_of_ac = arma::cross(arma::conv_to<arma::vec>::from(latcell.row(0)), arma::conv_to<arma::vec>::from(latcell.row(2)));
         // get the cosine of the angle between b and outer product of ac
         double cosangle = arma::dot(latcell.row(1), normal_of_ac) / arma::norm(latcell.row(1)) / arma::norm(normal_of_ac);
@@ -139,9 +142,9 @@ int vacuum_layer(atomsciflow::Crystal* structure, int plane, double thickness) {
         }
         double factor = (*std::max_element(y_all.begin(), y_all.end()) - *std::min_element(y_all.begin(), y_all.end()) + thickness) / proj_b_on_ac_normal * 1.0;
         structure->cell[1] = arma::conv_to<std::vector<double>>::from(latcell.row(1) * factor);
-    } else if (plane == 3) {
+    } else if ("bc" == plane) {
         arma::vec normal_of_bc = arma::cross(arma::conv_to<arma::vec>::from(latcell.row(1)), arma::conv_to<arma::vec>::from(latcell.row(2)));
-        // get the cosine of the angle between b and outer product of ac
+        // get the cosine of the angle between a and outer product of bc
         double cosangle = arma::dot(latcell.row(0), normal_of_bc) / arma::norm(latcell.row(0)) / arma::norm(normal_of_bc);
         double proj_a_on_bc_normal = arma::norm(latcell.row(0)) * std::abs(cosangle);
         std::vector<double> x_all;
@@ -471,7 +474,7 @@ std::vector<atomsciflow::Atom> enlarge_atoms_new_cell(atomsciflow::Crystal* stru
     double new_b = arma::norm(latcell_new.row(1));
     double new_c = arma::norm(latcell_new.row(2));
 
-    std::cout << "new_a: " << new_a << "; new_b: " << new_b << "; new_c: " << new_c << std::endl;
+    // std::cout << "new_a: " << new_a << "; new_b: " << new_b << "; new_c: " << new_c << std::endl;
 
     std::vector<double> cpp_vec(3);
     cpp_vec[0] = new_a;
@@ -489,12 +492,12 @@ std::vector<atomsciflow::Atom> enlarge_atoms_new_cell(atomsciflow::Crystal* stru
     
     std::vector<atomsciflow::Atom> atoms = structure->atoms;
     
-    std::cout << "n1: " << n[0] << std::endl;
-    std::cout << "n2: " << n[1] << std::endl;
-    std::cout << "n3: " << n[2] << std::endl;
+    // std::cout << "n1: " << n[0] << std::endl;
+    // std::cout << "n2: " << n[1] << std::endl;
+    // std::cout << "n3: " << n[2] << std::endl;
     
     // build supercell: replica in three vector one by one
-    std::cout << "atoms.size(): " << atoms.size() << std::endl;
+    // std::cout << "atoms.size(): " << atoms.size() << std::endl;
     int natom_now = 0;
     double x, y, z;
     for (i = 0; i < 3; i++) {
@@ -559,22 +562,22 @@ std::vector<atomsciflow::Atom> enlarge_atoms_new_cell(atomsciflow::Crystal* stru
 int redefine_lattice(atomsciflow::Crystal* structure, std::vector<int> a, std::vector<int> b, std::vector<int> c, double precision=1.0e-8) {
     int i = 0;
     int j = 0;
-    std::cout << "a: " << a[0] << " " << a[1] << " " << a[2] << std::endl;
-    std::cout << "b: " << b[0] << " " << b[1] << " " << b[2] << std::endl;
-    std::cout << "c: " << c[0] << " " << c[1] << " " << c[2] << std::endl;
+    // std::cout << "a: " << a[0] << " " << a[1] << " " << a[2] << std::endl;
+    // std::cout << "b: " << b[0] << " " << b[1] << " " << b[2] << std::endl;
+    // std::cout << "c: " << c[0] << " " << c[1] << " " << c[2] << std::endl;
     
-    std::cout << "structure->cell[0]: " << structure->cell[0][0] << " " << structure->cell[0][1] << " " << structure->cell[0][2] << std::endl;
-    std::cout << "structure->cell[1]: " << structure->cell[1][0] << " " << structure->cell[1][1] << " " << structure->cell[1][2] << std::endl;
-    std::cout << "structure->cell[0]: " << structure->cell[2][0] << " " << structure->cell[2][1] << " " << structure->cell[2][2] << std::endl;
+    // std::cout << "structure->cell[0]: " << structure->cell[0][0] << " " << structure->cell[0][1] << " " << structure->cell[0][2] << std::endl;
+    // std::cout << "structure->cell[1]: " << structure->cell[1][0] << " " << structure->cell[1][1] << " " << structure->cell[1][2] << std::endl;
+    // std::cout << "structure->cell[0]: " << structure->cell[2][0] << " " << structure->cell[2][1] << " " << structure->cell[2][2] << std::endl;
     
     arma::mat latcell_old(3, 3);
     latcell_old.row(0) = arma::conv_to<arma::rowvec>::from(structure->cell[0]);
     latcell_old.row(1) = arma::conv_to<arma::rowvec>::from(structure->cell[1]);
     latcell_old.row(2) = arma::conv_to<arma::rowvec>::from(structure->cell[2]);  
     
-    std::cout << "latcell_old[0]: " << latcell_old(0, 0) << " " << latcell_old(0, 1) << " " << latcell_old(0, 2) << std::endl;
-    std::cout << "latcell_old[1]: " << latcell_old(1, 0) << " " << latcell_old(1, 1) << " " << latcell_old(1, 2) << std::endl;
-    std::cout << "latcell_old[2]: " << latcell_old(2, 0) << " " << latcell_old(2, 1) << " " << latcell_old(2, 2) << std::endl;    
+    // std::cout << "latcell_old[0]: " << latcell_old(0, 0) << " " << latcell_old(0, 1) << " " << latcell_old(0, 2) << std::endl;
+    // std::cout << "latcell_old[1]: " << latcell_old(1, 0) << " " << latcell_old(1, 1) << " " << latcell_old(1, 2) << std::endl;
+    // std::cout << "latcell_old[2]: " << latcell_old(2, 0) << " " << latcell_old(2, 1) << " " << latcell_old(2, 2) << std::endl;    
     
     arma::mat latcell_new(3, 3);
     
@@ -582,9 +585,9 @@ int redefine_lattice(atomsciflow::Crystal* structure, std::vector<int> a, std::v
     latcell_new.row(1) =  b[0] * latcell_old.row(0) + b[1] * latcell_old.row(1) + b[2] * latcell_old.row(2);
     latcell_new.row(2) =  c[0] * latcell_old.row(0) + c[1] * latcell_old.row(1) + c[2] * latcell_old.row(2);
     
-    std::cout << "latcell_new[0]: " << latcell_new(0, 0) << " " << latcell_new(0, 1) << " " << latcell_new(0, 2) << std::endl;
-    std::cout << "latcell_new[1]: " << latcell_new(1, 0) << " " << latcell_new(1, 1) << " " << latcell_new(1, 2) << std::endl;
-    std::cout << "latcell_new[2]: " << latcell_new(2, 0) << " " << latcell_new(2, 1) << " " << latcell_new(2, 2) << std::endl;        
+    // std::cout << "latcell_new[0]: " << latcell_new(0, 0) << " " << latcell_new(0, 1) << " " << latcell_new(0, 2) << std::endl;
+    // std::cout << "latcell_new[1]: " << latcell_new(1, 0) << " " << latcell_new(1, 1) << " " << latcell_new(1, 2) << std::endl;
+    // std::cout << "latcell_new[2]: " << latcell_new(2, 0) << " " << latcell_new(2, 1) << " " << latcell_new(2, 2) << std::endl;        
 
     // enlarge the system
     std::vector<std::vector<double> > new_cell;
@@ -592,13 +595,13 @@ int redefine_lattice(atomsciflow::Crystal* structure, std::vector<int> a, std::v
     new_cell.push_back(arma::conv_to<std::vector<double> >::from(latcell_new.row(1)));
     new_cell.push_back(arma::conv_to<std::vector<double> >::from(latcell_new.row(2)));
     
-    std::cout << "new_cell[0]: " << new_cell[0][0] << " " << new_cell[0][1] << " " << new_cell[0][2] << std::endl;
-    std::cout << "new_cell[1]: " << new_cell[1][0] << " " << new_cell[1][1] << " " << new_cell[1][2] << std::endl;
-    std::cout << "new_cell[2]: " << new_cell[2][0] << " " << new_cell[2][1] << " " << new_cell[2][2] << std::endl;
+    // std::cout << "new_cell[0]: " << new_cell[0][0] << " " << new_cell[0][1] << " " << new_cell[0][2] << std::endl;
+    // std::cout << "new_cell[1]: " << new_cell[1][0] << " " << new_cell[1][1] << " " << new_cell[1][2] << std::endl;
+    // std::cout << "new_cell[2]: " << new_cell[2][0] << " " << new_cell[2][1] << " " << new_cell[2][2] << std::endl;
     
     std::vector<atomsciflow::Atom> atoms_container = enlarge_atoms_new_cell(structure, new_cell);
 
-    std::cout << "redefine_lattice: enlarge_atoms_new_cell finished!" << std::endl;
+    // std::cout << "redefine_lattice: enlarge_atoms_new_cell finished!" << std::endl;
     
     // now calc the fractional coordinates of all atoms in atoms_container with new_cell as reference
     arma::mat convmat(3, 3);
@@ -615,8 +618,8 @@ int redefine_lattice(atomsciflow::Crystal* structure, std::vector<int> a, std::v
         atoms_container[i].z = arma_vec(2);
     }
     
-    std::cout << "redefine_lattice: atoms_container convert to frac coord finished!" << std::endl;
-    std::cout << "atoms_container.size(): " << atoms_container.size() << std::endl;
+    // std::cout << "redefine_lattice: atoms_container convert to frac coord finished!" << std::endl;
+    // std::cout << "atoms_container.size(): " << atoms_container.size() << std::endl;
     
     std::vector<atomsciflow::Atom> atoms_frac_within_new_cell;
     
@@ -631,7 +634,7 @@ int redefine_lattice(atomsciflow::Crystal* structure, std::vector<int> a, std::v
         }
         
     }
-    std::cout << "atoms_frac_within_new_cell->size(): " << atoms_frac_within_new_cell.size() << std::endl;
+    // std::cout << "atoms_frac_within_new_cell->size(): " << atoms_frac_within_new_cell.size() << std::endl;
         
     // now convert coord of atom in atoms_frac_within_new_cell to cartesian
     
@@ -656,6 +659,76 @@ int redefine_lattice(atomsciflow::Crystal* structure, std::vector<int> a, std::v
     return 0;
 }
 
+
+/**
+ * @param structure: an instance of crystal()
+ * @param direction: direction of the surface plane, like [0, 0, 1], the reference of it is three lattice vector a, b, c
+ * @param precision, a value that is less than 1 and infinitely close to 1
+ *      used to judge whether one atom is in another periodic of the redefined cell used in cleave surface
+ * @return an object of crystal()
+ *
+ * Note: make use of redefine_lattice() to cleave surface.
+ */
+int cleave_surface(atomsciflow::Crystal* structure, std::vector<int> direction, double thickness=10, double precision=1.0e-8) {
+    
+    std::vector<int> a_from_old{1, 0, 0};
+    std::vector<int> b_from_old{0, 1, 0};
+    std::vector<int> c_from_old{0, 0, 1};
+
+    if (direction == std::vector<int>{1, 0, 0}) {
+        a_from_old = std::vector<int>{0, 1, 0};
+        b_from_old = std::vector<int>{0, 0, 1};
+        c_from_old = std::vector<int>{1, 0, 0};
+    } else if (direction == std::vector<int>{0, 1, 0}) {
+        a_from_old = std::vector<int>{0, 0, 1};
+        b_from_old = std::vector<int>{1, 0, 0};
+        c_from_old = std::vector<int>{0, 1, 0};
+    } else if (direction == std::vector<int>{0, 0, 1}) {
+        a_from_old = std::vector<int>{1, 0, 0};
+        b_from_old = std::vector<int>{0, 1, 0};
+        c_from_old = std::vector<int>{0, 0, 1};
+    } else if (direction == std::vector<int>{0, 1, 1}) {
+        a_from_old = std::vector<int>{1, 0, 0};
+        b_from_old = std::vector<int>{0, 1, -1};
+        c_from_old = std::vector<int>{0, 1, 1};
+    } else if (direction == std::vector<int>{1, 0, 1}) {
+        a_from_old = std::vector<int>{1, 0, -1};
+        b_from_old = std::vector<int>{0, 1, 0};
+        c_from_old = std::vector<int>{1, 0, 1};
+    } else if (direction == std::vector<int>{1, 1, 0}) {
+        a_from_old = std::vector<int>{0, 0, 1};
+        b_from_old = std::vector<int>{1, -1, 0};
+        c_from_old = std::vector<int>{1, 1, 0};
+    } else if (direction == std::vector<int>{1, 1, 1}) {
+        a_from_old = std::vector<int>{1, -1, 0};
+        b_from_old = std::vector<int>{1, 0, -1};
+        c_from_old = std::vector<int>{1, 1, 1};        
+    } else if (direction == std::vector<int>{0, 1, 2}) {
+        
+    } else if (direction == std::vector<int>{0, 2, 1}) {
+        
+    } else if (direction == std::vector<int>{1, 0, 2}) {
+        
+    } else if (direction == std::vector<int>{1, 2, 0}) {
+        
+    } else if (direction == std::vector<int>{2, 0, 1}) {
+        
+    } else if (direction == std::vector<int>{2, 1, 0}) {
+        
+    }
+
+    // std::cout << "a-> " << a_from_old[0] << " " << a_from_old[1] << " " << a_from_old[2] << std::endl;
+    // std::cout << "b-> " << b_from_old[0] << " " << b_from_old[1] << " " << b_from_old[2] << std::endl;
+    // std::cout << "c-> " << c_from_old[0] << " " << c_from_old[1] << " " << c_from_old[2] << std::endl;
+    
+    // redefine lattice
+    redefine_lattice(structure, a_from_old, b_from_old, c_from_old, precision);
+    
+    vacuum_layer(structure, 1, thickness);
+    
+    return 0;
+}
+
 /**
  * @param structure: an instance of crystal()
  * @param direction: direction of the surface plane, like [0, 0, 1], the reference of it is three lattice vector a, b, c
@@ -666,7 +739,7 @@ int redefine_lattice(atomsciflow::Crystal* structure, std::vector<int> a, std::v
  * Note: make use of redefine_lattice() to cleave surface.
  * we try to find new_a and new_b which form the surface plane (the direction is normal to the plane)
  */
-int cleave_surface(atomsciflow::Crystal* structure, std::vector<int> direction, double thickness=10, double precision=1.0e-8) {
+int cleave_surface_old(atomsciflow::Crystal* structure, std::vector<int> direction, double thickness=10, double precision=1.0e-8) {
     arma::mat old_cell(3, 3);
     old_cell.row(0) = arma::conv_to<arma::rowvec>::from(structure->cell[0]);
     old_cell.row(1) = arma::conv_to<arma::rowvec>::from(structure->cell[1]);

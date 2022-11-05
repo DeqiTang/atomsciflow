@@ -66,6 +66,9 @@ public:
     void gen_cdcloud(const std::string& script);
     void gen_slurm(const std::string& script);
 
+    std::string job_script_front();
+    std::string job_script_back();
+
     void run(const std::string& directory);
 
     std::map<std::string, std::string> run_params;

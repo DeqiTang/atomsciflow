@@ -179,10 +179,6 @@ class MetaMDPlumed(Cp2k):
         self.set_param("motion/free_energy/metadyn/use_plumed", ".TRUE.")
         self.set_param("motion/free_energy/metadyn/plumed_input_file", "./plumed.dat")
 
-        self.plumed.set_param("d1:distance/atoms", [1, 2])
-        self.plumed.set_param(":print/arg", "d1")
-        self.plumed.set_param(":print/file", "colvar.data")
-
     def run(self, directory):
         step = ""
         step += "cd ${ABSOLUTE_WORK_DIR}\n"

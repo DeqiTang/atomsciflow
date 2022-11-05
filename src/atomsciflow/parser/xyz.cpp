@@ -25,6 +25,7 @@ SOFTWARE.
 #include "atomsciflow/parser/xyz.h"
 
 #include <iterator>
+#include <boost/algorithm/string.hpp>
 
 #include "atomsciflow/base/atom.h"
 
@@ -82,19 +83,15 @@ int read_xyz_file(atomsciflow::Crystal* crystal, std::string filepath) {
     crystal->cell.push_back(b);
     crystal->cell.push_back(c);        
 
+    std::vector<std::string> str_vec;
+
     for (i = 0; i < natom; i++) {
-
-        std::vector<std::string> line_split(std::sregex_token_iterator(lines[i+2].begin(), lines[i+2].end(), whitespace, -1), 
-            std::sregex_token_iterator());
-        
+        boost::split(str_vec, boost::trim_left_copy(lines[i+2]), boost::is_space(), boost::token_compress_on);
         Atom atom;
-        
-        //std::cout << line_split[0] << line_split[1] ;
-
-        atom.set_name(line_split[0]);
-        atom.set_x(std::atof(line_split[1].c_str()));
-        atom.set_y(std::atof(line_split[2].c_str()));
-        atom.set_z(std::atof(line_split[3].c_str()));
+        atom.set_name(str_vec[0]);
+        atom.set_x(std::atof(str_vec[1].c_str()));
+        atom.set_y(std::atof(str_vec[2].c_str()));
+        atom.set_z(std::atof(str_vec[3].c_str()));
         crystal->atoms.push_back(atom);
     }    
 
@@ -120,7 +117,7 @@ int write_xyz_file(atomsciflow::Crystal* crystal, std::string filepath) {
         << std::setprecision(9) << std::setw(15) << crystal->cell[2][2] << "\n";
     
     for (auto& atom : crystal->atoms) {
-        xyzfile <<// atom.name << " " << atom.x << " " << atom.y << " " << atom.z << "\n";
+        xyzfile <<
             atom.name << "\t"
             << std::setprecision(9) << std::setw(15) << atom.x << "\t"
             << std::setprecision(9) << std::setw(15) << atom.y << "\t"

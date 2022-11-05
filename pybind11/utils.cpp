@@ -29,7 +29,7 @@ PYBIND11_MODULE(utils, m) {
     m.def("enlarge_atoms_new_cell", &atomsciflow::enlarge_atoms_new_cell);
     m.def("redefine_lattice", &atomsciflow::redefine_lattice);
     m.def("cleave_surface", &atomsciflow::cleave_surface);
-    m.def("merge", &atomsciflow::merge_layers);
+    m.def("merge_layers", &atomsciflow::merge_layers);
     m.def("build_nanotube_ab", &atomsciflow::build_nanotube_ab);
     m.def("build_nanotube_ac", &atomsciflow::build_nanotube_ac);
     m.def("build_nanotube_bc", &atomsciflow::build_nanotube_bc);

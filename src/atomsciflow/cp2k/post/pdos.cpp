@@ -235,8 +235,9 @@ void Pdos::run(const std::string& directory) {
     out << boost::format("set xrange [%1%:%2%]\n") % this->xmin % this->xmax;
 
     out << "set arrow from 0, graph 0 to 0, graph 1 nohead linecolor rgb \'black\' linewidth 0.5\n";
-    out << "set arrow from -20, 0 to 20, 0 nohead linecolor rgb \'black\' linewidth 0.5\n";
-    
+    out << boost::format("set arrow from %1%, 0 to %2%, 0 nohead linecolor rgb \'black\' linewidth 0.5\n") 
+        % this->xmin % this->xmax;
+
     int i = 0;
 
     out << "set output \'elem-proj.png\'\n";
