@@ -47,6 +47,11 @@ public:
     std::string to_string();
     void get_xyz(const std::string& xyzfile);
 
+    template <typename T>
+    void set_param(const std::string& path, T value) {
+        // not implemented.     
+    }
+
     virtual void run(const std::string& directory);
 
     Xyz xyz;
