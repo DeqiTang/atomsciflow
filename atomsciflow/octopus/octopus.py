@@ -84,3 +84,88 @@ class Dos(Octopus):
         self.set_status("Radius", False)
         self.set_param("CalculationMode", "gs")
         self.set_block_data("Output", "dos", 0, 0)
+
+class VibModes(Octopus):
+    def __init__(self):
+        super().__init__()
+
+    def run(self, directory):
+        
+        step = ""
+        self.set_param("CalculationMode", "gs")        
+        step += "cd ${ABSOLUTE_WORK_DIR}\n"
+        step += "cat >inp<<EOF\n"
+        step += self.to_string()
+        step += "EOF\n"
+        step += "$CMD_HEAD %s > octopus-gs.out\n" % self.job.run_params["cmd"]
+        self.job.append_step(step)
+
+        step = ""
+        self.set_param("CalculationMode", "vib_modes")
+        step += "cat >inp<<EOF\n"
+        step += self.to_string()
+        step += "EOF\n"
+        step += "$CMD_HEAD %s > octopus-vib-modes.out\n" % self.job.run_params["cmd"]
+        self.job.append_step(step)
+
+        self.job.run(directory)
+
+class OpticalCasida(Octopus):
+    def __init__(self):
+        super().__init__()
+
+    def run(self, directory):
+        
+        step = ""
+        self.set_param("CalculationMode", "gs")        
+        step += "cd ${ABSOLUTE_WORK_DIR}\n"
+        step += "cat >inp<<EOF\n"
+        step += self.to_string()
+        step += "EOF\n"
+        step += "$CMD_HEAD %s > octopus-gs.out\n" % self.job.run_params["cmd"]
+        self.job.append_step(step)
+
+        step = ""
+        self.set_param("CalculationMode", "unocc")     
+        self.set_param("ExtraStates", 10)           
+        step += "cd ${ABSOLUTE_WORK_DIR}\n"
+        step += "cat >inp<<EOF\n"
+        step += self.to_string()
+        step += "EOF\n"
+        step += "$CMD_HEAD %s > octopus-unocc.out\n" % self.job.run_params["cmd"]
+        self.job.append_step(step)
+
+        step = ""
+        self.set_param("CalculationMode", "casida")
+        step += "cat >inp<<EOF\n"
+        step += self.to_string()
+        step += "EOF\n"
+        step += "$CMD_HEAD %s > octopus-casida.out\n" % self.job.run_params["cmd"]
+        self.job.append_step(step)
+
+        self.job.run(directory)
+
+class OpticalSternheimer(Octopus):
+    def __init__(self):
+        super().__init__()
+
+    def run(self, directory):
+        
+        step = ""
+        self.set_param("CalculationMode", "gs")        
+        step += "cd ${ABSOLUTE_WORK_DIR}\n"
+        step += "cat >inp<<EOF\n"
+        step += self.to_string()
+        step += "EOF\n"
+        step += "$CMD_HEAD %s > octopus-gs.out\n" % self.job.run_params["cmd"]
+        self.job.append_step(step)
+
+        step = ""
+        self.set_param("CalculationMode", "em_resp")
+        step += "cat >inp<<EOF\n"
+        step += self.to_string()
+        step += "EOF\n"
+        step += "$CMD_HEAD %s > octopus-em-resp.out\n" % self.job.run_params["cmd"]
+        self.job.append_step(step)
+
+        self.job.run(directory)

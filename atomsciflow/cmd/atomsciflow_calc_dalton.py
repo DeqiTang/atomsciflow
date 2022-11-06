@@ -42,16 +42,13 @@ def dalton_processor(args):
     if args.calc.lower() == "static":
         from atomsciflow.dalton import Dalton
         job = Dalton()
-        job.get_xyz(args.xyz)
-        set_calc_processor_common(job, args)      
-        job.run(args.directory)
     elif args.calc.lower() == "opt":
         from atomsciflow.dalton import Dalton
         job = Dalton()
-        job.get_xyz(args.xyz)
-        set_calc_processor_common(job, args)      
-        job.run(args.directory)
     else:
         print("The specified calculation type is unfound!")
         sys.exit(1)
+
+    set_calc_processor_common(job, args)      
+    job.run(args.directory)
     

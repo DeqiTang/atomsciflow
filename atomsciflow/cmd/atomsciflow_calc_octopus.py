@@ -34,7 +34,7 @@ def add_octopus_subparser(subparsers):
     add_calc_parser_common(subparser)
     
     subparser.add_argument("-c", "--calc", type=str, default="static",
-        choices=["static", "opt", "md", "band", "dos"],
+        choices=["static", "opt", "md", "band", "dos", "vib", "optical-casida", "optical-sternheimer"],
         help="The calculation to do. The specified value is case insensitive")
 
     # custom
@@ -71,7 +71,16 @@ def octopus_processor(args):
         job.set_kpath(kpath)    
     elif args.calc.lower() == "dos":
         from atomsciflow.octopus import Dos
-        job = Dos()            
+        job = Dos()
+    elif args.calc.lower() == "vib":
+        from atomsciflow.octopus import VibModes
+        job = VibModes()      
+    elif args.calc.lower() == "optical-casida":
+        from atomsciflow.octopus import OpticalCasida
+        job = OpticalCasida()      
+    elif args.calc.lower() == "optical-sternheimer":
+        from atomsciflow.octopus import OpticalSternheimer
+        job = OpticalSternheimer()      
     else:
         print("The specified calculation type is unfound!")
         sys.exit(1)

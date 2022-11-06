@@ -27,6 +27,9 @@ from atomsciflow.octopus.octopus import (
     Static, 
     Opt,
     Band,
-    Dos
+    Dos,
+    VibModes,
+    OpticalCasida,
+    OpticalSternheimer
 )
 from atomsciflow.cpp.server import JobScheduler
