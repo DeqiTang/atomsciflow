@@ -36,7 +36,9 @@ namespace ba = boost::algorithm;
 Bands::Bands() {    
     this->ha_to_ev = 27.211324570273; 
     this->set_run("program-out", "cp2k.out");
-    this->set_run("output-json", "post-band.json");    
+    this->set_run("output-json", "post-band.json");
+    this->ymin = -10;
+    this->ymax = 10; 
 }
 
 Bands::~Bands() {
@@ -243,7 +245,8 @@ void Bands::run(const std::string& directory) {
     out << "set xtics font ',15'\n";
     out << "set border linewidth 3\n";
     out << "set autoscale\n";
-    out << "set yrange [-5:5]\n";
+    out << boost::format("set yrange [%1%:%2%]\n")
+        % this->ymin % this->ymax;
 
     out << "set xtics(";
     for (int i = 0; i < xtics_labels.size()-1; i++) {

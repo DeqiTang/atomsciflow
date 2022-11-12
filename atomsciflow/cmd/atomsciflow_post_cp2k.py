@@ -46,11 +46,19 @@ def add_cp2k_post_subparser(subparsers):
     ag.add_argument("--smear-npoints", type=int, default=10000,
         help="Specify the number of points to do smear sampling")
 
-    ag.add_argument("--xmin", type=float, default=-5,
+    ag = subparser.add_argument_group(title="Plot range")
+
+    ag.add_argument("--xmin", type=float, default=None,
         help="Specify the plot x range min.")
 
-    ag.add_argument("--xmax", type=float, default=5,
+    ag.add_argument("--xmax", type=float, default=None,
         help="Specify the plot x range max.")
+
+    ag.add_argument("--ymin", type=float, default=None,
+        help="Specify the plot y range min.")
+        
+    ag.add_argument("--ymax", type=float, default=None,
+        help="Specify the plot y range max.")
 
 def cp2k_post_processor(args):
     print("working directory: %s" % args.directory)
@@ -61,12 +69,18 @@ def cp2k_post_processor(args):
         job = Pdos()
         job.set_smear_width(args.smear_width)
         job.set_smear_npoints(args.smear_npoints)
-        job.set_xmin(args.xmin)
-        job.set_xmax(args.xmax)
+        if args.xmin != None:
+            job.set_xmin(args.xmin)
+        if args.xmax != None:
+            job.set_xmax(args.xmax)
         job.run(args.directory)
     elif args.calc.lower() == "band":
         from atomsciflow.cp2k.post import Bands
-        job = Bands()      
+        job = Bands()
+        if args.ymin != None:
+            job.set_ymin(args.ymin)
+        if args.ymax != None:
+            job.set_ymax(args.ymax)        
         job.run(args.directory)
     elif args.calc.lower() == "opt":
         from atomsciflow.cp2k.post import Opt

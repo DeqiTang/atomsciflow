@@ -35,9 +35,17 @@ class Opt(qe.PostOpt):
 class Band(post.Post):
     def __init__(self):
         super().__init__()
+        self.ymin = -10
+        self.ymax = 10
 
     def set_kpath(self, kpath):
         self.kpath = kpath
+
+    def set_ymin(self, ymin: float):
+        self.ymin = ymin
+    
+    def set_ymax(self, ymax: float):
+        self.ymax = ymax
 
     def run(self, directory):
         super().run(directory)
@@ -95,6 +103,7 @@ class Band(post.Post):
             fout.write("set xtics font ',15'\n")
             fout.write("set border linewidth 3\n")
             fout.write("set autoscale\n")
+            fout.write('set yrange [%s:%s]\n' % (self.ymin, self.ymax))
             # set a linestyle 1 to be the style for band lines
             fout.write("set style line 1 linecolor rgb \'black\' linetype 1 pointtype 1 linewidth 3\n")
             # set a linestyle 2 to be the style for the vertical high-symmetry kpoint line and horizontal fermi level line
@@ -128,6 +137,15 @@ class Band(post.Post):
 class Dos(post.Post):
     def __init__(self):
         super().__init__()
+
+        self.xmin = -10
+        self.xmax = 10
+
+    def set_xmin(self, xmin: float):
+        self.xmin = xmin
+    
+    def set_xmax(self, xmax: float):
+        self.xmax = xmax
 
     def run(self, directory):
         super().run(directory)
@@ -252,7 +270,7 @@ class Dos(post.Post):
             fout.write("set xtics font ',15'\n")
             fout.write("set border linewidth 3\n")
             fout.write("set autoscale\n")
-            fout.write("set xrange [-10:10]\n")
+            fout.write("set xrange [%s:%s]\n" % (self.xmin, self.xmax))
 
             fout.write("set arrow from 0, graph 0 to 0, graph 1 nohead linecolor rgb \'black\' linewidth 0.5\n")
             fout.write("set arrow from -10, 0 to 10, 0 nohead linecolor rgb \'black\' linewidth 0.5\n")

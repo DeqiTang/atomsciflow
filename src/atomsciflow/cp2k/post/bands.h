@@ -60,11 +60,21 @@ public:
     Bands();
     ~Bands();
 
+    void set_ymin(double ymin) {
+        this->ymin = ymin;
+    }
+
+    void set_ymax(double ymax) {
+        this->ymax = ymax;
+    }
+
     virtual void run(const std::string& directory);
     
     // used to convert energy from [a.u.] unit to [eV] unit
     double ha_to_ev;
     std::vector<std::shared_ptr<KpointSet>> kpoint_sets;
+    double ymin;
+    double ymax;
 };
 
 } // namespace atomsciflow::cp2k::post

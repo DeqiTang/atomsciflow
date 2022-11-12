@@ -188,7 +188,7 @@ class MetaMDPlumed(Cp2k):
         step += "cat >plumed.dat<<EOF\n"
         step += self.plumed.to_string()
         step += "EOF\n"
-        step += "$CMD_HEAD %s -in %s | tee %s  \n" % (
+        step += "$CMD_HEAD %s -in %s | tee -a %s  \n" % (
             self.job.run_params["cmd"],
             self.job.run_params["input"],
             self.job.run_params["output"]
@@ -227,7 +227,7 @@ class Phonopy(Cp2k):
 
         step = "for inp in %s-supercell-*.inp\n" % self.job.run_params["input"].split(".inp")[0]
         step += "do\n"
-        step += "$CMD_HEAD %s -in %s | tee %s \n" % (
+        step += "$CMD_HEAD %s -in %s | tee -a %s \n" % (
             self.job.run_params["cmd"],
             "${inp}",
             "${inp}.out"

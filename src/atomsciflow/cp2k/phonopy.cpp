@@ -69,7 +69,7 @@ void Phonopy::run(const std::string& directory) {
     boost::split(vec_str, job.run_params["input"], boost::is_any_of("."));
     step << boost::format("for inp in %1%-supercell-*.inp\n") % vec_str[0];
     step << "do\n";
-    step << boost::format("$CMD_HEAD %1% -in %2% | tee %3% \n")
+    step << boost::format("$CMD_HEAD %1% -in %2% | tee -a %3% \n")
         % job.run_params["cmd"]
         % "${inp}"
         % "${inp}.out"

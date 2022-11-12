@@ -38,6 +38,20 @@ def add_qe_post_subparser(subparsers):
     ag.add_argument("--kpath", type=str, default=None,
         help="Specify the kpath, either from a file or command line string, e.g. --kpath kpath.txt or --kpath \"0 0 0 GAMMA 5;0.5 0 0 x |\"")
 
+    ag = subparser.add_argument_group(title="Plot range")
+
+    ag.add_argument("--xmin", type=float, default=None,
+        help="Specify the plot x range min.")
+
+    ag.add_argument("--xmax", type=float, default=None,
+        help="Specify the plot x range max.")
+
+    ag.add_argument("--ymin", type=float, default=None,
+        help="Specify the plot y range min.")
+
+    ag.add_argument("--ymax", type=float, default=None,
+        help="Specify the plot y range max.")
+
 def qe_post_processor(args):
     print("working directory: %s" % args.directory)
     if args.calc.lower() == "static":
@@ -68,9 +82,17 @@ def qe_post_processor(args):
         else:
             kpath.read_file(args.kpath)
         job.set_kpath(kpath)
+        if args.ymin != None:
+            job.set_ymin(args.ymin)
+        if args.ymax != None:
+            job.set_ymax(args.ymax)
     elif args.calc.lower() == "dos":
         from atomsciflow.qe.post import Dos
-        job = Dos()        
+        job = Dos()
+        if args.xmin != None:
+            job.set_xmin(args.xmin)
+        if args.xmax != None:
+            job.set_xmax(args.xmax)        
     else:
         print("The specified post-processing type is unfound!")
         sys.exit(1)

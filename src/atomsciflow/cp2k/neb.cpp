@@ -76,7 +76,7 @@ void Neb::run(const std::string& directory) {
     step << boost::format("cat >%1%<<EOF\n") % job.run_params["input"];
     step << this->to_string();
     step << "EOF\n";
-    step << boost::format("$CMD_HEAD %1% -in %2% | tee %3%  \n") 
+    step << boost::format("$CMD_HEAD %1% -in %2% | tee -a %3%  \n") 
         % job.run_params["cmd"] 
         % job.run_params["input"]
         % job.run_params["output"]

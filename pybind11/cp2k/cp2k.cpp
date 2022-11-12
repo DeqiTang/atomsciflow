@@ -235,8 +235,10 @@ void add_class_post_pdos(py::module& m) {
 void add_class_post_bands(py::module& m) {
     py::class_<atomsciflow::cp2k::post::Bands>(m, "PostBands")
         .def(py::init<>())
+        .def("set_ymin", &atomsciflow::cp2k::post::Bands::set_ymin)
+        .def("set_ymax", &atomsciflow::cp2k::post::Bands::set_ymax)        
         .def("run", &atomsciflow::cp2k::post::Bands::run)
-        // .def("set_kpath", &atomsciflow::cp2k::post::Bands::set_kpath)
+        // .def("set_kpath", &atomsciflow::cp2k::post::Bands::set_kpath)        
         ;
 }
 
